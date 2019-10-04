@@ -1,0 +1,36 @@
+[project]
+authors = "Neptunian Axolotl"
+
+description = "Ludum Dare 45 Neptunian Axolotl"
+
+email = "mankarse.git@alethrea.net"
+
+package_name = "ld45"
+
+title = "LudumDare45"
+
+url = "https://ldjam.com/events/ludum-dare/45/$165937"
+
+uti = "com.ldjam.ld45.165937"
+
+version = "v0.0"
+
+[build]
+output_directory = "release"
+
+ignore_list = [
+    # Git
+    "^.git.*",
+
+    # Binary files
+    ".zip$",
+    ".tar.gz$",
+    ".love$",
+    ".exe$",
+
+    # Boon-specific files and directories
+    "Boon.toml",
+    "release",
+]
+
+exclude_default_ignore_list = false
