@@ -10,6 +10,8 @@ local shipPart
 local debugHitboxKey = 'm'
 local debugEnabled = false
 
+local starfield = require("starfield")
+
 local function GetRandomComponent()
     local num = math.random(1, #compConfigList)
     return compConfigList[num].defName
@@ -133,9 +135,13 @@ function love.draw()
 
     local px, py = player.body:getX(), player.body:getY()
     love.graphics.push()
+    
+    local stars = starfield.locations(px, py)
+    love.graphics.points(stars)
+    
     love.graphics.translate(winWidth/2 - px, winHeight/2 - py)
     -- Worldspace
-
+    
     for i = 1, #junkList do
         DrawShip(junkList[i])
     end
