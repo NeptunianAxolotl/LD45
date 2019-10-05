@@ -54,18 +54,30 @@ local function SetupComponent(body, compDefName, params)
 
     return comp
 end
- 
-local function ShipToWorld(body, shape, offX, offY)
-    return body:getX() + offX, body:getY() + offY, body:getAngle()
-end
 
 local function UpdateInput(ship)
     for i = 1, #ship.components do
         local comp = ship.components[i]
-        if love.keyboard.isDown(comp.activeKey) then
-            local activeX, activeY, activeAngle = ShipToWorld(ship.body, comp.shape, comp.def.activationOrigin[1], comp.def.activationOrigin[2])
-            comp.def:onFunction(ship.body, activeX, activeY, activeAngle)
+        if comp.def.onFunction and love.keyboard.isDown(comp.activeKey) then
+            local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+            local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
+            local angle = ship.body:getAngle() + comp.angle
+            vx, vy = RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
+            comp.def:onFunction(ship.body, ox + vx, oy + vy, angle)
         end
+    end
+end
+
+local function DrawShipVectors(ship)
+    for i = 1, #ship.components do
+        local comp = ship.components[i]
+        local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+        local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
+        local angle = ship.body:getAngle() + comp.angle
+        vx, vy = RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
+        local dx, dy = ox + vx, oy + vy
+        love.graphics.line(dx, dy, dx + 20*math.cos(angle), dy + 20*math.sin(angle))
+        love.graphics.circle("line", dx, dy, 10)
     end
 end
 
@@ -86,6 +98,9 @@ local function DrawDebug()
             end
         end
     end
+
+    DrawShipVectors(player)
+
     love.graphics.setColor(1, 1, 1, 1)
 end
 
@@ -106,7 +121,7 @@ function love.draw()
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
 
-    local px, py = player.body:getX(), player.body:getY()
+    local px, py = player.body:getWorldCenter()
     love.graphics.push()
     
     local stars = starfield.locations(px, py)

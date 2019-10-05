@@ -10,10 +10,6 @@ local conf = {
     shapeCoords = {25,0, 10,10, 10,-18, -38,-15, -38,15},
     mass = 20,
     name = "player",
-    onFunction = function (self, body, activeX, activeY, activeAngle)
-        local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
-        body:applyForce(fx, fy, activeX, activeY)
-    end,
 }
 
 return conf
