@@ -10,6 +10,9 @@ local shipPart
 local debugHitboxKey = 'm'
 local debugEnabled = false
 
+local setKeybind = false
+local needKeybind = false
+
 local starfield = require("starfield")
 
 local function GetRandomComponent()
@@ -19,6 +22,21 @@ end
 
 local function RotateVector(x, y, angle)
 	return x*math.cos(angle) - y*math.sin(angle), x*math.sin(angle) + y*math.cos(angle)
+end
+
+local function UpdatePlayerComponentAttributes()
+    needKeybind = false
+    for i = 1, #player.components do
+        local comp = player.components[i]
+        if comp.def.text and not comp.activeKey then
+            needKeybind = true
+            break
+        end
+    end
+
+    if not needKeybind then
+        setKeybind = false
+    end
 end
 
 local function SetupComponent(body, compDefName, params)
@@ -47,6 +65,7 @@ local function SetupComponent(body, compDefName, params)
     comp.fixture = love.physics.newFixture(body, comp.shape, comp.def.density)
 
     comp.activeKey = params.activeKey
+    comp.isPlayer  = params.isPlayer
     local fixtureData = params.fixtureData or {}
     fixtureData.noAttach = comp.def.noAttach
     comp.fixture:setUserData(fixtureData)
@@ -57,7 +76,7 @@ end
 local function UpdateInput(ship)
     for i = 1, #ship.components do
         local comp = ship.components[i]
-        if comp.def.onFunction and love.keyboard.isDown(comp.activeKey) then
+        if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
             local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
             local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
             local angle = ship.body:getAngle() + comp.angle
@@ -110,11 +129,12 @@ local function DrawShip(ship)
         love.graphics.draw(comp.def.imageOff, dx, dy, ship.body:getAngle() + comp.angle, 
             comp.def.imageScale[1], comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
 
-        if comp.activeKey ~= nil and comp.def.onFunction ~= nil then
+        if comp.def.text ~= nil and comp.isPlayer then
             local textDef = comp.def.text
+            local keyName = comp.activeKey or "??"
 
             love.graphics.setColor(unpack(comp.def.text.color))
-            love.graphics.print(comp.activeKey, dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
+            love.graphics.print(keyName, dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
             love.graphics.setColor(1,1,1,1)
         end
     end
@@ -158,6 +178,13 @@ function love.draw()
     
     love.graphics.pop()
     -- UI space
+
+    if needKeybind and not setKeybind then
+        love.graphics.print("Press space to set unbound component keys", 10, 10, 0, 2, 2)
+    elseif setKeybind then
+        love.graphics.print("Press any key to set a keybind", 10, 10, 0, 2, 2)
+    end
+
 end
 
 
@@ -171,6 +198,21 @@ end
 function love.keypressed(key, scancode, isRepeat)
     if key == debugHitboxKey and not isRepeat then
         debugEnabled = not debugEnabled
+    end
+
+    if not isRepeat then
+        if key == 'space' then
+            setKeybind = not setKeybind
+        elseif setKeybind then
+            for i = 1, #player.components do
+                local comp = player.components[i]
+                if comp.def.text and not comp.activeKey then
+                    comp.activeKey = key
+                end
+            end
+            setKeybind = false
+            needKeybind = false
+        end
     end
 end
 
@@ -239,7 +281,7 @@ local function DoMerge(playerFixture, otherFixture)
         local angle = junkBody:getAngle() - playerBody:getAngle() + comp.angle
 
         player.components[#player.components + 1] = SetupComponent(playerBody, otherData.compDefName, {
-                activeKey = 'w',
+                isPlayer = true,
                 fixtureData = {isPlayer = true, compDefName = compDefName},
                 xOff = xOff,
                 yOff = yOff,
@@ -250,6 +292,8 @@ local function DoMerge(playerFixture, otherFixture)
     
     otherFixture:getBody():destroy()
     junkList[otherData.junkIndex] = nil
+
+    UpdatePlayerComponentAttributes()
 end
 
 local function ProcessCollisions()
@@ -300,7 +344,7 @@ local function SetupPlayer()
     body:setAngularVelocity(0.8)
 
     local components = {}
-    components[1] = SetupComponent(body, "booster", {activeKey = 'w', fixtureData = {isPlayer = true, compDefName = compDefName}})
+    components[1] = SetupComponent(body, "booster", {isPlayer = true, fixtureData = {isPlayer = true, compDefName = compDefName}})
 
     return {
         body = body,
@@ -316,4 +360,5 @@ function love.load()
 
     SetupWorld()
     player = SetupPlayer()
+    UpdatePlayerComponentAttributes()
 end

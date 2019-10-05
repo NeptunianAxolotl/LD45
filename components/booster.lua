@@ -9,7 +9,6 @@ local conf = {
     activationOrigin = {-20, 0},
     shapeCoords = {25,0, 10,20, 10,-20, -20,-20, -20,20},
     density = 1,
-    name = "booster1",
     text =
     {
         pos = {5.5, 5},
