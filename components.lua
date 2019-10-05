@@ -2,6 +2,7 @@ local components = {}
 
 components.booster = require("components/booster")
 components.tractor_wheel = require("components/tractor_wheel")
+components.laser_prism = require("components/laser_prism")
 components.player = require("components/player")
 components.girder1 = require("components/girder 1")
 components.asteroid1 = require("components/asteroid 1")
