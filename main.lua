@@ -4,6 +4,26 @@ local playerShape
 local junkList = {}
 
 local shipPart
+
+local function GetBoundedLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
+	
+	local denominator = ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
+	if denominator == 0 then
+		return false
+	end
+	local first = ((x1 - x3)*(y3 - y4) - (y1 - y3)*(x3 - x4))/denominator
+	local second = -1*((x1 - x2)*(y1 - y3) - (y1 - y2)*(x1 - x3))/denominator
+	
+	if first < 0 or first > 1 or (second < 0 or second > 1) then
+		return false
+	end
+	
+	local px = x1 + first*(x2 - x1)
+	local py = y1 + first*(y2 - y1)
+	
+	return {px, py}
+end
+
 function love.draw()
     for i = 1, #junkList do
         local junk = junkList[i]
@@ -13,70 +33,98 @@ function love.draw()
     love.graphics.setColor(1, 1, 0)
     love.graphics.circle("fill", circle.x, circle.y, circle.radius)
     
+    --bodies
     for i = 1, #junkList do
         fixtures = junkList[i]:getFixtures()
         
+        --fixtures
         for j = 1, #fixtures do
             local shape = fixtures[j]:getShape()
             
+            --points for fixture
             local points = {shape:getPoints()}
             local _points = {junkList[i]:getWorldPoints(points[1], points[2], points[3], points[4], points[5], points[6], points[7], points[8])}
             
+            --duplicate first point to after last point
             _points[9] = _points[1]
             _points[10] = _points[2]
             
-            -- get shape outline
-            shapeLines = {}
+            pointsToRemove = {}
             
-            for s = 1, 4 do
-                shapeLines[s] = love.graphics.line(_points[(2 * s) - 1], _points[2 * s], _points[2 * (s + 1) - 1], _points[2 * (s+1)])
+            -- check whether light source lines intesect with shape lines
+            print('loop')
+            for l = 4, 1, -1 do
+                for e = (#_points/2-1), 1, -1 do
+                    print(#_points)
+                    print("l e",l,e)
+                    if GetBoundedLineIntersection(
+                        _points[(2 * l) - 1],
+                        _points[2 * l],
+                        circle.x + circle.radius / 2,
+                        circle.y + circle.radius / 2,
+                        _points[(2 * e) - 1],
+                        _points[2 * e],
+                        _points[2 * (e + 1) - 1],
+                        _points[2 * (e+1)]
+                    ) == false then
+                        --if yes, remove points from list
+                        table.insert(pointsToRemove, (2*l) - 1)
+                        table.insert(pointsToRemove, 2*l)
+                    end
+                    print("l, i",l, i)
+                end
             end
-
-            --get lines pointing from light source to each vertex
-            lines = {}
             
-            for k = 1, 4 do
-                lines[#lines + 1] = love.graphics.line(_points[(2 * k) - 1], _points[2 * k], circle.x + circle.radius / 2, circle.y + circle.radius / 2)
+            for i = 1, #pointsToRemove do
+                table.remove(_points, pointsToRemove[i])
             end
             
-            -- discard all lines that do not intersect the shape 
-            for l = #lines, 1, -1 do
-                for e = #shapeLines, 1, -1 do
-                    local ix, iy = GetBoundedLineIntersection(lines[l], shapeLines[e])
-                    
-                    if ix == nil or iy == nil then
-                        lines:remove(l)
+            pointsToRemove = nil
+            
+            --draw lines between remaining points (unless there's only one point, in which case do nothing)
+            if #points < 3 then
+                --print('only one point')
+            else
+                --print ('more than one point')
+                --draw shape outlines
+                for s = 1, #_points / 2 do
+                    --print('inside loop')
+                    if _points[(2 * s) - 1] ~= nil and _points[2 * s] ~= nil and _points[(2 * (s + 1)) - 1] ~= nil and _points[2 * (s+1)] then
+                        love.graphics.line(_points[(2 * s) - 1], _points[2 * s], _points[(2 * (s + 1)) - 1], _points[2 * (s+1)])
                     end
                     
-                        
-                        --love.graphics.setColour(1,0,0)
-                        --love.graphics.line(lines[l].x1, lines[l].y1, lines[l].x2, lines[l].y2)
                     
-                    
-                    
+                    --print(_points[(2 * s) - 1])
+                    --print(_points[2 * s])
+                    --print(_points[(2 * (s + 1)) - 1])
+                    --print(_points[2 * (s+1)])
                     
                     
                 end
-                
-                
+
+                --draw lines pointing from light source to each vertex
+                for k = 1, #_points / 2 do
+                    love.graphics.line(_points[(2 * k) - 1], _points[2 * k], circle.x + circle.radius / 2, circle.y + circle.radius / 2)
+                end
             end
             
             
-        end
-        
 
-        
-        
+            
+
+            
+            
+        end
+
         -- retrieve two lines adjacent to those lines that do intersect the shape, at the outside
         -- create a shape bounded by the screen edge, the two outer lines, and the 'back half' of the shape
         -- colour this shape in
         -- overlay this shape as an effect on graphics present in this area
-        
-        
     
         --print(x1 .. ', ' .. y1 .. '; ' .. x2 .. ', ' .. y2 .. '.')
     end
     
+
     
     love.graphics.setColor(1, 1, 1)
 end
@@ -109,6 +157,7 @@ end
 
 function love.update(dt)
     world:update(dt)
+    
 end
 
 function love.mousemoved( x, y, dx, dy, istouch )
@@ -125,24 +174,3 @@ end
 
 
 ]=]--
-
-local function GetBoundedLineIntersection(line1, line2)
-	local x1, y1, x2, y2 = line1[1][1], line1[1][2], line1[2][1], line1[2][2]
-	local x3, y3, x4, y4 = line2[1][1], line2[1][2], line2[2][1], line2[2][2]
-	
-	local denominator = ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
-	if denominator == 0 then
-		return false
-	end
-	local first = ((x1 - x3)*(y3 - y4) - (y1 - y3)*(x3 - x4))/denominator
-	local second = -1*((x1 - x2)*(y1 - y3) - (y1 - y2)*(x1 - x3))/denominator
-	
-	if first < 0 or first > 1 or (second < 0 or second > 1) then
-		return false
-	end
-	
-	local px = x1 + first*(x2 - x1)
-	local py = y1 + first*(y2 - y1)
-	
-	return {px, py}
-end
