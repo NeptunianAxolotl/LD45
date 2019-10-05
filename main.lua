@@ -116,17 +116,27 @@ local function DrawShip(ship)
     end
 end
 
+local cameraX, cameraY = 0, 0
+local smoothCameraFactor = 0.25
+local function UpdateCameraPos()
+    local px, py = player.body:getWorldCenter()
+    cameraX = (1 - smoothCameraFactor)*cameraX + smoothCameraFactor*px
+    cameraY = (1 - smoothCameraFactor)*cameraY + smoothCameraFactor*py
+
+    return cameraX, cameraY
+end
+
 function love.draw()
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
 
-    local px, py = player.body:getWorldCenter()
     love.graphics.push()
     
-    local stars = starfield.locations(px, py)
+    local cx, cy = UpdateCameraPos()
+    local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
     
-    love.graphics.translate(winWidth/2 - px, winHeight/2 - py)
+    love.graphics.translate(winWidth/2 - cx, winHeight/2 - cy)
     -- Worldspace
     for _, junk in pairs(junkList) do
         DrawShip(junk)
