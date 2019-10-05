@@ -9,7 +9,6 @@ local conf = {
     activationOrigin = {0, 0},
     shapeCoords = { 20,5, 20,-5, -20,-5, -20,5},
     density = 1,
-    name = "player",
 }
 
 return conf

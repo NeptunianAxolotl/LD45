@@ -12,9 +12,9 @@ local conf = {
     name = "booster1",
     text =
     {
-        pos = {5, 0},
+        pos = {5.5, 5},
         rotation = math.pi/2,
-        scale = {1,1},
+        scale = {1.5, 1.5},
         color = {0.8,0.1,0.1,1},
     },
     onFunction = function (self, body, activeX, activeY, activeAngle)
