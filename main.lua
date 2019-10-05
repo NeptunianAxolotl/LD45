@@ -9,6 +9,9 @@ function love.draw()
         local junk = junkList[i]
         love.graphics.draw(shipPart, junk:getX(), junk:getY(), junk:getAngle(), 0.1, 0.1, 400, 300)
     end
+    
+    
+    love.graphics.circle("fill", 600, 600, 10, 10)
 end
 
 local function SetupWorld()
@@ -42,3 +45,11 @@ end
 
 function love.mousereleased( x, y, button, istouch, presses)
 end
+
+--[[--
+- parallax (background stars, flashing points, small local celestial bodies?)
+- light source intersection - engine flame, local light source (just basic one-colour shading)
+
+
+
+--]]--
