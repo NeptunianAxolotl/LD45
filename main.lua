@@ -3,28 +3,20 @@ local world
 local player
 local junkList = {}
 
-local compConfig = require("components")
+local compConfig, compConfigList = unpack(require("components"))
 
 local shipPart 
 
 local debugHitboxKey = 'm'
 local debugEnabled = false
 
-local function SetupWorld()
-    world = love.physics.newWorld(0, 0, true) -- Last argument is whether sleep is allowed.
-
-    for i = 1, 20 do
-        local junk = love.physics.newBody(world, math.random()*1000 - 500, math.random()*1000 - 500, "dynamic")
-        love.physics.newFixture(junk, love.physics.newPolygonShape(-25, -24, 25, -10, 25, 10, -25, 24), 1)
-
-        junk:setAngle(math.random()*2*math.pi)
-        junk:setLinearVelocity(math.random()*4, math.random()*4)
-        junk:setAngularVelocity(math.random()*2*math.pi)
-        junkList[#junkList + 1] = junk
-    end
+local function GetRandomComponent()
+    local num = math.random(1, #compConfigList)
+    return compConfigList[num].defName
 end
 
 local function SetupComponent(body, compDefName, params)
+    params = params or {}
     local comp = {}
     comp.def = compConfig[compDefName]
     comp.shape = love.physics.newPolygonShape(unpack(comp.def.shapeCoords))
@@ -33,6 +25,23 @@ local function SetupComponent(body, compDefName, params)
     comp.activeKey = params.activeKey
 
     return comp
+end
+
+local function SetupWorld()
+    world = love.physics.newWorld(0, 0, true) -- Last argument is whether sleep is allowed.
+
+    for i = 1, 20 do
+        local junk = love.physics.newBody(world, math.random()*1000 - 500, math.random()*1000 - 500, "dynamic")
+
+        local comp = SetupComponent(junk, GetRandomComponent())
+        junk:setAngle(math.random()*2*math.pi)
+        junk:setLinearVelocity(math.random()*4, math.random()*4)
+        junk:setAngularVelocity(math.random()*2*math.pi)
+        junkList[#junkList + 1] = {
+            body = junk,
+            components = {comp}
+        }
+    end
 end
 
 local function SetupPlayer()
@@ -105,7 +114,7 @@ local function DrawDebug()
             love.graphics.polygon("line", points)
         end
     end
-    love.graphics.setColor(1,1,1,1)
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 function love.draw()
@@ -118,8 +127,7 @@ function love.draw()
     -- Worldspace
 
     for i = 1, #junkList do
-        local junk = junkList[i]
-        love.graphics.draw(shipPart, junk:getX(), junk:getY(), junk:getAngle(), 0.1, 0.1, 400, 300)
+        DrawShip(junkList[i])
     end
 
     DrawShip(player)
