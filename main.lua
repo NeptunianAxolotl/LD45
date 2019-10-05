@@ -291,6 +291,7 @@ local function SetupPlayer()
 end
 
 function love.load()
+    math.randomseed(os.clock())
     shipPart = love.graphics.newImage('images/ship.png')
 
     LoadComponentResources()
