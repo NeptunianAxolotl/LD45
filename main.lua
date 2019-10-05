@@ -5,25 +5,6 @@ local junkList = {}
 
 local shipPart
 
-local function boundedIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
-	
-	local denominator = ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
-	if denominator == 0 then
-		return false
-	end
-	local first = ((x1 - x3)*(y3 - y4) - (y1 - y3)*(x3 - x4))/denominator
-	local second = -1*((x1 - x2)*(y1 - y3) - (y1 - y2)*(x1 - x3))/denominator
-	
-	if first < 0 or first > 1 or (second < 0 or second > 1) then
-		return false
-	end
-	
-	local px = x1 + first*(x2 - x1)
-	local py = y1 + first*(y2 - y1)
-	
-	return {px, py}
-end
-
 local function intersection (x1, y1, x2, y2, x3, y3, x4, y4)
   local d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
   local a = x1 * y2 - y1 * x2
@@ -145,33 +126,18 @@ function paintShadows (bodyList, lightSource, minDistance)
                     intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
                     
                 end
-                
-                love.graphics.line(intersectX, intersectY, edgePoints[(2 * i) - 1], edgePoints[2 * i])
-                
+                                
                 shadowPoints[3 + (2 * i)] = intersectX
                 shadowPoints[4 + (2 * i)] = intersectY
             end    
             
             --draw the shadow shape  
             love.graphics.polygon("fill", shadowPoints)
-            
-            --love.graphics.line(edgePoints[1], edgePoints[2], edgePoints[3], edgePoints[4])
-            
-
         end
-
-        -- retrieve two lines adjacent to those lines that do intersect the shape, at the outside
-        -- create a shape bounded by the screen edge, the two outer lines, and the 'back half' of the shape
-        -- colour this shape in
-        -- overlay this shape as an effect on graphics present in this area
         
         ::continue::
-    
     end
-    
-    
 end
-
 
 function love.draw()
     for i = 1, #junkList do
@@ -242,11 +208,3 @@ end
 
 function love.mousereleased( x, y, button, istouch, presses)
 end
-
---[=[
-- parallax (background stars, flashing points, small local celestial bodies?)
-- light source intersection - engine flame, local light source (just basic one-colour shading)
-
-
-
-]=]--
