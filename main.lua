@@ -19,6 +19,50 @@ junkIndex = 0
 
 function love.draw()
     drawSystem.draw(world, player, junkList, debugEnabled, needKeybind, setKeybind)
+    
+    local componentLighting = false
+    
+    for i = 1, #player.components do
+        if comp.def.holdActivate then
+            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
+                
+                
+                
+            end
+        end
+        
+    end
+    
+    if componentLighting == false then
+       --overlay the screen with shadow 
+        local winWidth  = love.graphics:getWidth()
+        local winHeight = love.graphics:getHeight()
+        
+        windowVertices = {}
+        windowVertices[1] = 0
+        windowVertices[2] = 0
+        windowVertices[3] = 0
+        windowVertices[4] = winHeight
+        windowVertices[5] = winWidth
+        windowVertices[6] = winHeight
+        windowVertices[7] = winWidth
+        windowVertices[8] = 0
+        
+        love.graphics.setColor(0,0,0,0.2)
+        love.graphics.polygon("fill", windowVertices)
+        
+        love.graphics.setColor(1,1,1)
+    else
+        --draw shaded shapes
+        
+        --generate shadows
+        
+        --generate illuminated shapes
+        
+        --(these are going to have to be iterated through :/ )
+        
+    end
+    
 end
 
 --------------------------------------------------

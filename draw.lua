@@ -33,6 +33,8 @@ end
 
 local function paintShadows (bodyList, lightSource, minDistance)
     
+    --check for polygon light sources, or circular bodies
+    
     --bodies
     for i = 1, #bodyList do
         fixtures = bodyList[i]:getFixtures()
