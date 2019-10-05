@@ -36,7 +36,6 @@ local function SetupComponent(body, compDefName, params)
     else
         local coords = comp.def.shapeCoords
         local modCoords = {}
-        print("angle", angle)
         for i = 1, #coords, 2 do
             local cx, cy = RotateVector(coords[i], coords[i + 1], angle)
             cx, cy = cx + xOff, cy + yOff
