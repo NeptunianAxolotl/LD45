@@ -2,6 +2,7 @@ local components = {}
 
 components.booster = require("components/booster")
 components.tractor_wheel = require("components/tractor_wheel")
+components.player = require("components/player")
 
 -- Post processing
 local compList = {}
