@@ -6,6 +6,139 @@ local util = require("util")
 
 local shipPart 
 
+local function intersection (x1, y1, x2, y2, x3, y3, x4, y4)
+  local d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+  local a = x1 * y2 - y1 * x2
+  local b = x3 * y4 - y3 * x4
+  local x = (a * (x3 - x4) - (x1 - x2) * b) / d
+  local y = (a * (y3 - y4) - (y1 - y2) * b) / d
+  return x, y
+end
+
+local function getAngles(self, sourceX, sourceY)
+    local angles = {}
+    
+    for i = 1, #self / 2 do
+        angles[#angles + 1] = math.atan2(sourceY - self[2 * i], sourceX - self[(2 * i) - 1])
+    end
+    
+    return angles
+end
+
+local function distance (x1, y1, x2, y2)
+      local dx = x1 - x2
+  local dy = y1 - y2
+  return math.sqrt ( dx * dx + dy * dy )    
+end
+
+local function paintShadows (bodyList, lightSource, minDistance)
+    
+    --bodies
+    for i = 1, #bodyList do
+        fixtures = bodyList[i]:getFixtures()
+        
+        --fixtures
+        for j = 1, #fixtures do
+            
+            local shadowPoints = {}
+            
+            local shape = fixtures[j]:getShape()
+            
+            --points for fixture
+            local points = {shape:getPoints()}
+            local _points = {junkList[i]:getWorldPoints(points[1], points[2], points[3], points[4], points[5], points[6], points[7], points[8])}
+            
+            for i = 1, #_points / 2 do
+                if distance(_points[2 * i - 1], _points[2 * i], lightSource.x, lightSource.y) < minDistance then
+                    goto continue
+                end
+            end
+            
+            local angles = getAngles(_points, lightSource.x, lightSource.y)
+            local compAngles = {}
+            
+            for i = 1, #angles do
+                compAngles[i] = angles[i]
+            end
+            
+            table.sort(angles)
+            
+            minAngle = angles[1]
+            maxAngle = angles[#angles]
+            
+            local maxAngleNo = 0
+            local minAngleNo = 0
+            
+            for i = 1, #angles do
+                if compAngles[i] == minAngle then
+                    minAngleNo = i
+                end
+                
+                if compAngles[i] == maxAngle then
+                    maxAngleNo = i
+                end
+                
+            end
+
+            edgePoints = {}
+            edgePoints[1] = _points[(2 * minAngleNo) - 1]
+            edgePoints[2] = _points[2 * minAngleNo]
+            edgePoints[3] = _points[(2 * maxAngleNo) - 1]
+            edgePoints[4] = _points[2 * maxAngleNo]
+            
+            shadowPoints[1] = edgePoints[3]
+            shadowPoints[2] = edgePoints[4]
+            shadowPoints[3] = edgePoints[1]
+            shadowPoints[4] = edgePoints[2]
+
+            --draw lines tracing from shape edges
+            for i = 1, 2 do
+                --project line to edge of screen
+                --top or bottom?
+                local angle = math.atan2(lightSource.y - edgePoints[2 * i], lightSource.x - edgePoints[(2 * i) - 1])
+                
+                if angle > 0 and angle < math.pi then
+                    --top
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, winWidth, 0)
+                
+                elseif angle < 0 and angle > - math.pi then
+                    --bottom
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, winHeight, winWidth, winHeight)
+                    
+                else
+                    --direct horizontal, skip this step and move to left or right
+                    if angle == 0 then
+                        --right
+                        intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
+                    else
+                        --left
+                        intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
+                        
+                    end     
+                end
+                     
+                if intersectX < 0 then
+                    --left
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
+                        
+                elseif intersectX > winWidth then
+                    --right
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
+                    
+                end
+                                
+                shadowPoints[3 + (2 * i)] = intersectX
+                shadowPoints[4 + (2 * i)] = intersectY
+            end    
+            
+            --draw the shadow shape  
+            love.graphics.polygon("fill", shadowPoints)
+        end
+        
+        ::continue::
+    end
+end
+
 local function DrawShipVectors(ship)
     for i = 1, #ship.components do
         local comp = ship.components[i]
