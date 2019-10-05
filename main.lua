@@ -109,6 +109,14 @@ local function DrawShip(ship)
         local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
         love.graphics.draw(comp.def.imageOff, dx, dy, ship.body:getAngle() + comp.angle, 
             comp.def.imageScale[1], comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+
+        if comp.activeKey ~= nil and comp.def.onFunction ~= nil then
+            local textDef = comp.def.text
+
+            love.graphics.setColor(unpack(comp.def.text.color))
+            love.graphics.print(comp.activeKey, dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
+            love.graphics.setColor(1,1,1,1)
+        end
     end
 
     if debugEnabled then

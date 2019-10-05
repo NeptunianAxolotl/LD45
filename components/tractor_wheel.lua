@@ -9,7 +9,7 @@ local conf = {
     activationOrigin = {0, 0},
     circleShapeRadius = 32,
     density = 1,
-	-- angular velocity here; tractor wheel is always rotating in game 
+    -- angular velocity here; tractor wheel is always rotating in game
 }
 
 return conf
