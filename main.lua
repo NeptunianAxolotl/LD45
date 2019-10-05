@@ -10,8 +10,22 @@ function love.draw()
         love.graphics.draw(shipPart, junk:getX(), junk:getY(), junk:getAngle(), 0.1, 0.1, 400, 300)
     end
     
-    
+    love.graphics.setColor(1, 1, 0)
     love.graphics.circle("fill", 600, 600, 10, 10)
+    
+    for i = 1, #junkList do
+        fixtures = junkList[i]:getFixtures()
+        
+        for j = 1, #fixtures do
+            x1, y1, x2, y2 = fixtures[j]:getBoundingBox()
+            
+        end
+    
+        --print(x1 .. ', ' .. y1 .. '; ' .. x2 .. ', ' .. y2 .. '.')
+    end
+    
+    
+    love.graphics.setColor(1, 1, 1)
 end
 
 local function SetupWorld()
