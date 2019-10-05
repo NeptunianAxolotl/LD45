@@ -119,7 +119,7 @@ end
 
 local function SetupPlayer()
     local body = love.physics.newBody(world, 0, 0, "dynamic")
-    body:setAngularVelocity(0.8)
+    body:setAngularVelocity(0.4)
 
     local components = {}
     components[1] = gameSystem.SetupComponent(body, "booster", {isPlayer = true, fixtureData = {isPlayer = true, compDefName = compDefName}})
