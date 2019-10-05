@@ -7,6 +7,8 @@ function love.load()
     ps:setLinearAcceleration(-200, -200, 200, 200)
     ps:setRotation(0,2)
     ps:setColors(1, 1, 1, 1, 1, 1, 1, 0)
+    
+    print("Initialisation complete")
 end
 
 function love.draw()
