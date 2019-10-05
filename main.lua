@@ -4,6 +4,8 @@ local debugEnabled = false
 local setKeybind = false
 local needKeybind = false
 
+IterableMap = require("IterableMap")
+
 local drawSystem = require("draw")
 local gameSystem = require("game")
 
@@ -11,7 +13,7 @@ local world
 local player
 
 local junkList = {}
-junkIndex = 0
+local junkIndex = 0
 
 --------------------------------------------------
 -- Draw
@@ -53,6 +55,24 @@ function love.keypressed(key, scancode, isRepeat)
     end
 end
 
+local function MouseHitFunc(fixture)
+    local fixtureData = fixture:getUserData()
+    if fixtureData.junkIndex and not fixtureData.noSelect then
+        -- Todo: point intersection
+        if gameSystem.TestJunkClick(junkList[fixtureData.junkIndex]) then
+            return false
+        end
+    end
+
+    return true
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+    local cx, cy = drawSystem.GetCameraTopLeft()
+    local mx, my = x + cx, y + cy
+    world:queryBoundingBox(mx - 2, my - 2, mx + 2, my + 2, MouseHitFunc)
+end
+
 --------------------------------------------------
 -- Colisions
 --------------------------------------------------
@@ -62,7 +82,7 @@ local function beginContact(a, b, coll)
 end
 
 local function endContact(a, b, coll)
-
+    gameSystem.endContact(a, b, col1)
 end
 
 local function preSolve(a, b, coll)
@@ -91,7 +111,7 @@ local function SetupWorld()
     world = love.physics.newWorld(0, 0, true) -- Last argument is whether sleep is allowed.
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
-    for i = 1, 20 do
+    for i = 1, 2000 do
         junkIndex = junkIndex + 1
         junkList[junkIndex] = gameSystem.MakeJunk(world, junkIndex)
     end
@@ -109,7 +129,6 @@ local function SetupPlayer()
         components = components,
     }
 end
-
 
 function love.load()
     math.randomseed(os.clock())

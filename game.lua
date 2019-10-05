@@ -54,22 +54,24 @@ local function SetupComponent(body, compDefName, params)
     comp.isPlayer  = params.isPlayer
     local fixtureData = params.fixtureData or {}
     fixtureData.noAttach = comp.def.noAttach
+    fixtureData.noSelect = comp.def.noSelect
     fixtureData.comp = comp
     comp.fixture:setUserData(fixtureData)
 
     return comp
 end
 
+local SPAWN_SIZE = 12000
 local function MakeJunk(world, index)
-    local junk = love.physics.newBody(world, math.random()*1000 - 500, math.random()*1000 - 500, "dynamic")
+    local junkBody = love.physics.newBody(world, math.random()*SPAWN_SIZE - SPAWN_SIZE/2, math.random()*SPAWN_SIZE - SPAWN_SIZE/2, "dynamic")
 
     local compDefName = GetRandomComponent()
-    local comp = SetupComponent(junk, compDefName, {fixtureData = {junkIndex = index, compDefName = compDefName}})
-    junk:setAngle(math.random()*2*math.pi)
-    junk:setLinearVelocity(math.random()*4, math.random()*4)
-    junk:setAngularVelocity(math.random()*0.3*math.pi)
+    local comp = SetupComponent(junkBody, compDefName, {fixtureData = {junkIndex = index, compDefName = compDefName}})
+    junkBody:setAngle(math.random()*2*math.pi)
+    junkBody:setLinearVelocity(math.random()*25, math.random()*25)
+    junkBody:setAngularVelocity(math.random()*0.3*math.pi)
     return {
-        body = junk,
+        body = junkBody,
         components = {comp}
     }
 end
@@ -96,22 +98,31 @@ local function UpdateInput(ship)
     end
 end
 
+local function TestJunkClick(junk)
+    junk.selected = not junk.selected
+    print("junk selected", junk.body:getX(), junk.body:getY())
+end
+
 --------------------------------------------------
 -- Colisions
 --------------------------------------------------
 
-local collisionToAdd
+local collisionToAdd = IterableMap.New()
 
 local function DoMerge(player, junkList, playerFixture, otherFixture)
     if otherFixture:isDestroyed() then
-        return
+        return true
     end
 
     local otherData = otherFixture:getUserData()
     if not otherData.junkIndex then
-        return
+        return true
     end
     local junk = junkList[otherData.junkIndex]
+
+    if not junk.selected then
+        return false
+    end
 
     local junkBody = junk.body
     local playerBody = playerFixture:getBody()
@@ -136,17 +147,19 @@ local function DoMerge(player, junkList, playerFixture, otherFixture)
     junkList[otherData.junkIndex] = nil
 
     UpdatePlayerComponentAttributes(player)
+
+    return true
+end
+
+local function ProcessCollision(key, data, index, player, junkList)
+    local playerFixture, otherFixture = data[1], data[2]
+    if DoMerge(player, junkList, playerFixture, otherFixture) then
+        return true
+    end
 end
 
 local function ProcessCollisions(player, junkList)
-    if not collisionToAdd then
-        return
-    end
-    for i = 1, #collisionToAdd do
-        local playerFixture, otherFixture = collisionToAdd[i][1], collisionToAdd[i][2]
-        DoMerge(player, junkList, playerFixture, otherFixture)
-    end
-    collisionToAdd = false
+    collisionToAdd.Apply(ProcessCollision, player, junkList)
 end
 
 local function beginContact(a, b, col1)
@@ -157,11 +170,33 @@ local function beginContact(a, b, col1)
     if aData.isPlayer == bData.isPlayer then
         return
     end
-    playerFixture = (aData.isPlayer and a) or b
-    otherFixture  = (bData.isPlayer and a) or b
+    local playerFixture = (aData.isPlayer and a) or b
+    local otherFixture  = (bData.isPlayer and a) or b
+    local otherData = otherFixture:getUserData()
 
-    collisionToAdd = collisionToAdd or {}
-    collisionToAdd[#collisionToAdd + 1] = {playerFixture, otherFixture}
+    if not otherData.junkIndex then
+       return 
+    end
+
+    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture})
+end
+
+local function endContact(a, b, col1)
+    local aData, bData = a:getUserData() or {}, b:getUserData() or {}
+    if aData.noAttach or bData.noAttach then
+        return
+    end
+    if aData.isPlayer == bData.isPlayer then
+        return
+    end
+    local playerFixture = (aData.isPlayer and a) or b
+    local otherFixture  = (bData.isPlayer and a) or b
+    local otherData = otherFixture:getUserData()
+
+    if not otherData.junkIndex then
+       return 
+    end
+    collisionToAdd.Remove(otherData.junkIndex)
 end
 
 --------------------------------------------------
@@ -171,7 +206,9 @@ end
 return {
     SetupComponent = SetupComponent,
     UpdateInput = UpdateInput,
+    TestJunkClick = TestJunkClick,
     ProcessCollisions = ProcessCollisions,
     beginContact = beginContact,
+    endContact = endContact,
     MakeJunk = MakeJunk,
 }

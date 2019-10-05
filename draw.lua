@@ -193,6 +193,10 @@ local function DrawShip(ship)
             love.graphics.print(string.upper(keyName), dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
             love.graphics.setColor(1,1,1,1)
         end
+
+        if ship.selected then
+            love.graphics.circle("line", dx, dy, comp.def.selectDrawRadius or 32)
+        end
     end
 
     if debugEnabled then
@@ -209,6 +213,12 @@ local function UpdateCameraPos(player)
 end
 
 local externalFunc = {}
+
+function externalFunc.GetCameraTopLeft()
+    local winWidth  = love.graphics:getWidth()
+    local winHeight = love.graphics:getHeight()
+    return cameraX - winWidth/2, cameraY - winHeight/2
+end
 
 function externalFunc.draw(world, player, junkList, debugEnabled, needKeybind, setKeybind) 
     local winWidth  = love.graphics:getWidth()

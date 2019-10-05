@@ -10,6 +10,7 @@ local conf = {
     circleShapeRadius = 25,
     density = 1,
     noAttach = true,
+    noSelect = true,
 }
 
 return conf
