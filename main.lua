@@ -76,12 +76,17 @@ end
 local function UpdateInput(ship)
     for i = 1, #ship.components do
         local comp = ship.components[i]
-        if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-            local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
-            local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
-            local angle = ship.body:getAngle() + comp.angle
-            vx, vy = RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
-            comp.def:onFunction(ship.body, ox + vx, oy + vy, angle)
+        if comp.def.holdActivate then
+            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
+                local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+                local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
+                local angle = ship.body:getAngle() + comp.angle
+                vx, vy = RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
+                comp.def:onFunction(ship.body, ox + vx, oy + vy, angle)
+                comp.activated = true
+            else
+                comp.activated = false
+            end
         end
     end
 end
@@ -126,7 +131,10 @@ local function DrawShip(ship)
     for i = 1, #ship.components do
         local comp = ship.components[i]
         local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
-        love.graphics.draw(comp.def.imageOff, dx, dy, ship.body:getAngle() + comp.angle, 
+
+        local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+
+        love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
             comp.def.imageScale[1], comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
 
         if comp.def.text ~= nil and comp.isPlayer then
