@@ -4,7 +4,7 @@ components.booster = require("components/booster")
 components.tractor_wheel = require("components/tractor_wheel")
 components.laser_prism = require("components/laser_prism")
 components.player = require("components/player")
-components.girder1 = require("components/girder 1")
+components.girder = require("components/girder")
 components.asteroid1 = require("components/asteroid 1")
 components.ship_debris1 = require("components/ship debris 1")
 components.command_module = require("components/command_module")
@@ -15,8 +15,8 @@ components.ion_engine = require("components/ion_engine")
 local compList = {}
 for name, def in pairs(components) do
     def.name = name
-    def.walkRadius = def.walkRadius or 40
-    if name ~= "player" then
+    def.walkRadius = def.walkRadius or 34
+    if name ~= "player" and not def.isGirder then
         compList[#compList + 1] = def
     end
 end

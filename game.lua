@@ -42,7 +42,11 @@ local function SetupComponent(body, compDefName, params)
         local coords = comp.def.shapeCoords
         local modCoords = {}
         for i = 1, #coords, 2 do
-            local cx, cy = util.RotateVector(coords[i], coords[i + 1], angle)
+            local cx, cy = coords[i], coords[i + 1]
+            if params.xScale then
+                cx = cx*params.xScale
+            end
+            cx, cy = util.RotateVector(cx, cy, angle)
             cx, cy = cx + xOff, cy + yOff
             modCoords[#modCoords + 1] = cx
             modCoords[#modCoords + 1] = cy
@@ -54,6 +58,7 @@ local function SetupComponent(body, compDefName, params)
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
     comp.playerShip  = params.playerShip
+    comp.xScale      = params.xScale
 
     local fixtureData = params.fixtureData or {}
     fixtureData.noAttach = comp.def.noAttach
@@ -160,16 +165,15 @@ local function UpdateMovePlayerGuy(player, mx, my)
     local onShip, compIndex, compDist = util.GetNearestComponent(player.ship, px, py)
     local newOnShip, newCompIndex, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
 
-    if (not newOnShip) and (compDist < newCompDist) then
-        return
-    end
     local newAngle = util.Angle(dx, dy)
 
     player.joint:destroy()
 
     player.guy.body:setAngle(newAngle)
-    player.guy.body:setX(nx)
-    player.guy.body:setY(ny)
+    if newOnShip or (newCompDist < compDist) then
+        player.guy.body:setX(nx)
+        player.guy.body:setY(ny)
+    end
 
     player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
 end
@@ -179,6 +183,43 @@ end
 --------------------------------------------------
 
 local collisionToAdd = IterableMap.New()
+
+local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
+    local mx, my = (x1 + x2)/2, (y1 + y2)/2
+    local worldAngle = util.Angle(x2 - x1, y2 - y1)
+
+    local xOff, yOff = ship.body:getLocalPoint(mx, my)
+    local angle = worldAngle - ship.body:getAngle()
+    local compDefName = "girder"
+
+    ship.components[#ship.components + 1] = SetupComponent(ship.body, compDefName, {
+            playerShip = playerShip,
+            fixtureData = {playerShip = playerShip, compDefName = compDefName},
+            xOff = xOff,
+            yOff = yOff,
+            angle = angle,
+            xScale = dist/25,
+        }
+    )
+end
+
+local function AddGirders(player, newComponentIndex)
+    local newComp = player.ship.components[newComponentIndex]
+
+    local compCount = #player.ship.components -- Avoid iterating over new girders
+    for i = 1, compCount do
+        if i ~= newComponentIndex then
+            local comp = player.ship.components[i]
+            if not comp.def.isGirder then
+                local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
+
+                if dist > 3 and dist < player.girderAddDist then
+                    AddGirderToPos(player.ship, true, dist, x1, y1, x2, y2)
+                end
+            end
+        end
+    end
+end
 
 local function DoMerge(player, junkList, playerFixture, otherFixture)
     if otherFixture:isDestroyed() then
@@ -228,6 +269,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture)
                 angle = angle,
             }
         )
+        AddGirders(player, #player.ship.components)
     end
     
     otherFixture:getBody():destroy()

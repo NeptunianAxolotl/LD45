@@ -1,6 +1,3 @@
-
-local FORCE = 180
-
 local conf = {
     imageOff = "images/ship debris 1.png",
     imageOn = "images/ship debris 1.png",

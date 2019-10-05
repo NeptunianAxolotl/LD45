@@ -14,6 +14,7 @@ local player = {
     setKeybind = false, 
     needKeybind = false,
     crawlSpeed = 5,
+    girderAddDist = 60,
 }
 
 local junkList = {}

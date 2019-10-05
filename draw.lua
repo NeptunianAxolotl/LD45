@@ -180,26 +180,43 @@ local function DrawShip(ship)
     if not ship then
         return
     end
+
+    -- Draw girders
     for i = 1, #ship.components do
         local comp = ship.components[i]
-        local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+        if comp.def.isGirder then
+            local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
-        local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+            local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
 
-        love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
-            comp.def.imageScale[1], comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
-
-        if comp.def.text ~= nil and comp.playerShip then
-            local textDef = comp.def.text
-            local keyName = comp.activeKey or "??"
-
-            love.graphics.setColor(unpack(comp.def.text.color))
-            love.graphics.print(string.upper(keyName), dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
-            love.graphics.setColor(1,1,1,1)
+            love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
+                comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
         end
+    end
+    -- Draw other things
+    for i = 1, #ship.components do
+        local comp = ship.components[i]
 
-        if ship.selected then
-            love.graphics.circle("line", dx, dy, comp.def.selectDrawRadius or 32)
+        if not comp.def.isGirder then
+            local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+
+            local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+
+            love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
+                comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+
+            if comp.def.text ~= nil and comp.playerShip then
+                local textDef = comp.def.text
+                local keyName = comp.activeKey or "??"
+
+                love.graphics.setColor(unpack(comp.def.text.color))
+                love.graphics.print(string.upper(keyName), dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
+                love.graphics.setColor(1,1,1,1)
+            end
+
+            if ship.selected then
+                love.graphics.circle("line", dx, dy, comp.def.selectDrawRadius or 32)
+            end
         end
     end
 

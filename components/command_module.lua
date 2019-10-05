@@ -1,6 +1,3 @@
-
-local FORCE = 180
-
 local conf = {
     imageOff = "images/command module.png",
     imageOn = "images/command module.png",

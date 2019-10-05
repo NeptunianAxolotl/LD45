@@ -1,6 +1,3 @@
-
-local FORCE = 180
-
 local conf = {
     imageOff = "images/Girder 1.png",
     imageOn = "images/Girder 1.png",
@@ -8,8 +5,8 @@ local conf = {
     imageScale = {0.04, 0.04},
     activationOrigin = {0, 0},
     shapeCoords = { 20,5, 20,-5, -20,-5, -20,5},
-    density = 1,
-    walkRadius = 10,
+    density = 0.2,
+    isGirder = true,
 }
 
 return conf
