@@ -2,7 +2,6 @@ local cameraX, cameraY = 0, 0
 local smoothCameraFactor = 0.25
 
 local starfield = require("starfield")
-local util = require("util")
 
 local shipPart 
 
@@ -170,12 +169,17 @@ local function DrawDebug(world, player)
         end
     end
 
-    DrawShipVectors(player)
+    if player.ship then
+        DrawShipVectors(player.ship)
+    end
 
     love.graphics.setColor(1, 1, 1, 1)
 end
 
 local function DrawShip(ship)
+    if not ship then
+        return
+    end
     for i = 1, #ship.components do
         local comp = ship.components[i]
         local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
@@ -185,7 +189,7 @@ local function DrawShip(ship)
         love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
             comp.def.imageScale[1], comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
 
-        if comp.def.text ~= nil and comp.isPlayer then
+        if comp.def.text ~= nil and comp.playerShip then
             local textDef = comp.def.text
             local keyName = comp.activeKey or "??"
 
@@ -205,7 +209,8 @@ local function DrawShip(ship)
 end
 
 local function UpdateCameraPos(player)
-    local px, py = player.body:getWorldCenter()
+    local ship = player.ship or player.guy
+    local px, py = ship.body:getWorldCenter()
     cameraX = (1 - smoothCameraFactor)*cameraX + smoothCameraFactor*px
     cameraY = (1 - smoothCameraFactor)*cameraY + smoothCameraFactor*py
 
@@ -220,7 +225,7 @@ function externalFunc.GetCameraTopLeft()
     return cameraX - winWidth/2, cameraY - winHeight/2
 end
 
-function externalFunc.draw(world, player, junkList, debugEnabled, needKeybind, setKeybind) 
+function externalFunc.draw(world, player, junkList, debugEnabled) 
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
 
@@ -236,7 +241,8 @@ function externalFunc.draw(world, player, junkList, debugEnabled, needKeybind, s
         DrawShip(junk)
     end
 
-    DrawShip(player)
+    DrawShip(player.ship)
+    DrawShip(player.guy)
 
     if debugEnabled then
         DrawDebug(world, player)
@@ -245,9 +251,9 @@ function externalFunc.draw(world, player, junkList, debugEnabled, needKeybind, s
     love.graphics.pop()
     -- UI space
 
-    if needKeybind and not setKeybind then
+    if player.needKeybind and not player.setKeybind then
         love.graphics.print("Press space to set unbound component keys", 10, 10, 0, 2, 2)
-    elseif setKeybind then
+    elseif player.setKeybind then
         love.graphics.print("Press any key to set a keybind", 10, 10, 0, 2, 2)
     end
 end

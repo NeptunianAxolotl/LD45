@@ -1,14 +1,10 @@
 
-local function AbsVal(x, y, z)
-	if z then
-		return math.sqrt(x*x + y*y + z*z)
-	elseif y then
-		return math.sqrt(x*x + y*y)
-	elseif x[3] then
-		return math.sqrt(x[1]*x[1] + x[2]*x[2] + x[3]*x[3])
-	else
-		return math.sqrt(x[1]*x[1] + x[2]*x[2])
-	end
+local function AbsVal(x, y)
+	return math.sqrt(x*x + y*y)
+end
+
+local function Dist(x1, y1, x2, y2)
+	return AbsVal(x1 - x2, y1 - y2)
 end
 
 local function RotateVector(x, y, angle)
@@ -32,8 +28,48 @@ local function Angle(x, z)
 	return 0
 end
 
+local function ToCart(dir, rad)
+	return rad*math.cos(dir), rad*math.sin(dir)
+end
+
+local function GetNearestComponent(ship, x, y)
+    if not ship then
+        return false, false, false
+    end
+
+    local closest = false
+    local closestDist = false
+
+    local closestOn = false
+    local closestOnDist = false
+
+    for i = 1, #ship.components do
+        local comp = ship.components[i]
+        local cx, cy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+        local dist = Dist(x, y, cx, cy)
+        if (not closestDist) or (dist < closestDist) then
+            closest = i
+            closestDist = dist
+        end
+
+        if ((not closestOn) or (dist < closestOn)) and (dist < comp.def.walkRadius) then
+            closestOn = i
+            closestOnDist = dist
+        end
+	end
+	
+	if closestOn then
+		return true, closestOn, closestOnDist
+	end
+
+	return false, closest, closestDist
+end
 
 return {
-    Angle = Angle,
+	AbsVal = AbsVal,
+	Dist = Dist,
     RotateVector = RotateVector,
+	Angle = Angle,
+	ToCart = ToCart,
+	GetNearestComponent = GetNearestComponent,
 }

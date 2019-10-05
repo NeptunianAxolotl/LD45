@@ -1,26 +1,32 @@
 local debugHitboxKey = 'm'
 local debugEnabled = false
 
-local setKeybind = false
-local needKeybind = false
-
 IterableMap = require("IterableMap")
+util = require("util")
 
 local drawSystem = require("draw")
 local gameSystem = require("game")
 
 local world
-local player
+local player = {
+    guy = nil,
+    ship = nil,
+    setKeybind = false, 
+    needKeybind = false,
+    crawlSpeed = 5,
+}
 
 local junkList = {}
 local junkIndex = 0
+
+local SPAWN_SIZE = 12000
 
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
 
 function love.draw()
-    drawSystem.draw(world, player, junkList, debugEnabled, needKeybind, setKeybind)
+    drawSystem.draw(world, player, junkList, debugEnabled)
 end
 
 --------------------------------------------------
@@ -39,18 +45,20 @@ function love.keypressed(key, scancode, isRepeat)
         debugEnabled = not debugEnabled
     end
 
-    if not isRepeat then
-        if key == 'space' then
-            setKeybind = not setKeybind
-        elseif setKeybind then
-            for i = 1, #player.components do
-                local comp = player.components[i]
-                if comp.def.text and not comp.activeKey then
-                    comp.activeKey = key
+    if player.ship and player.needKeybind then
+        if not isRepeat then
+            if key == 'space' then
+                player.setKeybind = not player.setKeybind
+            elseif player.setKeybind then
+                for i = 1, #player.ship.components do
+                    local comp = player.ship.components[i]
+                    if comp.def.text and not comp.activeKey then
+                        comp.activeKey = key
+                    end
                 end
+                player.setKeybind = false
+                player.needKeybind = false
             end
-            setKeybind = false
-            needKeybind = false
         end
     end
 end
@@ -70,7 +78,8 @@ end
 function love.mousepressed(x, y, button, istouch, presses)
     local cx, cy = drawSystem.GetCameraTopLeft()
     local mx, my = x + cx, y + cy
-    world:queryBoundingBox(mx - 2, my - 2, mx + 2, my + 2, MouseHitFunc)
+    -- clicking on junk
+    --world:queryBoundingBox(mx - 2, my - 2, mx + 2, my + 2, MouseHitFunc)
 end
 
 --------------------------------------------------
@@ -98,7 +107,12 @@ end
 --------------------------------------------------
 
 function love.update(dt)
-    gameSystem.UpdateInput(player)
+    gameSystem.UpdateInput(player.ship)
+
+    local cx, cy = drawSystem.GetCameraTopLeft()
+    local mx, my = love.mouse.getX() + cx, love.mouse.getY() + cy
+    gameSystem.UpdateMovePlayerGuy(player, mx, my)
+
     world:update(0.033)
     gameSystem.ProcessCollisions(player, junkList)
 end
@@ -113,21 +127,8 @@ local function SetupWorld()
 
     for i = 1, 2000 do
         junkIndex = junkIndex + 1
-        junkList[junkIndex] = gameSystem.MakeJunk(world, junkIndex)
+        junkList[junkIndex] = gameSystem.MakeRandomJunk(world, junkIndex, 0, 0, SPAWN_SIZE, 1000)
     end
-end
-
-local function SetupPlayer()
-    local body = love.physics.newBody(world, 0, 0, "dynamic")
-    body:setAngularVelocity(0.4)
-
-    local components = {}
-    components[1] = gameSystem.SetupComponent(body, "booster", {isPlayer = true, fixtureData = {isPlayer = true, compDefName = compDefName}})
-
-    return {
-        body = body,
-        components = components,
-    }
 end
 
 function love.load()
@@ -135,5 +136,7 @@ function love.load()
     drawSystem.load()
 
     SetupWorld()
-    player = SetupPlayer()
+
+    junkIndex = junkIndex + 1
+    player.guy = gameSystem.SetupPlayer(world, junkList, junkIndex)
 end

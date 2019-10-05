@@ -15,7 +15,10 @@ components.ion_engine = require("components/ion_engine")
 local compList = {}
 for name, def in pairs(components) do
     def.name = name
-    compList[#compList + 1] = def
+    def.walkRadius = def.walkRadius or 40
+    if name ~= "player" then
+        compList[#compList + 1] = def
+    end
 end
 
 return {components, compList}
