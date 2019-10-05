@@ -11,8 +11,6 @@ end
 
 function love.draw()
     love.graphics.draw(ps, 0, 0)
-    
-    love.graphics.circle("line", 100, 100, 10, 10)
 end
  
 function love.update(dt)
