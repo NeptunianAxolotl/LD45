@@ -7,7 +7,7 @@ local conf = {
     imageOrigin = {670, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},
-    shapeCoords = {25,0, 10,10, 10,-18, -38,-15, -38,15},
+    shapeCoords = { 20,15, 20,-20, -38,-20, -38,15},
     density = 1,
     name = "command module",
 }
