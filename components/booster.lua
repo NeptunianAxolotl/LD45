@@ -7,7 +7,7 @@ local conf = {
     imageOrigin = {670, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {-20, 0},
-    shapeCoords = {25,0, 10,20, 10,-20, -20,-20, -20,20},
+    shapeCoords = {26,0, 15,16, 15,-16, -14,-26, -26,-14, -26,14, -14,26},
     density = 8,
     text =
     {

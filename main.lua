@@ -142,7 +142,7 @@ local function DrawShip(ship)
             local keyName = comp.activeKey or "??"
 
             love.graphics.setColor(unpack(comp.def.text.color))
-            love.graphics.print(keyName, dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
+            love.graphics.print(string.upper(keyName), dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
             love.graphics.setColor(1,1,1,1)
         end
     end
