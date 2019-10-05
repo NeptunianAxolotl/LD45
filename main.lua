@@ -43,32 +43,37 @@ local function getAngles(self, sourceX, sourceY)
     return angles
 end
 
+local function distance (x1, y1, x2, y2)
+      local dx = x1 - x2
+  local dy = y1 - y2
+  return math.sqrt ( dx * dx + dy * dy )    
+end
 
-function love.draw()
-    for i = 1, #junkList do
-        local junk = junkList[i]
-        love.graphics.draw(shipPart, junk:getX(), junk:getY(), junk:getAngle(), 0.1, 0.1, 400, 300)
-    end
-    
-    love.graphics.setColor(1, 1, 0)
-    love.graphics.circle("fill", circle.x, circle.y, circle.radius)
-    
-    local winWidth  = love.graphics:getWidth()
-    local winHeight = love.graphics:getHeight() 
+
+function paintShadows (bodyList, lightSource, minDistance)
     
     --bodies
-    for i = 1, #junkList do
-        fixtures = junkList[i]:getFixtures()
+    for i = 1, #bodyList do
+        fixtures = bodyList[i]:getFixtures()
         
         --fixtures
         for j = 1, #fixtures do
+            
+            local shadowPoints = {}
+            
             local shape = fixtures[j]:getShape()
             
             --points for fixture
             local points = {shape:getPoints()}
             local _points = {junkList[i]:getWorldPoints(points[1], points[2], points[3], points[4], points[5], points[6], points[7], points[8])}
             
-            local angles = getAngles(_points, circle.x + circle.radius /2, circle.y + circle.radius/2)
+            for i = 1, #_points / 2 do
+                if distance(_points[2 * i - 1], _points[2 * i], lightSource.x, lightSource.y) < minDistance then
+                    goto continue
+                end
+            end
+            
+            local angles = getAngles(_points, lightSource.x, lightSource.y)
             local compAngles = {}
             
             for i = 1, #angles do
@@ -99,78 +104,90 @@ function love.draw()
             edgePoints[2] = _points[2 * minAngleNo]
             edgePoints[3] = _points[(2 * maxAngleNo) - 1]
             edgePoints[4] = _points[2 * maxAngleNo]
+            
+            shadowPoints[1] = edgePoints[3]
+            shadowPoints[2] = edgePoints[4]
+            shadowPoints[3] = edgePoints[1]
+            shadowPoints[4] = edgePoints[2]
 
             --draw lines tracing from shape edges
             for i = 1, 2 do
                 --project line to edge of screen
                 --top or bottom?
-                local angle = math.atan2(circle.y - edgePoints[2 * i], circle.x - edgePoints[(2 * i) - 1])
+                local angle = math.atan2(lightSource.y - edgePoints[2 * i], lightSource.x - edgePoints[(2 * i) - 1])
                 
                 if angle > 0 and angle < math.pi then
                     --top
-                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, winWidth, 0)
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, winWidth, 0)
                 
                 elseif angle < 0 and angle > - math.pi then
                     --bottom
-                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, winHeight, winWidth, winHeight)
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, winHeight, winWidth, winHeight)
                     
                 else
                     --direct horizontal, skip this step and move to left or right
                     if angle == 0 then
                         --right
-                        intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
+                        intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
                     else
                         --left
-                        intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
+                        intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
                         
                     end     
                 end
                      
                 if intersectX < 0 then
                     --left
-                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
                         
                 elseif intersectX > winWidth then
                     --right
-                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
+                    intersectX, intersectY = intersection(lightSource.x, lightSource.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
                     
                 end
                 
                 love.graphics.line(intersectX, intersectY, edgePoints[(2 * i) - 1], edgePoints[2 * i])
-        
+                
+                shadowPoints[3 + (2 * i)] = intersectX
+                shadowPoints[4 + (2 * i)] = intersectY
             end    
             
-            love.graphics.line(edgePoints[1], edgePoints[2], edgePoints[3], edgePoints[4])
-            --love.graphics.line(edgePoints[1], edgePoints[2], circle.x, circle.y)
-            --love.graphics.line(edgePoints[3], edgePoints[4], circle.x, circle.y)
+            --draw the shadow shape  
+            love.graphics.polygon("fill", shadowPoints)
+            
+            --love.graphics.line(edgePoints[1], edgePoints[2], edgePoints[3], edgePoints[4])
             
 
-            
-            
-            
-            
-            
-            --top
-            
-            --right
-            
-            --bottom
-
-            
-
-            
-            
         end
 
         -- retrieve two lines adjacent to those lines that do intersect the shape, at the outside
         -- create a shape bounded by the screen edge, the two outer lines, and the 'back half' of the shape
         -- colour this shape in
         -- overlay this shape as an effect on graphics present in this area
+        
+        ::continue::
     
-        --print(x1 .. ', ' .. y1 .. '; ' .. x2 .. ', ' .. y2 .. '.')
     end
     
+    
+end
 
+
+function love.draw()
+    for i = 1, #junkList do
+        local junk = junkList[i]
+        love.graphics.draw(shipPart, junk:getX(), junk:getY(), junk:getAngle(), 0.1, 0.1, 400, 300)
+    end
+    
+    love.graphics.setColor(1, 1, 0)
+    love.graphics.circle("fill", circle.x, circle.y, circle.radius)
+    
+    winWidth  = love.graphics:getWidth()
+    winHeight = love.graphics:getHeight() 
+    
+    love.graphics.setColor(0,0,0,0.6)
+    
+    paintShadows(junkList, circle, 200)
     
     love.graphics.setColor(1, 1, 1)
 end
@@ -204,14 +221,16 @@ end
 function love.update(dt)
     world:update(dt)
     
+    local speed = 300
+    
     if love.keyboard.isDown("left") then
-        circle.x = circle.x - 100 * dt
+        circle.x = circle.x - speed * dt
     elseif love.keyboard.isDown("right") then
-        circle.x = circle.x + 100 * dt
+        circle.x = circle.x + speed * dt
     elseif love.keyboard.isDown("up") then
-        circle.y = circle.y - 100 * dt
+        circle.y = circle.y - speed * dt
     elseif love.keyboard.isDown("down") then
-        circle.y = circle.y + 100 * dt
+        circle.y = circle.y + speed * dt
     end
     
     
