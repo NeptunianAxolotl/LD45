@@ -108,8 +108,17 @@ function externalFunc.draw(player, junkList, debugEnabled, needKeybind, setKeybi
     end
 end
 
+local function LoadComponentResources()
+    local compConfig, compConfigList = unpack(require("components"))
+    for name, def in pairs(compConfig) do
+        def.imageOff = love.graphics.newImage(def.imageOff)
+        def.imageOn = love.graphics.newImage(def.imageOn)
+    end
+end
+
 function externalFunc.load()
     shipPart = love.graphics.newImage('images/ship.png')
+    LoadComponentResources()
 end
 
 return externalFunc
