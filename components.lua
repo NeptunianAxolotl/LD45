@@ -11,7 +11,7 @@ components.ship_debris1 = require("components/ship debris 1")
 -- Post processing
 local compList = {}
 for name, def in pairs(components) do
-    def.defName = name
+    def.name = name
     compList[#compList + 1] = def
 end
 

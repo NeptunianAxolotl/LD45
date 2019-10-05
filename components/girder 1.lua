@@ -8,7 +8,7 @@ local conf = {
     imageScale = {0.04, 0.04},
     activationOrigin = {0, 0},
     shapeCoords = { 20,5, 20,-5, -20,-5, -20,5},
-    mass = 20,
+    density = 1,
     name = "player",
 }
 

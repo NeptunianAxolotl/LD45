@@ -14,7 +14,7 @@ local starfield = require("starfield")
 
 local function GetRandomComponent()
     local num = math.random(1, #compConfigList)
-    return compConfigList[num].defName
+    return compConfigList[num].name
 end
 
 local function RotateVector(x, y, angle)
@@ -44,12 +44,12 @@ local function SetupComponent(body, compDefName, params)
         end
         comp.shape = love.physics.newPolygonShape(unpack(modCoords))
     end
-    comp.fixture = love.physics.newFixture(body, comp.shape, 1)
+    comp.fixture = love.physics.newFixture(body, comp.shape, comp.def.density)
 
     comp.activeKey = params.activeKey
-    if params.fixtureData then
-       comp.fixture:setUserData(params.fixtureData)
-    end
+    local fixtureData = params.fixtureData or {}
+    fixtureData.noAttach = comp.def.noAttach
+    comp.fixture:setUserData(fixtureData)
 
     return comp
 end
@@ -171,6 +171,9 @@ local collisionToAdd
 
 local function beginContact(a, b, coll)
     local aData, bData = a:getUserData() or {}, b:getUserData() or {}
+    if aData.noAttach or bData.noAttach then
+        return
+    end
     if aData.isPlayer == bData.isPlayer then
         return
     end
@@ -251,22 +254,26 @@ end
 -- Loading
 --------------------------------------------------
 
+local function MakeJunk(index)
+    local junk = love.physics.newBody(world, math.random()*1000 - 500, math.random()*1000 - 500, "dynamic")
+
+    local compDefName = GetRandomComponent()
+    local comp = SetupComponent(junk, compDefName, {fixtureData = {junkIndex = index, compDefName = compDefName}})
+    junk:setAngle(math.random()*2*math.pi)
+    junk:setLinearVelocity(math.random()*4, math.random()*4)
+    junk:setAngularVelocity(math.random()*2*math.pi)
+    junkList[#junkList + 1] = {
+        body = junk,
+        components = {comp}
+    }
+end
+
 local function SetupWorld()
     world = love.physics.newWorld(0, 0, true) -- Last argument is whether sleep is allowed.
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     for i = 1, 20 do
-        local junk = love.physics.newBody(world, math.random()*1000 - 500, math.random()*1000 - 500, "dynamic")
-
-        local compDefName = GetRandomComponent()
-        local comp = SetupComponent(junk, compDefName, {fixtureData = {junkIndex = i, compDefName = compDefName}})
-        junk:setAngle(math.random()*2*math.pi)
-        junk:setLinearVelocity(math.random()*4, math.random()*4)
-        junk:setAngularVelocity(math.random()*2*math.pi)
-        junkList[#junkList + 1] = {
-            body = junk,
-            components = {comp}
-        }
+        MakeJunk(i)
     end
 end
 
