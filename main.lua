@@ -5,7 +5,7 @@ local junkList = {}
 
 local shipPart
 
-local function GetBoundedLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
+local function boundedIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
 	
 	local denominator = ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
 	if denominator == 0 then
@@ -24,6 +24,26 @@ local function GetBoundedLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
 	return {px, py}
 end
 
+local function intersection (x1, y1, x2, y2, x3, y3, x4, y4)
+  local d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+  local a = x1 * y2 - y1 * x2
+  local b = x3 * y4 - y3 * x4
+  local x = (a * (x3 - x4) - (x1 - x2) * b) / d
+  local y = (a * (y3 - y4) - (y1 - y2) * b) / d
+  return x, y
+end
+
+local function getAngles(self, sourceX, sourceY)
+    local angles = {}
+    
+    for i = 1, #self / 2 do
+        angles[#angles + 1] = math.atan2(sourceY - self[2 * i], sourceX - self[(2 * i) - 1])
+    end
+    
+    return angles
+end
+
+
 function love.draw()
     for i = 1, #junkList do
         local junk = junkList[i]
@@ -32,6 +52,9 @@ function love.draw()
     
     love.graphics.setColor(1, 1, 0)
     love.graphics.circle("fill", circle.x, circle.y, circle.radius)
+    
+    local winWidth  = love.graphics:getWidth()
+    local winHeight = love.graphics:getHeight() 
     
     --bodies
     for i = 1, #junkList do
@@ -45,70 +68,93 @@ function love.draw()
             local points = {shape:getPoints()}
             local _points = {junkList[i]:getWorldPoints(points[1], points[2], points[3], points[4], points[5], points[6], points[7], points[8])}
             
-            --duplicate first point to after last point
-            _points[9] = _points[1]
-            _points[10] = _points[2]
+            local angles = getAngles(_points, circle.x + circle.radius /2, circle.y + circle.radius/2)
+            local compAngles = {}
             
-            pointsToRemove = {}
-            
-            -- check whether light source lines intesect with shape lines
-            print('loop')
-            for l = 4, 1, -1 do
-                for e = (#_points/2-1), 1, -1 do
-                    print(#_points)
-                    print("l e",l,e)
-                    if GetBoundedLineIntersection(
-                        _points[(2 * l) - 1],
-                        _points[2 * l],
-                        circle.x + circle.radius / 2,
-                        circle.y + circle.radius / 2,
-                        _points[(2 * e) - 1],
-                        _points[2 * e],
-                        _points[2 * (e + 1) - 1],
-                        _points[2 * (e+1)]
-                    ) == false then
-                        --if yes, remove points from list
-                        table.insert(pointsToRemove, (2*l) - 1)
-                        table.insert(pointsToRemove, 2*l)
-                    end
-                    print("l, i",l, i)
-                end
+            for i = 1, #angles do
+                compAngles[i] = angles[i]
             end
             
-            for i = 1, #pointsToRemove do
-                table.remove(_points, pointsToRemove[i])
-            end
+            table.sort(angles)
             
-            pointsToRemove = nil
+            minAngle = angles[1]
+            maxAngle = angles[#angles]
             
-            --draw lines between remaining points (unless there's only one point, in which case do nothing)
-            if #points < 3 then
-                --print('only one point')
-            else
-                --print ('more than one point')
-                --draw shape outlines
-                for s = 1, #_points / 2 do
-                    --print('inside loop')
-                    if _points[(2 * s) - 1] ~= nil and _points[2 * s] ~= nil and _points[(2 * (s + 1)) - 1] ~= nil and _points[2 * (s+1)] then
-                        love.graphics.line(_points[(2 * s) - 1], _points[2 * s], _points[(2 * (s + 1)) - 1], _points[2 * (s+1)])
-                    end
-                    
-                    
-                    --print(_points[(2 * s) - 1])
-                    --print(_points[2 * s])
-                    --print(_points[(2 * (s + 1)) - 1])
-                    --print(_points[2 * (s+1)])
-                    
-                    
+            local maxAngleNo = 0
+            local minAngleNo = 0
+            
+            for i = 1, #angles do
+                if compAngles[i] == minAngle then
+                    minAngleNo = i
                 end
+                
+                if compAngles[i] == maxAngle then
+                    maxAngleNo = i
+                end
+                
+            end
 
-                --draw lines pointing from light source to each vertex
-                for k = 1, #_points / 2 do
-                    love.graphics.line(_points[(2 * k) - 1], _points[2 * k], circle.x + circle.radius / 2, circle.y + circle.radius / 2)
+            edgePoints = {}
+            edgePoints[1] = _points[(2 * minAngleNo) - 1]
+            edgePoints[2] = _points[2 * minAngleNo]
+            edgePoints[3] = _points[(2 * maxAngleNo) - 1]
+            edgePoints[4] = _points[2 * maxAngleNo]
+
+            --draw lines tracing from shape edges
+            for i = 1, 2 do
+                --project line to edge of screen
+                --top or bottom?
+                local angle = math.atan2(circle.y - edgePoints[2 * i], circle.x - edgePoints[(2 * i) - 1])
+                
+                if angle > 0 and angle < math.pi then
+                    --top
+                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, winWidth, 0)
+                
+                elseif angle < 0 and angle > - math.pi then
+                    --bottom
+                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, winHeight, winWidth, winHeight)
+                    
+                else
+                    --direct horizontal, skip this step and move to left or right
+                    if angle == 0 then
+                        --right
+                        intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
+                    else
+                        --left
+                        intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
+                        
+                    end     
                 end
-            end
+                     
+                if intersectX < 0 then
+                    --left
+                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], 0, 0, 0, winHeight)
+                        
+                elseif intersectX > winWidth then
+                    --right
+                    intersectX, intersectY = intersection(circle.x, circle.y, edgePoints[(2 * i) - 1], edgePoints[2 * i], winWidth, 0, winWidth, winHeight)
+                    
+                end
+                
+                love.graphics.line(intersectX, intersectY, edgePoints[(2 * i) - 1], edgePoints[2 * i])
+        
+            end    
+            
+            love.graphics.line(edgePoints[1], edgePoints[2], edgePoints[3], edgePoints[4])
+            --love.graphics.line(edgePoints[1], edgePoints[2], circle.x, circle.y)
+            --love.graphics.line(edgePoints[3], edgePoints[4], circle.x, circle.y)
+            
+
             
             
+            
+            
+            
+            --top
+            
+            --right
+            
+            --bottom
 
             
 
@@ -157,6 +203,17 @@ end
 
 function love.update(dt)
     world:update(dt)
+    
+    if love.keyboard.isDown("left") then
+        circle.x = circle.x - 100 * dt
+    elseif love.keyboard.isDown("right") then
+        circle.x = circle.x + 100 * dt
+    elseif love.keyboard.isDown("up") then
+        circle.y = circle.y - 100 * dt
+    elseif love.keyboard.isDown("down") then
+        circle.y = circle.y + 100 * dt
+    end
+    
     
 end
 
