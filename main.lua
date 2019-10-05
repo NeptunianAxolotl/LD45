@@ -11,15 +11,68 @@ function love.draw()
     end
     
     love.graphics.setColor(1, 1, 0)
-    love.graphics.circle("fill", 600, 600, 10, 10)
+    love.graphics.circle("fill", circle.x, circle.y, circle.radius)
     
     for i = 1, #junkList do
         fixtures = junkList[i]:getFixtures()
         
         for j = 1, #fixtures do
-            x1, y1, x2, y2 = fixtures[j]:getBoundingBox()
+            local shape = fixtures[j]:getShape()
+            
+            local points = {shape:getPoints()}
+            local _points = {junkList[i]:getWorldPoints(points[1], points[2], points[3], points[4], points[5], points[6], points[7], points[8])}
+            
+            _points[9] = _points[1]
+            _points[10] = _points[2]
+            
+            -- get shape outline
+            shapeLines = {}
+            
+            for s = 1, 4 do
+                shapeLines[s] = love.graphics.line(_points[(2 * s) - 1], _points[2 * s], _points[2 * (s + 1) - 1], _points[2 * (s+1)])
+            end
+
+            --get lines pointing from light source to each vertex
+            lines = {}
+            
+            for k = 1, 4 do
+                lines[#lines + 1] = love.graphics.line(_points[(2 * k) - 1], _points[2 * k], circle.x + circle.radius / 2, circle.y + circle.radius / 2)
+            end
+            
+            -- discard all lines that do not intersect the shape 
+            for l = #lines, 1, -1 do
+                for e = #shapeLines, 1, -1 do
+                    local ix, iy = GetBoundedLineIntersection(lines[l], shapeLines[e])
+                    
+                    if ix == nil or iy == nil then
+                        lines:remove(l)
+                    end
+                    
+                        
+                        --love.graphics.setColour(1,0,0)
+                        --love.graphics.line(lines[l].x1, lines[l].y1, lines[l].x2, lines[l].y2)
+                    
+                    
+                    
+                    
+                    
+                end
+                
+                
+            end
+            
             
         end
+        
+
+        
+        
+        -- retrieve two lines adjacent to those lines that do intersect the shape, at the outside
+        -- create a shape bounded by the screen edge, the two outer lines, and the 'back half' of the shape
+        -- colour this shape in
+        -- overlay this shape as an effect on graphics present in this area
+        
+        
     
         --print(x1 .. ', ' .. y1 .. '; ' .. x2 .. ', ' .. y2 .. '.')
     end
@@ -44,6 +97,11 @@ local function SetupWorld()
 end
  
 function love.load()
+    circle = {}
+    circle.x = 600
+    circle.y = 600
+    circle.radius = 10
+    
     shipPart = love.graphics.newImage('images/ship.png')
 
     SetupWorld()
@@ -60,10 +118,31 @@ end
 function love.mousereleased( x, y, button, istouch, presses)
 end
 
---[[--
+--[=[
 - parallax (background stars, flashing points, small local celestial bodies?)
 - light source intersection - engine flame, local light source (just basic one-colour shading)
 
 
 
---]]--
+]=]--
+
+local function GetBoundedLineIntersection(line1, line2)
+	local x1, y1, x2, y2 = line1[1][1], line1[1][2], line1[2][1], line1[2][2]
+	local x3, y3, x4, y4 = line2[1][1], line2[1][2], line2[2][1], line2[2][2]
+	
+	local denominator = ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
+	if denominator == 0 then
+		return false
+	end
+	local first = ((x1 - x3)*(y3 - y4) - (y1 - y3)*(x3 - x4))/denominator
+	local second = -1*((x1 - x2)*(y1 - y3) - (y1 - y2)*(x1 - x3))/denominator
+	
+	if first < 0 or first > 1 or (second < 0 or second > 1) then
+		return false
+	end
+	
+	local px = x1 + first*(x2 - x1)
+	local py = y1 + first*(y2 - y1)
+	
+	return {px, py}
+end
