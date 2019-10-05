@@ -9,6 +9,7 @@ components.asteroid1 = require("components/asteroid 1")
 components.ship_debris1 = require("components/ship debris 1")
 components.command_module = require("components/command_module")
 components.gun = require("components/gun")
+components.ion_engine = require("components/ion_engine")
 
 -- Post processing
 local compList = {}
