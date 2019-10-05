@@ -8,12 +8,7 @@ local conf = {
     imageScale = {0.06, 0.06},
     activationOrigin = {0, 0},
     shapeCoords = { 7,7, 7,-7, -7,-7, -7,7},
-    mass = 20,
-    name = "player",
-    onFunction = function (self, body, activeX, activeY, activeAngle)
-        local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
-        body:applyForce(fx, fy, activeX, activeY)
-    end,
+    density = 1,
 }
 
 return conf
