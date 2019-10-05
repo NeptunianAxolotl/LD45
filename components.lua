@@ -6,6 +6,7 @@ components.laser_prism = require("components/laser_prism")
 components.player = require("components/player")
 components.girder1 = require("components/girder 1")
 components.asteroid1 = require("components/asteroid 1")
+components.ship_debris1 = require("components/ship debris 1")
 
 -- Post processing
 local compList = {}
