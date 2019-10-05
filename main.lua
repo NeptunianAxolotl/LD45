@@ -185,7 +185,7 @@ function love.draw()
     winWidth  = love.graphics:getWidth()
     winHeight = love.graphics:getHeight() 
     
-    love.graphics.setColor(0,0,0,0.6)
+    love.graphics.setColor(0,0,0,0.8)
     
     paintShadows(junkList, circle, 200)
     
