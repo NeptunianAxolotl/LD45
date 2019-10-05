@@ -19,7 +19,11 @@ local function SetupComponent(body, compDefName, params)
     params = params or {}
     local comp = {}
     comp.def = compConfig[compDefName]
-    comp.shape = love.physics.newPolygonShape(unpack(comp.def.shapeCoords))
+    if comp.def.circleShapeRadius then
+        comp.shape = love.physics.newCircleShape(0, 0, comp.def.circleShapeRadius)
+    else
+        comp.shape = love.physics.newPolygonShape(unpack(comp.def.shapeCoords))
+    end
     comp.fixture = love.physics.newFixture(body, comp.shape, 1)
 
     comp.activeKey = params.activeKey
@@ -110,8 +114,14 @@ local function DrawDebug()
         local fixtures = bodies[i]:getFixtures()
         for j = 1, #fixtures do
             local shape = fixtures[j]:getShape()
-            local points = {bodies[i]:getWorldPoints(shape:getPoints())}
-            love.graphics.polygon("line", points)
+            local shapeType = shape:getType()
+            if shapeType == "polygon" then
+                local points = {bodies[i]:getWorldPoints(shape:getPoints())}
+                love.graphics.polygon("line", points)
+            elseif shapeType == "circle" then
+                local x, y = bodies[i]:getWorldPoint(shape:getPoint())
+                love.graphics.circle("line", x, y, shape:getRadius())
+            end
         end
     end
     love.graphics.setColor(1, 1, 1, 1)

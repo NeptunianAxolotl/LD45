@@ -7,7 +7,7 @@ local conf = {
     imageOrigin = {32, 32},
     imageScale = {1, 1},
     activationOrigin = {0, 0},
-    shapeCoords = {20, 20, 20, -20, -20, -20, -20, 20},
+    circleShapeRadius = 32,
     mass = 20,
     name = "tractor_wheel",
 	-- angular velocity here; tractor wheel is always rotating in game 
