@@ -7,6 +7,9 @@ local compConfig = require("components")
 
 local shipPart 
 
+local debugHitboxKey = 'm'
+local debugEnabled = false
+
 local function SetupWorld()
     world = love.physics.newWorld(0, 0, true) -- Last argument is whether sleep is allowed.
 
@@ -91,6 +94,20 @@ function love.update(dt)
     world:update(dt)
 end
 
+local function DrawDebug()
+    love.graphics.setColor(1,0,0,1)
+    local bodies = world:getBodies()
+    for i = 1, #bodies do
+        local fixtures = bodies[i]:getFixtures()
+        for j = 1, #fixtures do
+            local shape = fixtures[j]:getShape()
+            local points = {bodies[i]:getWorldPoints(shape:getPoints())}
+            love.graphics.polygon("line", points)
+        end
+    end
+    love.graphics.setColor(1,1,1,1)
+end
+
 function love.draw()
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
@@ -106,6 +123,10 @@ function love.draw()
     end
 
     DrawShip(player)
+
+    if debugEnabled then
+        DrawDebug()
+    end
     
     love.graphics.pop()
     -- UI space
@@ -117,4 +138,10 @@ function love.mousemoved( x, y, dx, dy, istouch )
 end
 
 function love.mousereleased( x, y, button, istouch, presses)
+end
+
+function love.keypressed(key, scancode, isRepeat)
+    if key == debugHitboxKey and not isRepeat then
+        debugEnabled = not debugEnabled
+    end
 end
