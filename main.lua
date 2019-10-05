@@ -18,7 +18,7 @@ junkIndex = 0
 --------------------------------------------------
 
 function love.draw()
-    drawSystem.draw(player, junkList, debugEnabled, needKeybind, setKeybind)
+    drawSystem.draw(world, player, junkList, debugEnabled, needKeybind, setKeybind)
 end
 
 --------------------------------------------------

@@ -1,13 +1,9 @@
-
 local compConfig, compConfigList = unpack(require("components"))
+local util = require("util")
 
 local function GetRandomComponent()
     local num = math.random(1, #compConfigList)
     return compConfigList[num].name
-end
-
-local function RotateVector(x, y, angle)
-	return x*math.cos(angle) - y*math.sin(angle), x*math.sin(angle) + y*math.cos(angle)
 end
 
 --------------------------------------------------
@@ -45,7 +41,7 @@ local function SetupComponent(body, compDefName, params)
         local coords = comp.def.shapeCoords
         local modCoords = {}
         for i = 1, #coords, 2 do
-            local cx, cy = RotateVector(coords[i], coords[i + 1], angle)
+            local cx, cy = util.RotateVector(coords[i], coords[i + 1], angle)
             cx, cy = cx + xOff, cy + yOff
             modCoords[#modCoords + 1] = cx
             modCoords[#modCoords + 1] = cy
@@ -89,7 +85,7 @@ local function UpdateInput(ship)
                 local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
                 local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
                 local angle = ship.body:getAngle() + comp.angle
-                vx, vy = RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
+                vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
                 comp.def:onFunction(ship.body, ox + vx, oy + vy, angle)
                 comp.activated = true
             else

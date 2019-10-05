@@ -2,6 +2,7 @@ local cameraX, cameraY = 0, 0
 local smoothCameraFactor = 0.25
 
 local starfield = require("starfield")
+local util = require("util")
 
 local shipPart 
 
@@ -11,14 +12,14 @@ local function DrawShipVectors(ship)
         local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
         local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
         local angle = ship.body:getAngle() + comp.angle
-        vx, vy = RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
+        vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
         local dx, dy = ox + vx, oy + vy
         love.graphics.line(dx, dy, dx + 20*math.cos(angle), dy + 20*math.sin(angle))
         love.graphics.circle("line", dx, dy, 10)
     end
 end
 
-local function DrawDebug()
+local function DrawDebug(world, player)
     love.graphics.setColor(1,0,0,1)
     local bodies = world:getBodies()
     for i = 1, #bodies do
@@ -76,7 +77,7 @@ end
 
 local externalFunc = {}
 
-function externalFunc.draw(player, junkList, debugEnabled, needKeybind, setKeybind) 
+function externalFunc.draw(world, player, junkList, debugEnabled, needKeybind, setKeybind) 
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
 
@@ -95,7 +96,7 @@ function externalFunc.draw(player, junkList, debugEnabled, needKeybind, setKeybi
     DrawShip(player)
 
     if debugEnabled then
-        DrawDebug()
+        DrawDebug(world, player)
     end
 
     love.graphics.pop()
