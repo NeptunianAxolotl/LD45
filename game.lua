@@ -54,6 +54,7 @@ local function SetupComponent(body, compDefName, params)
     comp.isPlayer  = params.isPlayer
     local fixtureData = params.fixtureData or {}
     fixtureData.noAttach = comp.def.noAttach
+    fixtureData.comp = comp
     comp.fixture:setUserData(fixtureData)
 
     return comp
@@ -66,7 +67,7 @@ local function MakeJunk(world, index)
     local comp = SetupComponent(junk, compDefName, {fixtureData = {junkIndex = index, compDefName = compDefName}})
     junk:setAngle(math.random()*2*math.pi)
     junk:setLinearVelocity(math.random()*4, math.random()*4)
-    junk:setAngularVelocity(math.random()*2*math.pi)
+    junk:setAngularVelocity(math.random()*0.3*math.pi)
     return {
         body = junk,
         components = {comp}

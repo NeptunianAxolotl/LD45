@@ -1,5 +1,5 @@
 
-local FORCE = 1200
+local FORCE = 1500
 
 local conf = {
     imageOff = "images/booster.png",
