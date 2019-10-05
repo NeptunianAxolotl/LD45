@@ -92,7 +92,8 @@ end
 local function DrawShip(ship)
     for i = 1, #ship.components do
         local comp = ship.components[i]
-        love.graphics.draw(comp.def.imageOff, ship.body:getX(), ship.body:getY(), ship.body:getAngle(), 
+        local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+        love.graphics.draw(comp.def.imageOff, dx, dy, ship.body:getAngle() + comp.angle, 
             comp.def.imageScale[1], comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
     end
 
@@ -202,7 +203,7 @@ local function DoMerge(playerFixture, otherFixture)
 
         local angle = junkBody:getAngle() - playerBody:getAngle() + comp.angle
 
-        SetupComponent(playerBody, otherData.compDefName, {
+        player.components[#player.components + 1] = SetupComponent(playerBody, otherData.compDefName, {
                 activeKey = 'w',
                 fixtureData = {isPlayer = true, compDefName = compDefName},
                 xOff = xOff,
