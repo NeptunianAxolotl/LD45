@@ -308,6 +308,27 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
             DeleteComponent(ship, comp)
         end
     end
+    
+    for _, comp in ship.components.Iterator() do
+        comp.floodfillVal = false
+    end
+
+    local guyComponent = GetGuyComponent(player)
+    FloodFromPoint(guyComponent, 1)
+
+    for _, comp in ship.components.Iterator() do
+        if not comp.floodfillVal then
+            if not comp.def.isGirder then
+                local x, y = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+                local vx, vy = ship.body:getLinearVelocity()
+                local angle = ship.body:getAngle() + comp.angle
+
+                local junk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, ship.body:getAngularVelocity(), comp)
+                junkList[junk.junkIndex] = junk
+            end 
+            DeleteComponent(ship, comp)
+        end
+    end
 end
 
 --------------------------------------------------
