@@ -203,7 +203,7 @@ local function DrawShip(ship, debugEnabled)
             end
         end
 
-        if debugEnabled and not comp.nbhd.IsEmpty() then
+        if (SUPER_DEBUG_ENABLED or debugEnabled) and not comp.nbhd.IsEmpty() then
             love.graphics.setColor(0, 1, 0, 1)
             for _, other in comp.nbhd.Iterator() do
                 local ox, oy = ship.body:getWorldPoint(other.xOff, other.yOff)

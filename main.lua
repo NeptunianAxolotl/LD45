@@ -4,6 +4,8 @@ local debugEnabled = false
 IterableMap = require("IterableMap")
 util = require("util")
 
+SUPER_DEBUG_ENABLED = false
+
 drawSystem = require("draw")
 gameSystem = require("game")
 introSystem = require("intro")

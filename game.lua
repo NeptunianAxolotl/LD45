@@ -424,7 +424,9 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
     local guyComponent = GetGuyComponent(player)
     FloodFromPoint(guyComponent, 1)
 
-    for _, comp in ship.components.Iterator() do
+    local maxIndex, keyByIndex, dataByKey = ship.components.GetBarbarianData()
+    for i = maxIndex, 1, -1 do
+        local comp = dataByKey[keyByIndex[i]]
         if not comp.floodfillVal then
             if not comp.def.isGirder then
                 local x, y = ship.body:getWorldPoint(comp.xOff, comp.yOff)
@@ -433,7 +435,7 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
 
                 local junk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, ship.body:getAngularVelocity(), comp)
                 junkList[junk.junkIndex] = junk
-            end 
+            end
             DeleteComponent(ship, comp)
         end
     end
@@ -468,7 +470,7 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
             xOff = xOff,
             yOff = yOff,
             angle = angle,
-            xScale = dist/25,
+            xScale = dist/35,
         }
     )
 
@@ -480,7 +482,10 @@ end
 local function AddGirder(player, newComp, comp)
     local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
 
-    if dist > 3 and dist < player.girderAddDist then
+    if dist < player.girderAddDist then
+        if dist < 3 then
+            dist = 3
+        end
         local newGirder = AddGirderToPos(player.ship, true, dist, x1, y1, x2, y2)
         AddLogicalConnection(newGirder, newComp)
         AddLogicalConnection(newGirder, comp)
@@ -492,7 +497,7 @@ local function AddGirders(player, newComp)
     local on, nearestComp = util.GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
     local girderAdded = false
     for _, comp in player.ship.components.Iterator() do
-        if comp ~= newComp.index then
+        if comp.index ~= newComp.index then
             if (not comp.def.isGirder) or (nearestComp and nearestComp.index == comp.index) then
                 girderAdded = AddGirder(player, newComp, comp) or girderAdded
             end
