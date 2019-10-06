@@ -3,7 +3,7 @@ function love.conf(t)
     t.window.title = "LD45"
 
     t.console = true
-    t.window.title = "Katamari Freelancer"
+    t.window.title = "Warp Trash Flotilla"
     t.window.width = 1024
     t.window.height = 768
 
