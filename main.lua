@@ -10,6 +10,9 @@ drawSystem = require("draw")
 gameSystem = require("game")
 introSystem = require("intro")
 
+local introTimer = 0
+local introList = 0
+
 local world
 local player = {
     guy = nil,
@@ -28,33 +31,52 @@ local junkIndex = 0
 
 local lastDt = 0
 function love.draw()
-    if not introSystem.drawIntro() then
-        local winWidth  = love.graphics:getWidth()
-        local winHeight = love.graphics:getHeight()
-        
-        winPoints = {}
-        winPoints[1] = 0
-        winPoints[2] = 0
-        winPoints[3] = 0
-        winPoints[4] = winHeight
-        winPoints[5] = winWidth
-        winPoints[6] = winHeight
-        winPoints[7] = winWidth
-        winPoints[8] = 0
-        
-        local introTimer = introSystem.getIntroTimer()
-        local introCancel = introSystem.getIntroCancel()
-        
-        drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
-
-        if introTimer > introCancel + 2 and introTimer < introCancel + 3 then    
-            love.graphics.setColor(0, 0, 0, math.min((1 - (introTimer - math.min(23, introCancel + 2)) / 1), 1))
-            love.graphics.polygon("fill", winPoints)
-            love.graphics.setColor(1,1,1)
-        end
-        
-        drawSystem.drawConsole()
+    
+    --intro console messages
+    if introList == 0 and introTimer > 0.5 then
+        drawSystem.sendToConsole("> They told you the freighter was safe.", 3) 
+        introList = introList + 1
     end
+    
+    if introList == 1 and introTimer > 1.5 then
+        drawSystem.sendToConsole("> You knew better.", 3) 
+        introList = introList + 1
+    end
+        
+    if introList == 2 and introTimer > 5 then
+        drawSystem.sendToConsole("> You hadn’t boarded a commercial flight in years", 3) 
+        introList = introList + 1
+    end
+    
+    if introList == 3 and introTimer > 6 then
+        drawSystem.sendToConsole("> without an emergency pressure suit stashed in your carry-on.", 3) 
+        introList = introList + 1
+    end
+    
+    if introList == 4 and introTimer > 8 then
+        drawSystem.sendToConsole("> After all, it’s not paranoia", 3) 
+        introList = introList + 1
+    end
+    
+    if introList == 5 and introTimer > 9 then
+        drawSystem.sendToConsole("> if you really are surrounded by incompetents.", 3) 
+        introList = introList + 1
+    end
+    
+    if introList == 6 and introTimer > 13 then
+        drawSystem.sendToConsole("> Now, you have nothing.", 3) 
+        introList = introList + 1
+    end
+    
+    if introList == 7 and introTimer > 18 then
+        drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4) 
+        introList = introList + 1
+    end
+    
+    love.graphics.setColor(1,1,1, (introTimer - 5) / 10)
+    drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
+        
+    drawSystem.drawConsole()
 end
 
 --------------------------------------------------
@@ -117,26 +139,21 @@ end
 --------------------------------------------------
 local escPressed = false
 function love.update(dt)
-    if love.keyboard.isDown("escape") and escPressed == false then
-        introSystem.setIntroCancel()
-        escPressed = true
-    end
+    introTimer = introTimer + dt
     
-    if not introSystem.updateIntro(dt) then
-        lastDt = dt
-        local px, py = (player.ship or player.guy).body:getWorldCenter()
-        gameSystem.ExpandJunkspace(world, junkList, px, py)
-        gameSystem.UpdateComponentActivation(player, junkList, player, dt)
+    lastDt = dt
+    local px, py = (player.ship or player.guy).body:getWorldCenter()
+    gameSystem.ExpandJunkspace(world, junkList, px, py)
+    gameSystem.UpdateComponentActivation(player, junkList, player, dt)
 
-        local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
-        gameSystem.UpdateMovePlayerGuy(player, mx, my)
-        gameSystem.UpdatePlayerComponentAttributes(player)
+    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+    gameSystem.UpdateMovePlayerGuy(player, mx, my)
+    gameSystem.UpdatePlayerComponentAttributes(player)
 
-        if dt < 0.4 then
-            world:update(dt)
-        end
-        gameSystem.ProcessCollisions(world, player, junkList)
+    if dt < 0.4 then
+        world:update(dt)
     end
+    gameSystem.ProcessCollisions(world, player, junkList)
 end
 
 --------------------------------------------------
@@ -148,14 +165,12 @@ local function SetupWorld()
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 end
 
-function love.load()
-    if not introSystem.loadIntro() then    
-        math.randomseed(os.clock())
-        --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
-        drawSystem.load()
+function love.load()   
+    math.randomseed(os.clock())
+    --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
+    drawSystem.load()
 
-        SetupWorld()
+    SetupWorld()
 
-        player.guy = gameSystem.SetupPlayer(world, junkList)
-    end
+    player.guy = gameSystem.SetupPlayer(world, junkList)
 end

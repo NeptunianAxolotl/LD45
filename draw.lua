@@ -11,17 +11,21 @@ local shipPart
 
 local consoleText = {}
 local consoleTimer = {}
-local consoleAlpha = {}
 
-function externalFunc.sendToConsole (text)
+function externalFunc.sendToConsole (text, timer)
+    
+    if timer == nil then
+        timer = 5
+    end
+    
     table.insert(consoleText, text)
-    table.insert(consoleTimer, 3)
+    table.insert(consoleTimer, timer)
 end
 
 function externalFunc.drawConsole()
-    for i = 1, #consoleText do
-        love.graphics.setColor(1,1,1, math.min(1,consoleTimer[i]))
-        love.graphics.print(consoleText[i], 50, 730 - (i * 20))
+    for i = #consoleText, 1, -1 do
+        love.graphics.setColor(1,1,1, math.min(1,consoleTimer[#consoleText + 1 - i]))
+        love.graphics.print(consoleText[#consoleText + 1 - i], 50, 730 - (i * 20))
         love.graphics.setColor(1,1,1)
     end
 end
@@ -29,7 +33,6 @@ end
 function externalFunc.removeFromConsole()
     table.remove(consoleText, 1)
     table.remove(consoleTimer, 1)
-    table.remove(consoleAlpha, 1)
 end
 
 local function paintShadows (bodyList, lightSource, minDistance)
