@@ -24,8 +24,12 @@ components.debris_burner = require("components/debris_burner")
 local compList = {}
 for name, def in pairs(components) do
     def.name = name
-    def.maxHealth = def.maxHealth or 420
-    def.walkRadius = def.walkRadius or 34
+    if not def.maxHealth then
+        print("Missing maxHealth for", def.name)
+    end
+    if not def.walkRadius then
+        print("Missing walkRadius for", def.name)
+    end
     if name ~= "player" and not def.isGirder then
         compList[#compList + 1] = def
     end

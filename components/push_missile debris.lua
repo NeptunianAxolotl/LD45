@@ -5,6 +5,8 @@ local conf = {
     imageScale = {0.5, 0.5},
     activationOrigin = {0, 0},
     shapeCoords = { 15,8, -15,8, -15,-8, 15,-8},
+    walkRadius = 22,
+    maxHealth = 80,
     density = 1,
 }
 

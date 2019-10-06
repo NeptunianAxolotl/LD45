@@ -292,10 +292,8 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     love.graphics.pop()
     -- UI space
 
-    if player.needKeybind and not player.setKeybind then
-        love.graphics.print("Press space to set unbound component keys", 10, 10, 0, 2, 2)
-    elseif player.setKeybind then
-        love.graphics.print("Press any key to set a keybind", 10, 10, 0, 2, 2)
+    if player.needKeybind then
+        love.graphics.print("Press any key to bind component controls.", 10, 10, 0, 2, 2)
     end
 end
 

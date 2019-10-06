@@ -12,7 +12,6 @@ local world
 local player = {
     guy = nil,
     ship = nil,
-    setKeybind = false, 
     needKeybind = false,
     crawlSpeed = 5,
     girderAddDist = 60,

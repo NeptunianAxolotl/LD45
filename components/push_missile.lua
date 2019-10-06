@@ -9,6 +9,8 @@ local conf = {
     imageScale = {0.5, 0.5},
     activationOrigin = {0, 40},
     shapeCoords = {15,-35, 7,-44, -7,-44, -15,-35, -15,21, -16,26, 16,26, 15,21},
+    walkRadius = 55,
+    maxHealth = 220,
     density = 10,
     text =
     {
