@@ -2,19 +2,18 @@
 local FORCE = 1500
 
 local conf = {
-    imageOff = "images/push_missile/push_missile_unused.png",
-	imageBetween = "images/push_missile/push_missile_launch.png",
-    imageOn = "images/push_missile/push_missile_firing.png",
-    imageOrigin = {30, 95},
-    imageScale = {0.5, 0.5},
+    imageOff = "images/red-rocket-off.png",
+    imageOn = "images/red-rocket-on.png",
+    imageOrigin = {670, 500},
+    imageScale = {0.1, 0.1},
     activationOrigin = {-20, 0},
-    shapeCoords = {15,-35, 7,-44, -7,-44, -15,-35, -15,21, -16,26, 16,26, 15,21},
-    density = 1,
+    shapeCoords = {26,0, 15,16, 15,-16, -14,-26, -26,-14, -26,14, -14,26},
+    density = 8,
     text =
     {
-        pos = {5, 0},
+        pos = {5.5, 5},
         rotation = math.pi/2,
-        scale = {1,1},
+        scale = {1.5, 1.5},
         color = {0.8,0.1,0.1,1},
     },
     holdActivate = true,
