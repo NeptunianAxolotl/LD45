@@ -66,12 +66,14 @@ local function SetupComponent(body, compDefName, params)
 end
 
 local junkIndex = 0
-local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, reuseComponent)
+local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, params)
     junkIndex = junkIndex + 1
 
     local junkBody = love.physics.newBody(world, x, y, "dynamic")
+    params = params or {}
+    params.fixtureData = {junkIndex = junkIndex, compDefName = compDefName}
 
-    local comp = SetupComponent(junkBody, compDefName, {fixtureData = {junkIndex = junkIndex, compDefName = compDefName}})
+    local comp = SetupComponent(junkBody, compDefName, params)
     junkBody:setAngle(angle)
     junkBody:setLinearVelocity(vx, vy)
     junkBody:setAngularVelocity(vangle)
@@ -246,6 +248,9 @@ local function KeyPressed(player, junkList, key)
             comp.activeKey = key
             player.needKeybind = false
             keyUsed = true
+            if comp.def.toggleActivate then
+                comp.activated = true
+            end
         end
     end
     
@@ -253,9 +258,21 @@ local function KeyPressed(player, junkList, key)
         return
     end
 
+    local onlyActivate = false
     for _, comp in player.ship.components.Iterator() do
         if comp.def.toggleActivate and comp.activeKey == key then
             comp.activated = not comp.activated
+            if comp.activated then
+                onlyActivate = true
+            end
+        end
+    end
+
+    if onlyActivate then
+        for _, comp in player.ship.components.Iterator() do
+            if comp.def.toggleActivate and comp.activeKey == key then
+                comp.activated = true
+            end
         end
     end
 end
@@ -286,7 +303,7 @@ local function AttemptMoveInDirection(player, px, py, speed, faceAngle, newAngle
     local onShip, comp, compDist = util.GetNearestComponent(player.ship, px, py)
     local newOnShip, newComp, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
     
-    if newCompDist and compDist and (newCompDist > compDist - speed*0.4) then
+    if newCompDist and compDist and (newCompDist > compDist - speed*0.7) then
         if not util.IsPointOnShip(player.ship, nx, ny) then
             return false
         end
@@ -439,7 +456,12 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
                 local vx, vy = ship.body:getLinearVelocity()
                 local angle = ship.body:getAngle() + comp.angle
 
-                local junk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, ship.body:getAngularVelocity(), comp)
+                local junk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, ship.body:getAngularVelocity(), 
+                    {
+                        health = comp.health,
+                        scaleFactor = comp.scaleFactor,  
+                    }
+                )
                 junkList[junk.junkIndex] = junk
             end
             DeleteComponent(ship, comp)
@@ -469,6 +491,7 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
     local xOff, yOff = ship.body:getLocalPoint(mx, my)
     local angle = worldAngle - ship.body:getAngle()
     local compDefName = "girder"
+    local def = compConfig[compDefName]
 
     local newGirder = SetupComponent(ship.body, compDefName, {
             playerShip = playerShip,
@@ -476,7 +499,7 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
             xOff = xOff,
             yOff = yOff,
             angle = angle,
-            xScale = dist/35,
+            xScale = dist/def.girderReach,
         }
     )
 

@@ -51,7 +51,7 @@ local function ToCart(dir, rad)
 	return rad*math.cos(dir), rad*math.sin(dir)
 end
 
-local function GetNearestComponent(ship, x, y, ignoreGirder)
+local function GetNearestComponent(ship, x, y, ignoreGirder, wantClosestOn)
     if not ship then
         return false, false, false
     end
@@ -78,7 +78,7 @@ local function GetNearestComponent(ship, x, y, ignoreGirder)
 		end
 	end
 	
-	if closestOn then
+	if wantClosestOn and closestOn then
 		return true, closestOn, closestOnDist
 	end
 

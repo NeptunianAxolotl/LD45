@@ -19,7 +19,7 @@ local conf = {
     {
         pos = {4, 8},
         rotation = 0,
-        scale = {1.3, 1.3},
+        scale = {1, 1},
         color = {0,0,0,1},
     },
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)

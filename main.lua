@@ -6,6 +6,8 @@ util = require("util")
 
 SUPER_DEBUG_ENABLED = false
 
+font = require("font")
+
 drawSystem = require("draw")
 gameSystem = require("game")
 introSystem = require("intro")
@@ -151,7 +153,6 @@ end
 function love.load()
     if not introSystem.loadIntro() then    
         math.randomseed(os.clock())
-        --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
         drawSystem.load()
 
         SetupWorld()

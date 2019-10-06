@@ -39,6 +39,7 @@ local function drawIntro ()
     if not intro then
         return false
     end
+    font.SetSize(2)
     
     love.graphics.setColor(math.min(introTimer, 1), math.min(introTimer, 1), math.min(introTimer, 1))
     

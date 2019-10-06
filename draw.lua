@@ -21,6 +21,7 @@ end
 function externalFunc.drawConsole()
     for i = 1, #consoleText do
         love.graphics.setColor(1,1,1, math.min(1,consoleTimer[i]))
+        font.SetSize(2)
         love.graphics.print(consoleText[i], 50, 730 - (i * 20))
         love.graphics.setColor(1,1,1)
     end
@@ -221,6 +222,7 @@ local function DrawShip(ship, debugEnabled)
                 local keyName = comp.activeKey or "??"
 
                 love.graphics.setColor(unpack(comp.def.text.color))
+                font.SetSize(3)
                 love.graphics.print(string.upper(keyName), dx, dy, totalDrawAngle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
                 love.graphics.setColor(1,1,1,1)
             end
@@ -293,7 +295,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.push()
 
-    local wantedScale = 40/(math.sqrt((player.ship or player.guy).components.GetIndexMax()) + 40)
+    local wantedScale = 80/(((player.ship or player.guy).components.GetIndexMax())^0.7 + 80)
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
@@ -318,7 +320,8 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     -- UI space
 
     if player.needKeybind then
-        love.graphics.print("Press any key to bind component controls.", 10, 10, 0, 2, 2)
+        font.SetSize(1)
+        love.graphics.print("Press any key to bind component controls.", 10, 10, 0, 1, 1)
     end
     
     if consoleTimer then
