@@ -1,10 +1,10 @@
 local conf = {
     imageOff = "images/ship debris 1.png",
     imageOn = "images/ship debris 1.png",
-    imageOrigin = {450, 450},
+    imageOrigin = {536, 400}, 
     imageScale = {0.06, 0.06},
     activationOrigin = {0, 0},
-    shapeCoords = { 7,7, 7,-7, -7,-7, -7,7},
+	shapeCoords = { -11,8, -8,1, 3,-10, 10,-9, 10,-1, 6,10, -6,0 },
     density = 1,
 }
 
