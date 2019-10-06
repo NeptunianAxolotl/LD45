@@ -1,4 +1,4 @@
-local FORCE = 3000
+local FORCE = 2000
 
 local conf = {
     imageOff = "images/tractor_wheel.png",
@@ -17,6 +17,7 @@ local conf = {
         color = {0.1,0.6,0.1,1},
     },
     drawables = {},
+    _type = "tractorbeam",
     -- angular velocity here; tractor wheel is always rotating in game
     
     toggleActivate = true,
@@ -28,7 +29,10 @@ local conf = {
         
         if junkList then
             for i, junk in ipairs(junkList) do
-                distance = util.Dist(activeX, activeY, junk.body:getX(), junk.body:getY())
+                
+                junkX, junkY = junk.body:getWorldPoints(junk.body:getX(), junk.body:getY())
+                
+                distance = util.Dist(activeX, activeY, junkX, junkY)
                 
                 if (not minDistance) or (distance < minDistance) then
                     minDistance = distance
@@ -45,18 +49,15 @@ local conf = {
             local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
             minDistBody.body:applyForce(-fx, -fy, activeX, activeY)
             
-            local object = {}
-            object.type = "tractorbeam"
+            object = {}
             object.x = activeX
             object.y = activeY
             object.x2 = minDistBody.body:getX()
             object.y2 = minDistBody.body:getY()
             
+            drawables = nil
             drawables = {}
-            drawables[#drawables + 1] = object
-            
-            print (drawables)
-            print (#drawables)
+            table.insert(drawables, object)
         end
     end,
 }

@@ -193,31 +193,26 @@ local function DrawShip(ship)
         end
         
         --Draw ship component effects
-        if comp.drawables and #comp.drawables > 0 then
+        if comp.def.drawables and #comp.def.drawables > 0 then
+
             for i = 1, #comp.drawables do
                 
-                print (comp.drawables[i])
-                print (comp.drawables[i].type)
-                
-                if comp.drawables[i].type == "tractorbeam" then
+                if comp.def._type == "tractorbeam" then
                     love.graphics.setColor(0,1,0,0.7)
                     love.graphics.setLineStyle("rough")
                     love.graphics.setLineWidth(6)
                     
                     
                     love.graphics.line(
-                        comp.drawables[i].x, 
-                        comp.drawables[i].y,
-                        comp.drawables[i].x2,
-                        comp.drawables[i].y2)
+                        comp.def.drawables[i].x, 
+                        comp.def.drawables[i].y,
+                        comp.def.drawables[i].x2,
+                        comp.def.drawables[i].y2)
                         
                     love.graphics.setColor(1,1,1)
                     love.graphics.setLineStyle("smooth")
                     love.graphics.setLineWidth(1)
-                end
-                
-                
-                
+                end  
             end
         end
     end
