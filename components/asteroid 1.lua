@@ -1,6 +1,6 @@
 local conf = {
-    imageOff = "images/asteroid r1.png",
-    imageOn = "images/asteroid r1.png",
+    imageOff = "images/asteroid_r1.png",
+    imageOn = "images/asteroid_r1.png",
     imageOrigin = {120, 111},
     imageScale = {1, 1},
     activationOrigin = {0, 0},
