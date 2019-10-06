@@ -85,6 +85,7 @@ local function MakeJunk(world, index, compDefName, x, y, angle, vx, vy, vangle)
     local components = IterableMap.New()
     components.Add(comp.index, comp)
     return {
+        junkIndex = index,
         body = junkBody,
         components = components
     }
@@ -271,20 +272,27 @@ local function FloodFromPoint(comp, floodVal, ignoreIndex)
 end
 
 local function RemoveComponent(ship, delComp)
-    for _, comp in player.ship.components.Iterator() do
+    for _, comp in ship.components.Iterator() do
         comp.floodfillVal = false
     end
 
     local floodValues = {}
-    for _, comp in delComp.nbhd.Iterator() do
-        local floodIndex = FloodFromPoint(comp, comp.index, {[delComp.index] = true})
-        if floodIndex then
-            floodValues[#floodValues + 1] = floodIndex
-        end
-    end
+    --for _, comp in delComp.nbhd.Iterator() do
+    --    local floodIndex = FloodFromPoint(comp, comp.index, {[delComp.index] = true})
+    --    if floodIndex then
+    --        floodValues[#floodValues + 1] = floodIndex
+    --    end
+    --end
 
-    if #floodValues == 1 then
+    if #floodValues == 0 then
         DeleteComponent(ship, delComp)
+        if ship.components.IsEmpty() then
+            if ship.junkIndex then
+                --ship.junkIndex
+            else
+
+            end
+        end
         return
     end
 end
@@ -334,8 +342,7 @@ local function AddGirders(player, newComp)
     end
 end
 
-local function DoMerge(player, junkList, playerFixture, otherFixture)
-    local otherData = otherFixture:getUserData()
+local function DoMerge(player, junkList, playerFixture, otherFixture, playerData, otherData)
     if not otherData.junkIndex then
         return true
     end
@@ -399,9 +406,14 @@ local function ProcessCollision(key, data, index, player, junkList)
     local otherData  = otherFixture:getUserData()
 
     if (not otherData.noAttach) and (playerData.isPlayer) then
-        if DoMerge(player, junkList, playerFixture, otherFixture) then
+        if DoMerge(player, junkList, playerFixture, otherFixture, playerData, otherData) then
             return true
         end
+    end
+    
+    if not playerData.isPlayer then
+        RemoveComponent(player.ship, playerData.comp)
+        RemoveComponent(junkList[otherData.junkIndex], otherData.comp)
     end
 
     return true
@@ -413,13 +425,17 @@ end
 
 local function beginContact(a, b, col1)
     local aData, bData = a:getUserData() or {}, b:getUserData() or {}
-    local playerFixture = ((aData.isPlayer or aData.playerShip) and a) or b
-    local otherFixture  = ((bData.isPlayer or bData.playerShip) and a) or b
-    local otherData     = otherFixture:getUserData()
 
-    if otherData.playerShip then
+    local aIsPlayer = (aData.isPlayer or aData.playerShip)
+    local bIsPlayer = (bData.isPlayer or bData.playerShip)
+
+    if aIsPlayer == bIsPlayer then
         return
     end
+
+    local playerFixture = (aIsPlayer and a) or b
+    local otherFixture  = (aIsPlayer and b) or a
+    local otherData     = otherFixture:getUserData()
 
     if not otherData.junkIndex then
        return 
@@ -429,25 +445,6 @@ local function beginContact(a, b, col1)
 end
 
 local function endContact(a, b, col1)
-    local aData, bData = a:getUserData() or {}, b:getUserData() or {}
-    if aData.noAttach or bData.noAttach then
-        return
-    end
-    
-    if not (aData.isPlayer or bData.isPlayer) then
-        return
-    end
-    local playerFixture = (aData.isPlayer and a) or b
-    local otherFixture  = (bData.isPlayer and a) or b
-    local otherData     = otherFixture:getUserData()
-    if otherData.playerShip then
-        return
-    end
-    if not otherData.junkIndex then
-       return 
-    end
-    
-    collisionToAdd.Remove(otherData.junkIndex)
 end
 
 --------------------------------------------------
