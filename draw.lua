@@ -1,4 +1,4 @@
-local cameraX, cameraY = 0, 0
+local cameraX, cameraY, cameraScale = 0, 0, 1
 local smoothCameraFactor = 0.25
 
 local starfield = require("starfield")
@@ -235,10 +235,10 @@ end
 
 local externalFunc = {}
 
-function externalFunc.GetCameraTopLeft()
+function externalFunc.WindowSpaceToWorldSpace(wx, wy)
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
-    return cameraX - winWidth/2, cameraY - winHeight/2
+    return cameraX + (wx-(winWidth/2))/cameraScale, cameraY + (wy-(winHeight/2))/cameraScale
 end
 
 function externalFunc.draw(world, player, junkList, debugEnabled) 
@@ -250,8 +250,11 @@ function externalFunc.draw(world, player, junkList, debugEnabled)
     local cx, cy = UpdateCameraPos(player)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
-
-    love.graphics.translate(winWidth/2 - cx, winHeight/2 - cy)
+    if player.ship then
+        cameraScale = 1/math.sqrt(math.sqrt(player.ship.components.GetIndexMax()))
+    end
+    love.graphics.scale(cameraScale)
+    love.graphics.translate(winWidth/(2*cameraScale) - cx, winHeight/(2*cameraScale) - cy)
     -- Worldspace
     for _, junk in pairs(junkList) do
         DrawShip(junk)

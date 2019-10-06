@@ -78,8 +78,7 @@ local function MouseHitFunc(fixture)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
-    local cx, cy = drawSystem.GetCameraTopLeft()
-    local mx, my = x + cx, y + cy
+    --local mx, my = drawSystem.WindowSpaceToWorldSpace(x, y)
     -- clicking on junk
     --world:queryBoundingBox(mx - 2, my - 2, mx + 2, my + 2, MouseHitFunc)
 end
@@ -112,8 +111,7 @@ function love.update(dt)
     gameSystem.UpdateInput(player.ship)
     gameSystem.UpdateActivation(player, junkList)
 
-    local cx, cy = drawSystem.GetCameraTopLeft()
-    local mx, my = love.mouse.getX() + cx, love.mouse.getY() + cy
+    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
     gameSystem.UpdateMovePlayerGuy(player, mx, my)
 
     if dt < 0.4 then
