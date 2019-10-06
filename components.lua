@@ -14,6 +14,8 @@ components.push_missile_debris = require("components/push_missile debris")
 components.command_module = require("components/command_module")
 components.gun = require("components/gun")
 components.ion_engine = require("components/ion_engine")
+components.laser_battery = require("components/laser_battery")
+components.navigation = require("components/navigation")
 
 -- Post processing
 local compList = {}
