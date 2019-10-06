@@ -1,5 +1,5 @@
 local MIN_DISTANCE = 700
-local FORCE = 2000
+local FORCE = 2400
 
 local conf = {
     imageOff = "images/tractor_wheel.png",

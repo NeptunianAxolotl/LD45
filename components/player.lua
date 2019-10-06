@@ -7,7 +7,7 @@ local conf = {
     shapeCoords = {33,0, 26,21, 26,-21, -24,-10, -24,10},
     walkRadius = 30,
     maxHealth = 1000,
-    density = 18,
+    density = 15,
 }
 
 return conf
