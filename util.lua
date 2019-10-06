@@ -63,7 +63,7 @@ local function GetNearestComponent(ship, x, y, ignoreGirder, wantClosestOn)
     local closestOnDist = false
 
 	for _, comp in ship.components.Iterator() do
-		if (not ignoreGirder) or (not comp.isGirder) then
+		if (not ignoreGirder) or (not comp.def.isGirder) then
 			local cx, cy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 			local dist = Dist(x, y, cx, cy)
 			if (not closestDist) or (dist < closestDist) then
@@ -97,6 +97,50 @@ local function IsPointOnShip(ship, x, y, ignoreGirder)
 	return false
 end
 
+local phasedObjects = IterableMap.New()
+local function SetPhaseStatus(comp, isPhase)
+	comp.fixture:setMask((isPhase and 1) or 16)
+end
+
+local function AddPhaseRadius(ship, px, py, radius, power)
+	if not ship then
+		return
+	end
+
+	for _, comp in ship.components.Iterator() do
+		local x, y = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+		local dist = Dist(x, y, px, py)
+		if dist < radius then
+			comp.phaseState = (comp.phaseState or 0) + power*dist/radius
+			if comp.phaseState > 1 then
+				comp.phaseState = 1
+			end
+			phasedObjects.Add(comp.index, comp)
+		end
+	end
+end
+
+local function UpdatePhasedObjects(dt)
+    local maxIndex, keyByIndex, dataByKey = phasedObjects.GetBarbarianData()
+	for i = maxIndex, 1, -1 do
+		local key = keyByIndex[i]
+		local comp = dataByKey[key]
+		if comp and not comp.fixture:isDestroyed() then
+			comp.phaseState = comp.phaseState - 1*dt
+			if (comp.phaseState > 0.5) ~= ((comp.phased and true) or false) then
+				comp.phased = (comp.phaseState > 0.5)
+				SetPhaseStatus(comp, comp.phased)
+			end
+			if comp.phaseState < 0 then
+				comp.phaseState = nil
+				phasedObjects.Remove(key)
+			end
+		else
+			phasedObjects.Remove(key)
+		end
+	end
+end
+
 return {
 	AbsVal = AbsVal,
 	Dist = Dist,
@@ -105,4 +149,6 @@ return {
 	ToCart = ToCart,
 	GetNearestComponent = GetNearestComponent,
 	IsPointOnShip = IsPointOnShip,
+	AddPhaseRadius = AddPhaseRadius,
+	UpdatePhasedObjects = UpdatePhasedObjects,
 }

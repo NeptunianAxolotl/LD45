@@ -190,11 +190,19 @@ local function DrawShip(ship, debugEnabled)
         if comp.def.isGirder then
             local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
+            if comp.phaseState then
+                love.graphics.setColor(1, 1, 1, 1 - 0.8*comp.phaseState)
+            end
+
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
             local drawScale = comp.scaleFactor
 
             love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
                 comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+
+            if comp.phaseState then
+                love.graphics.setColor(1, 1, 1, 1)
+            end
         end
     end
 
@@ -204,6 +212,10 @@ local function DrawShip(ship, debugEnabled)
         local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
         if not comp.def.isGirder then
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+
+            if comp.phaseState then
+                love.graphics.setColor(1, 1, 1, 1 - 0.8*comp.phaseState)
+            end
 
             local totalDrawAngle = ship.body:getAngle() + comp.angle + (comp.drawAngle or 0)
             local drawScale = comp.scaleFactor
@@ -229,8 +241,8 @@ local function DrawShip(ship, debugEnabled)
                 love.graphics.setColor(1,1,1,1)
             end
 
-            if ship.selected then
-                love.graphics.circle("line", dx, dy, comp.def.selectDrawRadius or 32)
+            if comp.phaseState then
+                love.graphics.setColor(1, 1, 1, 1)
             end
         end
 

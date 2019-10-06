@@ -1,3 +1,5 @@
+local POWER = 3
+
 local conf = {
     imageOff = "images/displacer.png",
     imageOn = "images/displaceron.png",
@@ -17,6 +19,13 @@ local conf = {
         scale = {1, 1},
         color = {0.8,0.1,0.1,1},
     },
+    toggleActivate = true,
+    onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        util.AddPhaseRadius(player.guy, activeX, activeY, 700, dt*POWER)
+        if player.ship then
+            util.AddPhaseRadius(player.ship, activeX, activeY, 700, dt*POWER)
+        end
+    end,
 }
 
 return conf

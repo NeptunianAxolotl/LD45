@@ -33,30 +33,30 @@ local junkIndex = 0
 
 local lastDt = 0
 function love.draw()
-    
+        
     --intro console messages
     if introList == 0 and introTimer > 0.5 then
         drawSystem.sendToConsole("> They told you the freighter was safe.", 3) 
         introList = introList + 1
     end
-    
+        
     if introList == 1 and introTimer > 1.5 then
         drawSystem.sendToConsole("> You knew better.", 3) 
         introList = introList + 1
     end
         
     if introList == 2 and introTimer > 5 then
-        drawSystem.sendToConsole("> You hadn’t boarded a commercial flight in years", 3) 
+        drawSystem.sendToConsole("> You hadn't boarded a commercial flight in years", 3) 
         introList = introList + 1
-    end
-    
+        end
+        
     if introList == 3 and introTimer > 6 then
         drawSystem.sendToConsole("> without an emergency pressure suit stashed in your carry-on.", 3) 
         introList = introList + 1
     end
     
     if introList == 4 and introTimer > 8 then
-        drawSystem.sendToConsole("> After all, it’s not paranoia", 3) 
+        drawSystem.sendToConsole("> After all, it's not paranoia", 3) 
         introList = introList + 1
     end
     
@@ -77,7 +77,74 @@ function love.draw()
     
     love.graphics.setColor(1,1,1, (introTimer - 5) / 10)
     drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
-        
+    drawSystem.drawConsole()
+
+end
+
+--------------------------------------------------
+-- Input
+--------------------------------------------------
+
+function love.mousemoved(x, y, dx, dy, istouch )
+    --ps:moveTo(x,y)
+end
+
+function love.mousereleased(x, y, button, istouch, presses)
+end
+
+function love.keypressed(key, scancode, isRepeat)
+    if key == debugHitboxKey and not isRepeat then
+        debugEnabled = not debugEnabled
+    end
+
+    gameSystem.KeyPressed(player, junkList, key, isRepeat)
+end
+
+local function MouseHitFunc(fixture)
+    local fixtureData = fixture:getUserData()
+    if fixtureData.junkIndex and not fixtureData.noSelect then
+        -- Todo: point intersection
+        if gameSystem.TestJunkClick(junkList[fixtureData.junkIndex]) then
+            return false
+        end
+    end
+
+    return true
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+    --local mx, my = drawSystem.WindowSpaceToWorldSpace(x, y)
+    -- clicking on junk
+    --world:queryBoundingBox(mx - 2, my - 2, mx + 2, my + 2, MouseHitFunc)
+end
+
+--------------------------------------------------
+-- Colisions
+--------------------------------------------------
+
+local function beginContact(a, b, coll)
+    gameSystem.beginContact(a, b, coll)
+end
+
+local function endContact(a, b, coll)
+end
+
+local function preSolve(a, b, coll)
+end
+
+local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)
+    gameSystem.postSolve(a, b, coll,  normalimpulse, tangentimpulse)
+end
+
+--------------------------------------------------
+-- Update
+--------------------------------------------------
+local escPressed = false
+function love.update(dt)
+    if love.keyboard.isDown("escape") and escPressed == false then
+        introSystem.setIntroCancel()
+        escPressed = true
+    end
     drawSystem.drawConsole()
 end
 
@@ -143,19 +210,20 @@ local escPressed = false
 function love.update(dt)
     introTimer = introTimer + dt
     
-    lastDt = dt
-    local px, py = (player.ship or player.guy).body:getWorldCenter()
-    gameSystem.ExpandJunkspace(world, junkList, px, py)
-    gameSystem.UpdateComponentActivation(player, junkList, player, dt)
+        lastDt = dt
+        local px, py = (player.ship or player.guy).body:getWorldCenter()
+        gameSystem.ExpandJunkspace(world, junkList, px, py)
+        gameSystem.UpdateComponentActivation(player, junkList, player, dt)
+        util.UpdatePhasedObjects(dt)
 
-    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
-    gameSystem.UpdateMovePlayerGuy(player, mx, my)
-    gameSystem.UpdatePlayerComponentAttributes(player)
+        local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+        gameSystem.UpdateMovePlayerGuy(player, mx, my)
+        gameSystem.UpdatePlayerComponentAttributes(player)
 
-    if dt < 0.4 then
-        world:update(dt)
-    end
-    gameSystem.ProcessCollisions(world, player, junkList)
+        if dt < 0.4 then
+            world:update(dt)
+        end
+        gameSystem.ProcessCollisions(world, player, junkList)
 end
 
 --------------------------------------------------
@@ -168,11 +236,11 @@ local function SetupWorld()
 end
 
 function love.load()   
-    math.randomseed(os.clock())
+        math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
-    drawSystem.load()
+        drawSystem.load()
 
-    SetupWorld()
+        SetupWorld()
 
-    player.guy = gameSystem.SetupPlayer(world, junkList)
+        player.guy = gameSystem.SetupPlayer(world, junkList)
 end
