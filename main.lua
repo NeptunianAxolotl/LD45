@@ -135,7 +135,7 @@ end
 
 function love.load()
     math.randomseed(os.clock())
-    love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix14.ttf'))
+    love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     drawSystem.load()
 
     SetupWorld()
