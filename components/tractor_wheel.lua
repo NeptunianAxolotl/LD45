@@ -13,6 +13,7 @@ local conf = {
         scale = {1.5, 1.5},
         color = {0.1,0.6,0.1,1},
     },
+    drawables = {},
     -- angular velocity here; tractor wheel is always rotating in game
     
     toggleActivate = true,
@@ -33,9 +34,18 @@ local conf = {
             end
         end
         
-        minDistBody:getAngles(activeX, activeY)
-        
+        local activeAngle = minDistBody:getAngles(activeX, activeY)
+        local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         minDistBody:applyForce(fx, fy, activeX, activeY)
+        
+        local object = {}
+        object.type = "tractorbeam"
+        object.x = activeX
+        object.y = activeY
+        object.x2 = minDistBody:getX()
+        object.y2 = minDistBody:getY()
+        
+        drawables[#drawables + 1] = object
     end,
 }
 
