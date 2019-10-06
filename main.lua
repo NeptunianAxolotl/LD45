@@ -7,6 +7,9 @@ util = require("util")
 drawSystem = require("draw")
 gameSystem = require("game")
 
+local intro = true
+local introTimer = 0
+
 local world
 local player = {
     guy = nil,
@@ -26,6 +29,10 @@ local junkIndex = 0
 
 local lastDt = 0
 function love.draw()
+    if intro == true
+        
+    end
+    
     drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
 end
 
@@ -105,6 +112,23 @@ end
 --------------------------------------------------
 
 function love.update(dt)
+    if intro == true then
+        introTimer = introTimer + dt
+        
+        if introTimer > 5 then
+        end
+        
+        if introTimer > 10 then
+        end
+        
+        if introTimer > 15 then
+        end
+        
+        if introTimer > 20 then
+            introTimer = false
+        end
+    end
+    
     lastDt = dt
     local px, py =  (player.ship or player.guy).body:getWorldCenter()
     gameSystem.ExpandJunkspace(world, junkList, px, py)

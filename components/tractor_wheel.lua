@@ -28,7 +28,7 @@ local conf = {
         local minDistBody
         
         if junkList then
-            for i, junk in ipairs(junkList) do
+            for i, junk in pairs(junkList) do
                 
                 junkX, junkY = junk.body:getWorldPoints(junk.body:getX(), junk.body:getY())
                 
@@ -55,8 +55,9 @@ local conf = {
             object.x2 = minDistBody.body:getX()
             object.y2 = minDistBody.body:getY()
             
-            self.conf.drawables = {}
-            table.insert(self.conf.drawables, object)
+            comp.drawables = {}
+            table.insert(comp.drawables, object)
+            print('inserted', object)
         end
     end
 }

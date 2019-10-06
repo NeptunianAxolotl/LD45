@@ -7,6 +7,9 @@ local animations = IterableMap.New()
 
 local shipPart  
 
+local intro
+local introTimer
+
 local function paintShadows (bodyList, lightSource, minDistance)
     
     --bodies
@@ -202,35 +205,38 @@ local function DrawShip(ship, debugEnabled)
             end
         end
         
-        --Draw ship component effects
-        if comp.def.drawables and comp.activated then
-            
-            print (comp.def.drawables)
-            print (#comp.def.drawables)
-            
-            if #comp.def.drawables > 0 then
 
-                for i = 1, #comp.drawables do
-                    
-                    if comp.def._type == "tractorbeam" then
-                        love.graphics.setColor(0,1,0,0.7)
-                        love.graphics.setLineStyle("rough")
-                        love.graphics.setLineWidth(6)
+        if comp.activated and comp._type == "tractorbeam" then
+            --Draw ship component effects
+            print (comp.drawables)
+            
+            if comp.drawables then
+                
+                print (comp.drawables)
+                print (#comp.drawables)
+                
+                if #comp.drawables > 0 then
+
+                    for i = 1, #comp.drawables do
                         
-                        
-                        love.graphics.line(
-                            comp.def.drawables[i].x, 
-                            comp.def.drawables[i].y,
-                            comp.def.drawables[i].x2,
-                            comp.def.drawables[i].y2)
-                            
-                        love.graphics.setColor(1,1,1)
-                        love.graphics.setLineStyle("smooth")
-                        love.graphics.setLineWidth(1)
-                    end  
+                        if comp.def._type == "tractorbeam" then
+                            love.graphics.setColor(0,1,0,0.7)
+                            love.graphics.setLineStyle("rough")
+                            love.graphics.setLineWidth(6)
+                                                    
+                            love.graphics.line(
+                                comp.drawables[i].x, 
+                                comp.drawables[i].y,
+                                comp.drawables[i].x2,
+                                comp.drawables[i].y2)
+                                
+                            love.graphics.setColor(1,1,1)
+                            love.graphics.setLineStyle("smooth")
+                            love.graphics.setLineWidth(1)
+                        end  
+                    end
                 end
             end
-        
         end
 
         if debugEnabled and not comp.nbhd.IsEmpty() then
