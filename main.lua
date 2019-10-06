@@ -6,6 +6,8 @@ util = require("util")
 
 SUPER_DEBUG_ENABLED = false
 
+font = require("font")
+
 drawSystem = require("draw")
 gameSystem = require("game")
 introSystem = require("intro")
@@ -44,7 +46,7 @@ function love.draw()
     end
         
     if introList == 2 and introTimer > 5 then
-        drawSystem.sendToConsole("> You hadnâ€™t boarded a commercial flight in years", 3) 
+        drawSystem.sendToConsole("> You hadn’t boarded a commercial flight in years", 3) 
         introList = introList + 1
     end
     
@@ -54,7 +56,7 @@ function love.draw()
     end
     
     if introList == 4 and introTimer > 8 then
-        drawSystem.sendToConsole("> After all, itâ€™s not paranoia", 3) 
+        drawSystem.sendToConsole("> After all, it’s not paranoia", 3) 
         introList = introList + 1
     end
     

@@ -10,6 +10,7 @@ local conf = {
     density = 0.2,
     humanName = "a girder",
     isGirder = true,
+    girderReach = 30,
 }
 
 return conf
