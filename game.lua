@@ -216,8 +216,52 @@ local function AddLogicalConnection(comp1, comp2)
     comp2.nbhd.Add(comp1.index, comp1)
 end
 
-local function RemoveComponent(ship, component)
+local function DeleteComponent(ship, delComp)
+    for _, comp in delComp.nbhd.Iterator() do
+        comp.nbhd.Remove(delComp.index)
+    end
 
+    ship.components.Remove(delComp.index)
+    delComp.fixture:destroy()
+end
+
+local function FloodFromPoint(comp, floodVal, ignoreIndex)
+    if comp.floodfillVal then
+        return false
+    end
+    local front = {}
+    front[#front + 1] = comp
+
+    while #front > 0 do
+        for _, comp in front[#front].nbhd.Iterator() do
+            if (not comp.floodfillVal) and (not ignoreIndex[comp.index]) then
+                front[#front + 1] = comp
+            end
+        end
+        comp.floodfillVal = floodVal
+        front[#front] = nil
+    end
+
+    return floodVal
+end
+
+local function RemoveComponent(ship, delComp)
+    for _, comp in player.ship.components.Iterator() do
+        comp.floodfillVal = false
+    end
+
+    local floodValues = {}
+    for _, comp in delComp.nbhd.Iterator() do
+        local floodIndex = FloodFromPoint(comp, comp.index, {[delComp.index] = true})
+        if floodIndex then
+            floodValues[#floodValues + 1] = floodIndex
+        end
+    end
+
+    if #floodValues == 1 then
+        DeleteComponent(ship, delComp)
+        return
+    end
 end
 
 --------------------------------------------------
@@ -266,10 +310,6 @@ local function AddGirders(player, newComp)
 end
 
 local function DoMerge(player, junkList, playerFixture, otherFixture)
-    if otherFixture:isDestroyed() then
-        return true
-    end
-
     local otherData = otherFixture:getUserData()
     if not otherData.junkIndex then
         return true
@@ -279,6 +319,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture)
 
     if not player.ship then
         player.ship = junk
+        player.ship.playerShip = true
         junkList[otherData.junkIndex] = nil
 
         for _, comp in player.ship.components.Iterator() do
@@ -326,9 +367,19 @@ end
 
 local function ProcessCollision(key, data, index, player, junkList)
     local playerFixture, otherFixture = data[1], data[2]
-    if DoMerge(player, junkList, playerFixture, otherFixture) then
+    if otherFixture:isDestroyed() or playerFixture:isDestroyed() then
         return true
     end
+    local playerData = playerFixture:getUserData()
+    local otherData  = otherFixture:getUserData()
+
+    if (not otherData.noAttach) and (playerData.isPlayer) then
+        if DoMerge(player, junkList, playerFixture, otherFixture) then
+            return true
+        end
+    end
+
+    return true
 end
 
 local function ProcessCollisions(player, junkList)
@@ -337,19 +388,14 @@ end
 
 local function beginContact(a, b, col1)
     local aData, bData = a:getUserData() or {}, b:getUserData() or {}
-    if aData.noAttach or bData.noAttach then
-        return
-    end
-
-    if not (aData.isPlayer or bData.isPlayer) then
-        return
-    end
-    local playerFixture = (aData.isPlayer and a) or b
-    local otherFixture  = (bData.isPlayer and a) or b
+    local playerFixture = ((aData.isPlayer or aData.playerShip) and a) or b
+    local otherFixture  = ((bData.isPlayer or bData.playerShip) and a) or b
     local otherData     = otherFixture:getUserData()
+
     if otherData.playerShip then
         return
     end
+
     if not otherData.junkIndex then
        return 
     end
