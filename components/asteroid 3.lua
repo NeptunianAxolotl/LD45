@@ -1,10 +1,10 @@
 local conf = {
     imageOff = "images/asteroid 2.png",
     imageOn = "images/asteroid 2.png",
-    imageOrigin = {113, 88},
+    imageOrigin = {111, 86},
     imageScale = {1, 1},
     activationOrigin = {0, 0},
-    shapeCoords = {-113,-89, 94,-88, 113,-89, 105,89, 30,88, -102,50, -113,57},
+    shapeCoords = { -111,-56, -51,-86, 81,-62, 111,0, 111,39, 34,86, -4,86, -111,30},
     walkRadius = 35,
     maxHealth = 550,
     density = 1,
