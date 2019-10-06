@@ -60,7 +60,8 @@ local function SetupComponent(body, compDefName, params, reuseTable)
 
     comp.nbhd = IterableMap.New()
 
-    comp.health = comp.def.maxHealth
+    comp.maxHealth   = params.maxHealthOverride or comp.def.maxHealth
+    comp.health      = comp.maxHealth
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
     comp.playerShip  = params.playerShip

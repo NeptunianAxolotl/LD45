@@ -168,6 +168,7 @@ local function DrawShip(ship, debugEnabled)
                 comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
         end
     end
+
     -- Draw other things
     for _, comp in ship.components.Iterator() do
 
@@ -177,6 +178,15 @@ local function DrawShip(ship, debugEnabled)
 
             love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
                 comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+
+            
+            if comp.def.imageDmg then
+                local healthBucket = comp.def.damBuckets - math.ceil(comp.def.damBuckets*comp.health/comp.maxHealth)
+                if healthBucket > 0 and comp.def.imageDam[healthBucket] then
+                    love.graphics.draw(comp.def.imageDam[healthBucket], dx, dy, ship.body:getAngle() + comp.angle, 
+                        comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                end
+            end
 
             if comp.def.text ~= nil and comp.playerShip then
                 local textDef = comp.def.text
@@ -201,7 +211,6 @@ local function DrawShip(ship, debugEnabled)
                     love.graphics.setColor(0,1,0,0.7)
                     love.graphics.setLineStyle("rough")
                     love.graphics.setLineWidth(6)
-                    
                     
                     love.graphics.line(
                         comp.def.drawables[i].x, 
@@ -302,6 +311,12 @@ local function LoadComponentResources()
     for name, def in pairs(compConfig) do
         def.imageOff = love.graphics.newImage(def.imageOff)
         def.imageOn = love.graphics.newImage(def.imageOn)
+        if def.imageDmg then
+            for i = 1, #def.imageDmg do
+                def.imageDmg[i] = love.graphics.newImage(def.imageDmg[i])
+            end
+            def.damBuckets = #def.imageDmg
+        end
     end
 end
 
