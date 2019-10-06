@@ -4,10 +4,10 @@ local FORCE = 500
 local conf = {
     imageOff = "images/ion engine 1.png",
     imageOn = "images/ion engine on 1.png",
-    imageOrigin = {550, 500},
+    imageOrigin = {560, 537},
     imageScale = {0.05, 0.05},
     activationOrigin = {-20, 0},
-    shapeCoords = {8, 15, -8,15, 8,-15, -8,-15},
+    shapeCoords = {7,17, 7,-17, -7,-17, -7,17},
     density = 8,
     text =
     {
