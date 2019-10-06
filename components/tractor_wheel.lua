@@ -43,7 +43,7 @@ local conf = {
             local jx, jy = minDistBody.body:getX(), minDistBody.body:getY()
             local activeAngle = util.Angle(jx - activeX, jy - activeY)
             local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
-            minDistBody.body:applyForce(fx, fy, activeX, activeY)
+            minDistBody.body:applyForce(-fx, -fy, activeX, activeY)
             
             local object = {}
             object.type = "tractorbeam"
