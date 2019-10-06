@@ -3,9 +3,9 @@ local conf = {
 	imageBetween = "images/push_missile/push_missile_launch.png",
     imageOn = "images/push_missile/push_missile_firing.png",
     imageOrigin = {30, 89},
-    imageScale = {1, 1},
+    imageScale = {0.5, 0.5},
     activationOrigin = {-20, 0},
-    shapeCoords = {30,59, 22,80, 0,89, -22,80, -30,59, -30,-33, -25,-47, -11,-55},
+    shapeCoords = {30,-29, 23,-79, 9,-89, -9,-89, -23,-79, -30,-29, -30,33, -24,48, -11,53, 11,53, 24,48, 30,33},
     density = 1,
     text =
     {

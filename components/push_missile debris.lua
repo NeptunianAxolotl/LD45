@@ -4,7 +4,7 @@ local conf = {
     imageOrigin = {30, 17},
     imageScale = {1, 1},
     activationOrigin = {0, 0},
-    shapeCoords = { 30,17, -30,17, -30,17, 30,-17},
+    shapeCoords = { 30,17, -30,17, -30,-17, 30,-17},
     density = 1,
 }
 
