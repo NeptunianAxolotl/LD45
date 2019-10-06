@@ -6,9 +6,7 @@ util = require("util")
 
 drawSystem = require("draw")
 gameSystem = require("game")
-
-local intro = true
-local introTimer = 0
+introSystem = require("intro")
 
 local world
 local player = {
@@ -29,11 +27,9 @@ local junkIndex = 0
 
 local lastDt = 0
 function love.draw()
-    if intro == true then
-        
+    if not introSystem.drawIntro() then
+        drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
     end
-    
-    drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
 end
 
 --------------------------------------------------
@@ -112,35 +108,20 @@ end
 --------------------------------------------------
 
 function love.update(dt)
-    if intro == true then
-        introTimer = introTimer + dt
-        
-        if introTimer > 5 then
-        end
-        
-        if introTimer > 10 then
-        end
-        
-        if introTimer > 15 then
-        end
-        
-        if introTimer > 20 then
-            introTimer = false
-        end
-    end
-    
-    lastDt = dt
-    local px, py =  (player.ship or player.guy).body:getWorldCenter()
-    gameSystem.ExpandJunkspace(world, junkList, px, py)
-    gameSystem.UpdateInput(player.ship, junkList, player)
+    if not introSystem.updateIntro(dt) then
+        lastDt = dt
+        local px, py =  (player.ship or player.guy).body:getWorldCenter()
+        gameSystem.ExpandJunkspace(world, junkList, px, py)
+        gameSystem.UpdateInput(player.ship, junkList, player)
 
-    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
-    gameSystem.UpdateMovePlayerGuy(player, mx, my)
+        local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+        gameSystem.UpdateMovePlayerGuy(player, mx, my)
 
-    if dt < 0.4 then
-        world:update(dt)
+        if dt < 0.4 then
+            world:update(dt)
+        end
+        gameSystem.ProcessCollisions(world, player, junkList)
     end
-    gameSystem.ProcessCollisions(world, player, junkList)
 end
 
 --------------------------------------------------
