@@ -373,7 +373,7 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
 end
 
 local function AddGirders(player, newComp)
-    local on, nearestComp = GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
+    local on, nearestComp = util.GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
     for _, comp in player.ship.components.Iterator() do
         if comp ~= newComp.index then
             if (not comp.def.isGirder) or (nearestComp and nearestComp.index == comp.index) then
