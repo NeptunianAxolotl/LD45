@@ -182,8 +182,8 @@ local function DrawShip(ship, debugEnabled)
             
             if comp.def.imageDmg then
                 local healthBucket = comp.def.damBuckets - math.ceil(comp.def.damBuckets*comp.health/comp.maxHealth)
-                if healthBucket > 0 and comp.def.imageDam[healthBucket] then
-                    love.graphics.draw(comp.def.imageDam[healthBucket], dx, dy, ship.body:getAngle() + comp.angle, 
+                if healthBucket > 0 and comp.def.imageDmg[healthBucket] then
+                    love.graphics.draw(comp.def.imageDmg[healthBucket], dx, dy, ship.body:getAngle() + comp.angle, 
                         comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
                 end
             end
@@ -275,7 +275,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.push()
 
-    local wantedScale = 120/((player.ship or player.guy).components.GetIndexMax() + 120)
+    local wantedScale = 120/(math.sqrt((player.ship or player.guy).components.GetIndexMax()) + 120)
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
