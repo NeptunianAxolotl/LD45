@@ -116,7 +116,7 @@ function love.update(dt)
     if dt < 0.4 then
         world:update(dt)
     end
-    gameSystem.ProcessCollisions(player, junkList)
+    gameSystem.ProcessCollisions(world, player, junkList)
 end
 
 --------------------------------------------------
@@ -128,8 +128,8 @@ local function SetupWorld()
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     for i = 1, 2000 do
-        junkIndex = junkIndex + 1
-        junkList[junkIndex] = gameSystem.MakeRandomJunk(world, junkIndex, 0, 0, SPAWN_SIZE, 1000)
+        local junk = gameSystem.MakeRandomJunk(world, 0, 0, SPAWN_SIZE, 1000)
+        junkList[junk.junkIndex] = junk
     end
 end
 
@@ -140,6 +140,5 @@ function love.load()
 
     SetupWorld()
 
-    junkIndex = junkIndex + 1
-    player.guy = gameSystem.SetupPlayer(world, junkList, junkIndex)
+    player.guy = gameSystem.SetupPlayer(world, junkList)
 end

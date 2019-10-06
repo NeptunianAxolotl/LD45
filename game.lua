@@ -26,17 +26,19 @@ local function UpdatePlayerComponentAttributes(player)
 end
 
 local componentIndex = 0
-local function SetupComponent(body, compDefName, params)
+local function SetupComponent(body, compDefName, params, reuseTable)
     params = params or {}
-    local comp = {}
+    local comp = reuseTable or {}
     comp.def = compConfig[compDefName]
 
     comp.xOff = params.xOff or 0
     comp.yOff = params.yOff or 0
     comp.angle = params.angle or 0
 
-    componentIndex = componentIndex + 1
-    comp.index = componentIndex
+    if not reuseTable then
+        componentIndex = componentIndex + 1
+        comp.index = componentIndex
+    end
 
     local xOff, yOff, angle = comp.xOff, comp.yOff, comp.angle
     if comp.def.circleShapeRadius then
@@ -74,10 +76,13 @@ local function SetupComponent(body, compDefName, params)
     return comp
 end
 
-local function MakeJunk(world, index, compDefName, x, y, angle, vx, vy, vangle)
+local junkIndex = 0
+local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, reuseComponent)
+    junkIndex = junkIndex + 1
+
     local junkBody = love.physics.newBody(world, x, y, "dynamic")
 
-    local comp = SetupComponent(junkBody, compDefName, {fixtureData = {junkIndex = index, compDefName = compDefName}})
+    local comp = SetupComponent(junkBody, compDefName, {fixtureData = {junkIndex = junkIndex, compDefName = compDefName}}, reuseComponent)
     junkBody:setAngle(angle)
     junkBody:setLinearVelocity(vx, vy)
     junkBody:setAngularVelocity(vangle)
@@ -85,13 +90,13 @@ local function MakeJunk(world, index, compDefName, x, y, angle, vx, vy, vangle)
     local components = IterableMap.New()
     components.Add(comp.index, comp)
     return {
-        junkIndex = index,
+        junkIndex = junkIndex,
         body = junkBody,
         components = components
     }
 end
 
-local function MakeRandomJunk(world, index, midX, midY, size, exclusionRad)
+local function MakeRandomJunk(world, midX, midY, size, exclusionRad)
     local posX = math.random()*size + midX - size/2
     local posY = math.random()*size + midY - size/2
 
@@ -101,10 +106,10 @@ local function MakeRandomJunk(world, index, midX, midY, size, exclusionRad)
     end
 
     local compDefName = GetRandomComponent()
-    return MakeJunk(world, index, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
+    return MakeJunk(world, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
 end
 
-local function SetupPlayer(world, junkList, junkIndex)
+local function SetupPlayer(world, junkList)
     local body = love.physics.newBody(world, 0, 0, "dynamic")
     body:setAngularVelocity(0.4)
 
@@ -114,7 +119,9 @@ local function SetupPlayer(world, junkList, junkIndex)
 
     local posX, posY = util.ToCart(bodyDir, 800)
     local vx, vy = util.ToCart(bodyDir + math.pi, 40)
-    junkList[junkIndex] = MakeJunk(world, junkIndex, "booster", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
+
+    local junk = MakeJunk(world, "booster", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
+    junkList[junk.junkIndex] = junk
 
     local components = IterableMap.New()
     local newComp = SetupComponent(body, "player", {isPlayer = true, fixtureData = {isPlayer = true, compDefName = compDefName}})
@@ -248,41 +255,94 @@ local function FloodFromPoint(comp, floodVal, ignoreIndex)
     front[#front + 1] = comp
 
     while #front > 0 do
-        for _, comp in front[#front].nbhd.Iterator() do
+        local vertex = front[#front]
+        vertex.floodfillVal = floodVal
+        front[#front] = nil
+        for _, comp in vertex.nbhd.Iterator() do
             if (not comp.floodfillVal) and (not ignoreIndex[comp.index]) then
                 front[#front + 1] = comp
             end
         end
-        comp.floodfillVal = floodVal
-        front[#front] = nil
     end
 
     return floodVal
 end
 
-local function RemoveComponent(ship, delComp)
+local function GetGuyComponent(player)
+    local onShip, closestComp, closestDist = util.GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
+    return closestComp
+end
+
+local function SplitPartOffShip(world, junkList, ship, floodfillVal)
+    local parentBody = ship.body
+    local splitJunk, splitBody
+    for _, comp in ship.components.Iterator() do
+        if floodfillVal == comp.floodfillVal then
+            if not splitJunk then
+                local x, y = parentBody:getWorldPoint(comp.xOff, comp.yOff)
+                local vx, vy = parentBody:getLinearVelocity()
+                local angle = parentBody:getAngle() + comp.angle
+
+                splitJunk = MakeJunk(world, index, compDefName, x, y, angle, vx, vy, parentBody:getAngularVelocity(), comp)
+                junkList[splitJunk.junkIndex] = splitJunk
+
+                splitBody = splitJunk.body
+            else
+                local xOff, yOff = splitBody:getLocalPoint(parentBody:getWorldPoint(comp.xOff, comp.yOff))
+        
+                local angle = parentBody:getAngle() - splitBody:getAngle() + comp.angle
+        
+                local newComp = SetupComponent(splitBody, otherData.compDefName, {
+                        playerShip = nil,
+                        fixtureData = {playerShip = nil, compDefName = comp.def.name},
+                        xOff = xOff,
+                        yOff = yOff,
+                        angle = angle,
+                    },
+                    comp
+                )
+                splitJunk.components.Add(comp.index, comp)
+            end
+        else
+            DeleteComponent(ship, comp)
+        end
+    end
+end
+
+local function RemoveComponent(world, player, junkList, ship, delComp)
     for _, comp in ship.components.Iterator() do
         comp.floodfillVal = false
     end
 
     local floodValues = {}
-    --for _, comp in delComp.nbhd.Iterator() do
-    --    local floodIndex = FloodFromPoint(comp, comp.index, {[delComp.index] = true})
-    --    if floodIndex then
-    --        floodValues[#floodValues + 1] = floodIndex
-    --    end
-    --end
+    for _, comp in delComp.nbhd.Iterator() do
+        local floodIndex = FloodFromPoint(comp, comp.index, {[delComp.index] = true})
+        if floodIndex then
+            floodValues[#floodValues + 1] = floodIndex
+        end
+    end
 
-    if #floodValues == 0 then
-        --DeleteComponent(ship, delComp)
+    DeleteComponent(ship, delComp)
+    if #floodValues <= 1 then
         if ship.components.IsEmpty() then
             if ship.junkIndex then
-                --ship.junkIndex
+                ship.body:destroy()
+                junkList[ship.junkIndex] = nil
             else
-
+                player.ship.body:destroy()
+                player.ship = nil
+                player.joint = nil
             end
         end
         return
+    end
+
+    local keptPart = (ship.junkIndex and floodValues[1]) or GetGuyComponent(player).floodfillVal
+
+    for i = 1, #floodValues do
+        if floodValues[i] ~= keptPart then
+            SplitPartOffShip(world, junkList, ship, floodValues[i])
+        end
     end
 end
 
@@ -341,6 +401,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
     if not player.ship then
         player.ship = junk
         player.ship.playerShip = true
+        player.ship.junkIndex = nil
         junkList[otherData.junkIndex] = nil
 
         for _, comp in player.ship.components.Iterator() do
@@ -386,7 +447,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
     return true
 end
 
-local function ProcessCollision(key, data, index, player, junkList)
+local function ProcessCollision(key, data, index, world, player, junkList)
     local playerFixture, otherFixture = data[1], data[2]
     if otherFixture:isDestroyed() or playerFixture:isDestroyed() then
         return true
@@ -401,15 +462,17 @@ local function ProcessCollision(key, data, index, player, junkList)
     end
     
     if not playerData.isPlayer then
-        RemoveComponent(player.ship, playerData.comp)
-        RemoveComponent(junkList[otherData.junkIndex], otherData.comp)
+        RemoveComponent(world, player, junkList, player.ship, playerData.comp)
+        RemoveComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp)
     end
+
+    print("player.ship", player.ship)
 
     return true
 end
 
-local function ProcessCollisions(player, junkList)
-    collisionToAdd.Apply(ProcessCollision, player, junkList)
+local function ProcessCollisions(world, player, junkList)
+    collisionToAdd.Apply(ProcessCollision, world, player, junkList)
 end
 
 local function beginContact(a, b, col1)

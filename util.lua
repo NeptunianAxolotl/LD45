@@ -66,12 +66,12 @@ local function GetNearestComponent(ship, x, y)
         local cx, cy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 		local dist = Dist(x, y, cx, cy)
         if (not closestDist) or (dist < closestDist) then
-            closest = comp.index
+            closest = comp
             closestDist = dist
         end
 
-        if ((not closestOn) or (dist < closestOn)) and (dist < comp.def.walkRadius) then
-            closestOn = comp.index
+        if ((not closestOn) or (dist < closestOnDist)) and (dist < comp.def.walkRadius) then
+            closestOn = comp
             closestOnDist = dist
         end
 	end

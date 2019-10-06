@@ -230,7 +230,7 @@ local function DrawShip(ship)
 end
 
 local function UpdateCameraPos(player, scale)
-    local ship = player.ship or player.guy
+    local ship = (player.ship or player.guy)
     local px, py = ship.body:getWorldCenter()
     cameraX = (1 - smoothCameraFactor)*cameraX + smoothCameraFactor*px
     cameraY = (1 - smoothCameraFactor)*cameraY + smoothCameraFactor*py
