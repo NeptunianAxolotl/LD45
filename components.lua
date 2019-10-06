@@ -17,6 +17,7 @@ components.ion_engine = require("components/ion_engine")
 components.laser_battery = require("components/laser_battery")
 components.navigation = require("components/navigation")
 components.displacer = require("components/displacer")
+components.debris_burner = require("components/debris_burner")
 
 -- Post processing
 local compList = {}
