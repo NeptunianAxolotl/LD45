@@ -117,7 +117,9 @@ function love.update(dt)
     local mx, my = love.mouse.getX() + cx, love.mouse.getY() + cy
     gameSystem.UpdateMovePlayerGuy(player, mx, my)
 
-    world:update(0.033)
+    if dt < 0.4 then
+        world:update(dt)
+    end
     gameSystem.ProcessCollisions(player, junkList)
 end
 

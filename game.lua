@@ -26,6 +26,7 @@ local function UpdatePlayerComponentAttributes(player)
     end
 end
 
+local componentIndex = 0
 local function SetupComponent(body, compDefName, params)
     params = params or {}
     local comp = {}
@@ -34,6 +35,9 @@ local function SetupComponent(body, compDefName, params)
     comp.xOff = params.xOff or 0
     comp.yOff = params.yOff or 0
     comp.angle = params.angle or 0
+
+    componentIndex = componentIndex + 1
+    comp.index = componentIndex
 
     local xOff, yOff, angle = comp.xOff, comp.yOff, comp.angle
     if comp.def.circleShapeRadius then
@@ -54,6 +58,8 @@ local function SetupComponent(body, compDefName, params)
         comp.shape = love.physics.newPolygonShape(unpack(modCoords))
     end
     comp.fixture = love.physics.newFixture(body, comp.shape, comp.def.density)
+
+    comp.nbhd = IterableMap.New()
 
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
@@ -201,6 +207,19 @@ local function UpdateMovePlayerGuy(player, mx, my)
 end
 
 --------------------------------------------------
+-- Graph Functions
+--------------------------------------------------
+
+local function AddLogicalConnection(comp1, comp2)
+    comp1.nbhd.Add(comp2.index, comp2)
+    comp2.nbhd.Add(comp1.index, comp1)
+end
+
+local function RemoveComponent(ship, component)
+
+end
+
+--------------------------------------------------
 -- Colisions
 --------------------------------------------------
 
@@ -214,7 +233,7 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
     local angle = worldAngle - ship.body:getAngle()
     local compDefName = "girder"
 
-    ship.components[#ship.components + 1] = SetupComponent(ship.body, compDefName, {
+    local newGirder = SetupComponent(ship.body, compDefName, {
             playerShip = playerShip,
             fixtureData = {playerShip = playerShip, compDefName = compDefName},
             xOff = xOff,
@@ -223,6 +242,10 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
             xScale = dist/25,
         }
     )
+
+    ship.components[#ship.components + 1] = newGirder
+
+    return newGirder
 end
 
 local function AddGirders(player, newComponentIndex)
@@ -236,7 +259,9 @@ local function AddGirders(player, newComponentIndex)
                 local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
 
                 if dist > 3 and dist < player.girderAddDist then
-                    AddGirderToPos(player.ship, true, dist, x1, y1, x2, y2)
+                    local newGirder = AddGirderToPos(player.ship, true, dist, x1, y1, x2, y2)
+                    AddLogicalConnection(newGirder, newComp)
+                    AddLogicalConnection(newGirder, comp)
                 end
             end
         end
