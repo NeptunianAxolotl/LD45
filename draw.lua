@@ -256,7 +256,7 @@ local function DoAnimation(_, data, _, dt)
         return true
     end
     local frame = math.floor(#data.def.quads*data.t/data.def.duration) + 1
-    love.graphics.draw(data.def.spriteSheet, data.def.quads[frame], data.x, data.y, data.rotation, data.scale, data.scale)
+    love.graphics.draw(data.def.spriteSheet, data.def.quads[frame], data.x, data.y, data.rotation, data.scale, data.scale, data.def.xOff, data.def.yOff)
     data.t = data.t + dt
 
     return false
@@ -318,6 +318,8 @@ local function LoadAnimation(image, width, height, duration, scaleMin, scaleMax)
     animation.quads = {}
     animation.scaleMin = scaleMin or 1
     animation.scaleMax = scaleMax or 1
+
+    animation.xOff, animation.yOff = width/2, height/2
 
     for y = 0, image:getHeight() - height, height do
         for x = 0, image:getWidth() - width, width do

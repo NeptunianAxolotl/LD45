@@ -14,8 +14,8 @@ local conf = {
     density = 1,
     text =
     {
-        pos = {10, 10},
-        rotation = math.pi/2,
+        pos = {4, 8},
+        rotation = 0,
         scale = {1.3, 1.3},
         color = {0,0,0,1},
     },
