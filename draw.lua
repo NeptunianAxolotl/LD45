@@ -2,6 +2,7 @@ local cameraX, cameraY, cameraScale = 0, 0, 1
 local smoothCameraFactor = 0.25
 
 local starfield = require("starfield")
+local animate = require("animations")
 
 local shipPart  
 
@@ -291,3 +292,4 @@ function externalFunc.load()
 end
 
 return externalFunc
+
