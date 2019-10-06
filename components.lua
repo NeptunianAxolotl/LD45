@@ -10,6 +10,7 @@ components.asteroid2 = require("components/asteroid 2")
 components.ship_debris1 = require("components/ship debris 1")
 components.push_missile = require("components/push_missile")
 components.push_missile_debris = require("components/push_missile debris")
+components.red_rocket = require("components/red-rocket")
 
 components.command_module = require("components/command_module")
 components.gun = require("components/gun")
