@@ -533,6 +533,9 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
             comp.fixture:setUserData(fixtureData)
 
             player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
+                        
+            drawSystem.sendToConsole("> captured a " .. fixtureData.compDefName)
+            
             return true
         end
     end
