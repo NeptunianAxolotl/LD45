@@ -100,12 +100,10 @@ end
 --------------------------------------------------
 
 function love.update(dt)
-
     if not introSystem.updateIntro(dt) then
         lastDt = dt
         local px, py =  (player.ship or player.guy).body:getWorldCenter()
         gameSystem.ExpandJunkspace(world, junkList, px, py)
-        gameSystem.UpdateInput(player.ship, junkList, player)
 
         local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
         gameSystem.UpdateMovePlayerGuy(player, mx, my)
