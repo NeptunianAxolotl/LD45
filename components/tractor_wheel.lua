@@ -16,12 +16,12 @@ local conf = {
         scale = {1.5, 1.5},
         color = {0.1,0.6,0.1,1},
     },
-    drawables = {},
+    --drawables = {},
     _type = "tractorbeam",
     -- angular velocity here; tractor wheel is always rotating in game
     
     toggleActivate = true,
-    onFunction = function (self, body, activeX, activeY, angle, junkList, player)
+    onFunction = function (comp, body, activeX, activeY, angle, junkList, player)
         local distance
         
         local minDistance
@@ -55,11 +55,10 @@ local conf = {
             object.x2 = minDistBody.body:getX()
             object.y2 = minDistBody.body:getY()
             
-            drawables = nil
-            drawables = {}
-            table.insert(drawables, object)
+            self.conf.drawables = {}
+            table.insert(self.conf.drawables, object)
         end
-    end,
+    end
 }
 
 return conf

@@ -215,7 +215,7 @@ local function ActivateComponent(ship, comp, junkList, player)
     local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
     local angle = ship.body:getAngle() + comp.angle
     vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
-    comp.def:onFunction(ship.body, ox + vx, oy + vy, angle, junkList, player)
+    comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player)
 end
 
 toggleKeys = {}
