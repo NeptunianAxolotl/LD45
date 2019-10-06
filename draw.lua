@@ -188,9 +188,10 @@ local function DrawShip(ship, debugEnabled)
             local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+            local drawScale = comp.scaleFactor
 
             love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
-                comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
         end
     end
 
@@ -202,15 +203,16 @@ local function DrawShip(ship, debugEnabled)
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
 
             local totalDrawAngle = ship.body:getAngle() + comp.angle + (comp.drawAngle or 0)
+            local drawScale = comp.scaleFactor
             love.graphics.draw(image, dx, dy, totalDrawAngle, 
-                comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
 
             
             if comp.def.imageDmg then
                 local healthBucket = comp.def.damBuckets - math.ceil(comp.def.damBuckets*comp.health/comp.maxHealth)
                 if healthBucket > 0 and comp.def.imageDmg[healthBucket] then
                     love.graphics.draw(comp.def.imageDmg[healthBucket], dx, dy, totalDrawAngle, 
-                        comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                        comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
                 end
             end
 

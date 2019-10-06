@@ -11,6 +11,8 @@ local conf = {
     walkRadius = 40,
     maxHealth = 900,
     toggleActivate = true,
+    scaleMax = 1.6,
+    scaleMin = 0.5,
     humanName = "a tractor beam",
     density = 1,
     text =
@@ -57,7 +59,7 @@ local conf = {
                 forceMult = forceMult*0.8
             end
 
-            local fx, fy = forceMult*FORCE*math.cos(forceAngle), forceMult*FORCE*math.sin(forceAngle)
+            local fx, fy = comp.scaleFactor*forceMult*FORCE*math.cos(forceAngle), forceMult*FORCE*math.sin(forceAngle)
             nearestJunk.body:applyForce(-fx, -fy, ax, ay)
             body:applyForce(fx, fy, ax, ay)
             

@@ -11,6 +11,8 @@ local conf = {
     toggleActivate = true,
     maxHealth = 200,
     walkRadius = 20,
+    scaleMax = 1.6,
+    scaleMin = 0.5,
     humanName = "a gyroscopic stabiliser",
     density = 1,
     text =
@@ -30,7 +32,7 @@ local conf = {
         if comp.power > 1 then
             comp.power = 1
         end
-        body:applyTorque(FORCE*comp.power)
+        body:applyTorque(comp.scaleFactor*FORCE*comp.power)
         comp.drawAngle = ((comp.drawAngle or 0) + dt*5*comp.power)%(math.pi*2)
     end,
     offFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
@@ -42,7 +44,7 @@ local conf = {
             if comp.power < 0 then
                 comp.power = 0
             end
-            body:applyTorque(FORCE*comp.power)
+            body:applyTorque(comp.scaleFactor*FORCE*comp.power)
         elseif comp.power < 0 then
             comp.power = comp.power + CHANGE_SPEED*dt
             if comp.power > 0 then

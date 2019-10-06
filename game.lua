@@ -10,7 +10,7 @@ end
 --------------------------------------------------
 
 local componentIndex = 0
-local function SetupComponent(body, compDefName, params, reuseTable)
+local function SetupComponent(body, compDefName, params)
     params = params or {}
     local comp = {}
     comp.def = compConfig[compDefName]
@@ -22,17 +22,21 @@ local function SetupComponent(body, compDefName, params, reuseTable)
     componentIndex = componentIndex + 1
     comp.index = componentIndex
 
+    local scaleFactor = 1
+    if params.scaleFactor then
+        scaleFactor = params.scaleFactor
+    elseif comp.def.scaleMin and comp.def.scaleMax then
+        scaleFactor = comp.def.scaleMin + math.random()*(comp.def.scaleMax - comp.def.scaleMin)
+    end
+
     local xOff, yOff, angle = comp.xOff, comp.yOff, comp.angle
     if comp.def.circleShapeRadius then
-        comp.shape = love.physics.newCircleShape(xOff, yOff, comp.def.circleShapeRadius)
+        comp.shape = love.physics.newCircleShape(xOff, yOff, comp.def.circleShapeRadius*scaleFactor)
     else
         local coords = comp.def.shapeCoords
         local modCoords = {}
         for i = 1, #coords, 2 do
-            local cx, cy = coords[i], coords[i + 1]
-            if params.xScale then
-                cx = cx*params.xScale
-            end
+            local cx, cy = coords[i]*(params.xScale or 1)*scaleFactor, coords[i + 1]*scaleFactor
             cx, cy = util.RotateVector(cx, cy, angle)
             cx, cy = cx + xOff, cy + yOff
             modCoords[#modCoords + 1] = cx
@@ -44,12 +48,13 @@ local function SetupComponent(body, compDefName, params, reuseTable)
 
     comp.nbhd = IterableMap.New()
 
-    comp.maxHealth   = params.maxHealthOverride or comp.def.maxHealth
+    comp.maxHealth   = params.maxHealthOverride or (comp.def.maxHealth*scaleFactor)
     comp.health      = params.health or comp.maxHealth
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
     comp.playerShip  = params.playerShip
     comp.xScale      = params.xScale
+    comp.scaleFactor = scaleFactor
 
     local fixtureData = params.fixtureData or {}
     fixtureData.noAttach = comp.def.noAttach
@@ -281,7 +286,7 @@ local function AttemptMoveInDirection(player, px, py, speed, faceAngle, newAngle
     local onShip, comp, compDist = util.GetNearestComponent(player.ship, px, py)
     local newOnShip, newComp, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
     
-    if newCompDist and compDist and (newCompDist > compDist - speed*0.8) then
+    if newCompDist and compDist and (newCompDist > compDist - speed*0.4) then
         if not util.IsPointOnShip(player.ship, nx, ny) then
             return false
         end
@@ -555,6 +560,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
                 yOff = yOff,
                 angle = angle,
                 health = comp.health,
+                scaleFactor = comp.scaleFactor,
             }
         )
         
@@ -656,7 +662,6 @@ end
 --------------------------------------------------
 
 return {
-    SetupComponent = SetupComponent,
     UpdateComponentActivation = UpdateComponentActivation,
     KeyPressed = KeyPressed,
     UpdateMovePlayerGuy = UpdateMovePlayerGuy,
