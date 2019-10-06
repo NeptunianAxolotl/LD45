@@ -201,11 +201,12 @@ local function ActivateComponent(ship, comp, junkList, player, dt)
     comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
 end
 
-local function UpdateComponentActivation(ship, junkList, player, dt)
+local function UpdateComponentActivation(player, junkList, player, dt)
+    local ship = player.ship
     if not ship then
         return
     end
-    
+
     for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
@@ -224,6 +225,21 @@ local function KeyPressed(player, junkList, key)
     if not player.ship then
         return
     end
+
+    local keyUsed = false
+    if player.ship and player.needKeybind and player.onComponent then
+        local comp = player.onComponent
+        if comp and comp.def.text and not comp.activeKey then
+            comp.activeKey = key
+            player.needKeybind = false
+            keyUsed = true
+        end
+    end
+    
+    if keyUsed then
+        return
+    end
+
     for _, comp in player.ship.components.Iterator() do
         if comp.def.toggleActivate and comp.activeKey == key then
             comp.activated = not comp.activated

@@ -1,5 +1,5 @@
 
-local FORCE = 30000
+local FORCE = 16000
 
 local conf = {
     imageOff = "images/red-rocket-off.png",
@@ -9,8 +9,8 @@ local conf = {
     activationOrigin = {0, 66},
     shapeCoords = {0, -106.75, 38.5, -47.25, 54.25, 35.7, 36.75, 66.5, -36.75, 66.5, -54.25, 35.7, -38.5, -47.25},
     walkRadius = 70,
-    maxHealth = 1500,
-    density = 3,
+    maxHealth = 2200,
+    density = 6,
     text =
     {
         pos = {5.5, 5},

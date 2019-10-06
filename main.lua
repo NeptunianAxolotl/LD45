@@ -47,14 +47,6 @@ function love.keypressed(key, scancode, isRepeat)
         debugEnabled = not debugEnabled
     end
 
-    if player.ship and player.needKeybind and player.onComponent then
-        local comp = player.onComponent
-        if comp and comp.def.text and not comp.activeKey and not isRepeat then
-            comp.activeKey = key
-            player.needKeybind = false
-        end
-    end
-
     gameSystem.KeyPressed(player, junkList, key, isRepeat)
 end
 
@@ -107,7 +99,7 @@ function love.update(dt)
         lastDt = dt
         local px, py = (player.ship or player.guy).body:getWorldCenter()
         gameSystem.ExpandJunkspace(world, junkList, px, py)
-        gameSystem.UpdateComponentActivation(player.ship, junkList, player, dt)
+        gameSystem.UpdateComponentActivation(player, junkList, player, dt)
 
         local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
         gameSystem.UpdateMovePlayerGuy(player, mx, my)

@@ -1,5 +1,5 @@
 local MIN_DISTANCE = 700
-local FORCE = 1600
+local FORCE = 2000
 
 local conf = {
     imageOff = "images/tractor_wheel.png",
@@ -10,7 +10,7 @@ local conf = {
     circleShapeRadius = 32,
     walkRadius = 40,
     maxHealth = 900,
-    holdActivate = true,
+    toggleActivate = true,
     density = 1,
     text =
     {
@@ -51,9 +51,9 @@ local conf = {
             local jx, jy = nearestJunk.body:getX(), nearestJunk.body:getY()
             local forceAngle = util.Angle(jx - ax, jy - ay)
 
-            local forceMult = math.tanh((nearestDist - 220)*0.01)
+            local forceMult = math.tanh((nearestDist - 260)*0.01)
             if forceMult > 0 then
-                forceMult = forceMult*0.7
+                forceMult = forceMult*0.8
             end
 
             local fx, fy = forceMult*FORCE*math.cos(forceAngle), forceMult*FORCE*math.sin(forceAngle)
