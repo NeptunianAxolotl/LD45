@@ -52,23 +52,15 @@ function love.keypressed(key, scancode, isRepeat)
         debugEnabled = not debugEnabled
     end
 
-    if player.ship and player.needKeybind then
-        if not isRepeat then
-            if key == 'space' then
-                player.setKeybind = not player.setKeybind
-            elseif player.setKeybind then
-                for _, comp in player.ship.components.Iterator() do
-                    if comp.def.text and not comp.activeKey then
-                        comp.activeKey = key
-                    end
-                end
-                player.setKeybind = false
-                player.needKeybind = false
-            end
+    if player.ship and player.needKeybind and player.onComponent then
+        local comp = player.onComponent
+        if comp and comp.def.text and not comp.activeKey and not isRepeat then
+            comp.activeKey = key
+            player.needKeybind = false
         end
     end
-    
-    --gameSystem.KeypressInput(player.ship, key, isRepeat)
+
+    gameSystem.KeyPressed(player, junkList, key, isRepeat)
 end
 
 local function MouseHitFunc(fixture)
@@ -130,12 +122,13 @@ function love.update(dt)
     end
     
     lastDt = dt
-    local px, py =  (player.ship or player.guy).body:getWorldCenter()
+    local px, py = (player.ship or player.guy).body:getWorldCenter()
     gameSystem.ExpandJunkspace(world, junkList, px, py)
-    gameSystem.UpdateInput(player.ship, junkList, player)
+    gameSystem.UpdateComponentActivation(player.ship, junkList, player, dt)
 
     local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
     gameSystem.UpdateMovePlayerGuy(player, mx, my)
+    gameSystem.UpdatePlayerComponentAttributes(player)
 
     if dt < 0.4 then
         world:update(dt)
@@ -154,7 +147,7 @@ end
 
 function love.load()
     math.randomseed(os.clock())
-    love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
+    --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     drawSystem.load()
 
     SetupWorld()

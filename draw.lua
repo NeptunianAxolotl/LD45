@@ -7,9 +7,6 @@ local animations = IterableMap.New()
 
 local shipPart  
 
-local intro
-local introTimer
-
 local function paintShadows (bodyList, lightSource, minDistance)
     
     --bodies
@@ -204,40 +201,6 @@ local function DrawShip(ship, debugEnabled)
                 love.graphics.circle("line", dx, dy, comp.def.selectDrawRadius or 32)
             end
         end
-        
-
-        if comp.activated and comp._type == "tractorbeam" then
-            --Draw ship component effects
-            print (comp.drawables)
-            
-            if comp.drawables then
-                
-                print (comp.drawables)
-                print (#comp.drawables)
-                
-                if #comp.drawables > 0 then
-
-                    for i = 1, #comp.drawables do
-                        
-                        if comp.def._type == "tractorbeam" then
-                            love.graphics.setColor(0,1,0,0.7)
-                            love.graphics.setLineStyle("rough")
-                            love.graphics.setLineWidth(6)
-                                                    
-                            love.graphics.line(
-                                comp.drawables[i].x, 
-                                comp.drawables[i].y,
-                                comp.drawables[i].x2,
-                                comp.drawables[i].y2)
-                                
-                            love.graphics.setColor(1,1,1)
-                            love.graphics.setLineStyle("smooth")
-                            love.graphics.setLineWidth(1)
-                        end  
-                    end
-                end
-            end
-        end
 
         if debugEnabled and not comp.nbhd.IsEmpty() then
             love.graphics.setColor(0, 1, 0, 1)
@@ -246,6 +209,22 @@ local function DrawShip(ship, debugEnabled)
                 love.graphics.line(dx, dy, ox, oy)
             end
             love.graphics.setColor(1, 1, 1, 1)
+        end
+    end
+
+    
+    for _, comp in ship.components.Iterator() do
+        if comp.aimX and comp.activated then
+            love.graphics.setColor(0,1,0,0.7)
+            love.graphics.setLineStyle("rough")
+            love.graphics.setLineWidth(6)
+            
+            
+            love.graphics.line(comp.emitX, comp.emitY, comp.aimX, comp.aimY)
+                
+            love.graphics.setColor(1,1,1)
+            love.graphics.setLineStyle("smooth")
+            love.graphics.setLineWidth(1)
         end
     end
     
@@ -291,9 +270,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     local wantedScale = 40/(math.sqrt((player.ship or player.guy).components.GetIndexMax()) + 40)
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
-	
-	-- Stars
-    local stars = starfield.locations(cx, cy, cScale)
+    local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
 
     love.graphics.scale(cScale)

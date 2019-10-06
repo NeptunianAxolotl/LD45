@@ -1,5 +1,5 @@
 
-local FORCE = 1500
+local FORCE = 2000
 
 local conf = {
     imageOff = "images/booster.png",
@@ -10,6 +10,7 @@ local conf = {
     activationOrigin = {-20, 0},
     shapeCoords = {26,0, 15,16, 15,-16, -14,-26, -26,-14, -26,14, -14,26},
     density = 8,
+    health = 800,
     text =
     {
         pos = {5.5, 5},

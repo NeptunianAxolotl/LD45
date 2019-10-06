@@ -9,22 +9,6 @@ end
 -- Component handling
 --------------------------------------------------
 
-local function UpdatePlayerComponentAttributes(player)
-    player.needKeybind = false
-    if player.ship then
-        for _, comp in player.ship.components.Iterator() do
-            if comp.def.text and not comp.activeKey then
-                player.needKeybind = true
-                break
-            end
-        end
-    end
-
-    if not player.needKeybind then
-        setKeybind = false
-    end
-end
-
 local componentIndex = 0
 local function SetupComponent(body, compDefName, params, reuseTable)
     params = params or {}
@@ -61,7 +45,7 @@ local function SetupComponent(body, compDefName, params, reuseTable)
     comp.nbhd = IterableMap.New()
 
     comp.maxHealth   = params.maxHealthOverride or comp.def.maxHealth
-    comp.health      = comp.maxHealth
+    comp.health      = params.health or comp.maxHealth
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
     comp.playerShip  = params.playerShip
@@ -181,7 +165,6 @@ local function ExpandJunkspace(world, junkList, px, py)
     end
 end
 
-
 local function SetupPlayer(world, junkList)
     local body = love.physics.newBody(world, 0, 0, "dynamic")
     body:setAngularVelocity(0.4)
@@ -193,7 +176,7 @@ local function SetupPlayer(world, junkList)
     local posX, posY = util.ToCart(bodyDir, 800)
     local vx, vy = util.ToCart(bodyDir + math.pi, 40)
 
-    local junk = MakeJunk(world, "booster", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
+    local junk = MakeJunk(world, "push_missile", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
     junkList[junk.junkIndex] = junk
 
     local components = IterableMap.New()
@@ -210,16 +193,15 @@ end
 -- Input
 --------------------------------------------------
 
-local function ActivateComponent(ship, comp, junkList, player)
+local function ActivateComponent(ship, comp, junkList, player, dt)
     local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
     local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
     local angle = ship.body:getAngle() + comp.angle
     vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
-    comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player)
+    comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
 end
 
-toggleKeys = {}
-local function UpdateInput(ship, junkList, player)
+local function UpdateComponentActivation(ship, junkList, player, dt)
     if not ship then
         return
     end
@@ -227,40 +209,24 @@ local function UpdateInput(ship, junkList, player)
     for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                ActivateComponent(ship, comp, junkList, player)
+                ActivateComponent(ship, comp, junkList, player, dt)
                 comp.activated = true
             else
                 comp.activated = false
             end
-        elseif comp.def.toggleActivate then
-            if comp.activated == true then
-                ActivateComponent(ship, comp, junkList, player)
-            end    
-        
-            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                for i, key in ipairs(toggleKeys) do
-                    if key == comp.activeKey then
-                        goto keyheld
-                    end
-                end
-                
-                table.insert(toggleKeys, comp.activeKey)
-                
-                if comp.activated == false then
-                    comp.activated = true
-                else
-                    comp.activated = false
-                end
-                
-                ::keyheld::
-                
-            else
-                for i, key in ipairs(toggleKeys) do
-                    if key == comp.activeKey then
-                        table.remove(toggleKeys, i)
-                    end
-                end
-            end
+        elseif comp.def.toggleActivate and comp.activated then
+            ActivateComponent(ship, comp, junkList, player, dt)
+        end
+    end
+end
+
+local function KeyPressed(player, junkList, key)
+    if not player.ship then
+        return
+    end
+    for _, comp in player.ship.components.Iterator() do
+        if comp.def.toggleActivate and comp.activeKey == key then
+            comp.activated = not comp.activated
         end
     end
 end
@@ -280,14 +246,14 @@ local function UpdateMovePlayerGuy(player, mx, my)
 
     local px, py = player.guy.body:getX(), player.guy.body:getY()
     local norm = util.Dist(mx, my, px, py)
-    if norm < 2*player.crawlSpeed then
+    if norm < player.crawlSpeed then
         return
     end
     local dx, dy = (mx - px)/norm, (my - py)/norm
     local nx, ny = px + dx*player.crawlSpeed, py + dy*player.crawlSpeed
 
-    local onShip, compIndex, compDist = util.GetNearestComponent(player.ship, px, py)
-    local newOnShip, newCompIndex, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
+    local onShip, comp, compDist = util.GetNearestComponent(player.ship, px, py)
+    local newOnShip, newComp, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
 
     local newAngle = util.Angle(dx, dy)
 
@@ -300,6 +266,29 @@ local function UpdateMovePlayerGuy(player, mx, my)
     end
 
     player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
+end
+
+local function UpdatePlayerComponentAttributes(player)
+    if not player.ship then
+        player.needKeybind = false
+        player.onComponent = false
+        return
+    end
+    local px, py = player.guy.body:getX(), player.guy.body:getY()
+    local onShip, comp, compDist = util.GetNearestComponent(player.ship, px, py, true)
+
+    if not comp then
+        player.needKeybind = false
+        player.onComponent = false
+        return
+    end
+    player.onComponent = comp
+
+    if comp.def.text and not comp.activeKey then
+        player.needKeybind = true
+        return
+    end
+    player.needKeybind = false
 end
 
 --------------------------------------------------
@@ -465,8 +454,6 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
             comp.fixture:setUserData(fixtureData)
 
             player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
-
-            UpdatePlayerComponentAttributes(player)
             return true
         end
     end
@@ -485,6 +472,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
                 xOff = xOff,
                 yOff = yOff,
                 angle = angle,
+                health = comp.health,
             }
         )
         player.ship.components.Add(newComp.index, newComp)
@@ -494,8 +482,6 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
     
     otherFixture:getBody():destroy()
     junkList[otherData.junkIndex] = nil
-
-    UpdatePlayerComponentAttributes(player)
 
     return true
 end
@@ -567,8 +553,10 @@ end
 
 return {
     SetupComponent = SetupComponent,
-    UpdateInput = UpdateInput,
+    UpdateComponentActivation = UpdateComponentActivation,
+    KeyPressed = KeyPressed,
     UpdateMovePlayerGuy = UpdateMovePlayerGuy,
+    UpdatePlayerComponentAttributes = UpdatePlayerComponentAttributes,
     TestJunkClick = TestJunkClick,
     ProcessCollisions = ProcessCollisions,
     beginContact = beginContact,
