@@ -8,6 +8,7 @@ local conf = {
     walkRadius = 28,
     maxHealth = 120,
     density = 0.2,
+    humanName = "a girder",
     isGirder = true,
 }
 

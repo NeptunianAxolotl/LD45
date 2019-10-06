@@ -7,6 +7,7 @@ local conf = {
     shapeCoords = {32,-12, 20,-22, -20,-22, -32,-12, 0,22},
     walkRadius = 45,
     maxHealth = 250,
+    humanName = "a laser prism",
     density = 1,
 }
 

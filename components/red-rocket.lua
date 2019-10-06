@@ -10,6 +10,7 @@ local conf = {
     shapeCoords = {0, -106.75, 38.5, -47.25, 54.25, 35.7, 36.75, 66.5, -36.75, 66.5, -54.25, 35.7, -38.5, -47.25},
     walkRadius = 70,
     maxHealth = 2200,
+    humanName = "a large rocket",
     density = 6,
     text =
     {

@@ -8,6 +8,7 @@ local conf = {
     shapeCoords = { 33,19, 33,-19, -33,-19, -33,19},
     walkRadius = 42,
     maxHealth = 180,
+    humanName = "a laser battery",
     density = 1,
 }
 

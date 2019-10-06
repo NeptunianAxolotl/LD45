@@ -11,6 +11,7 @@ local conf = {
     toggleActivate = true,
     maxHealth = 200,
     walkRadius = 20,
+    humanName = "a gyroscopic stabiliser",
     density = 1,
     text =
     {

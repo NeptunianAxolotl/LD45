@@ -11,6 +11,7 @@ local conf = {
     walkRadius = 40,
     maxHealth = 900,
     toggleActivate = true,
+    humanName = "a tractor beam",
     density = 1,
     text =
     {

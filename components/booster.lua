@@ -19,6 +19,7 @@ local conf = {
         scale = {1.5, 1.5},
         color = {0.8,0.1,0.1,1},
     },
+    humanName = "a booster",
     holdActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)

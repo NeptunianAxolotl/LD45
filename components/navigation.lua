@@ -9,6 +9,7 @@ local conf = {
     walkRadius = 32,
     maxHealth = 400,
     density = 1,
+    humanName = "a radar module",
     text =
     {
         pos = {0, 0},

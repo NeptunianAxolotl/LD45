@@ -7,6 +7,7 @@ local conf = {
     shapeCoords = { 45,5, 45,-5, -50,-5, -50,5},
     walkRadius = 50,
     maxHealth = 220,
+    humanName = "a gun",
     density = 1,
 }
 

@@ -9,6 +9,7 @@ local conf = {
     walkRadius = 40,
     maxHealth = 400,
     density = 1,
+    humanName = "a displacer",
     text =
     {
         pos = {-5, 5},

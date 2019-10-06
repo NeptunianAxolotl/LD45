@@ -12,6 +12,7 @@ local conf = {
     walkRadius = 30,
     maxHealth = 150,
     density = 8,
+    humanName = "an ion engine",
     text =
     {
         pos = {5.5, 5},

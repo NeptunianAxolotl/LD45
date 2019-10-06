@@ -9,6 +9,7 @@ local conf = {
     walkRadius = 40,
     maxHealth = 200,
     density = 1,
+    humanName = "a command module",
     name = "command module",
 }
 

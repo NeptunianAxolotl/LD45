@@ -9,6 +9,7 @@ local conf = {
     walkRadius = 45,
     maxHealth = 320,
     density = 2,
+    humanName = "some burner debris",
     text =
     {
         pos = {-5, 5},
