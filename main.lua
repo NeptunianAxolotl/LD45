@@ -99,6 +99,10 @@ end
 --------------------------------------------------
 
 function love.update(dt)
+    if love.keyboard.isDown("escape") then
+        introSystem.setIntro(false)
+    end
+    
     if not introSystem.updateIntro(dt) then
         lastDt = dt
         local px, py = (player.ship or player.guy).body:getWorldCenter()
@@ -126,11 +130,13 @@ local function SetupWorld()
 end
 
 function love.load()
-    math.randomseed(os.clock())
-    --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
-    drawSystem.load()
+    if not introSystem.loadIntro() then    
+        math.randomseed(os.clock())
+        --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
+        drawSystem.load()
 
-    SetupWorld()
+        SetupWorld()
 
-    player.guy = gameSystem.SetupPlayer(world, junkList)
+        player.guy = gameSystem.SetupPlayer(world, junkList)
+    end
 end
