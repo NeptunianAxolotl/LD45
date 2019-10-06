@@ -171,10 +171,10 @@ local function SetupPlayer(world, junkList)
 
     local bodyDir = math.random()*2*math.pi
 
-    body:setLinearVelocity(util.ToCart(bodyDir, 80))
+    body:setLinearVelocity(util.ToCart(bodyDir, 35))
 
     local posX, posY = util.ToCart(bodyDir, 800)
-    local vx, vy = util.ToCart(bodyDir + math.pi, 40)
+    local vx, vy = util.ToCart(bodyDir + math.pi, 35)
 
     local junk = MakeJunk(world, "booster", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
     junkList[junk.junkIndex] = junk
