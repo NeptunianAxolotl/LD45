@@ -1,6 +1,7 @@
 local conf = {
     imageOff = "images/navigation.png",
     imageOn = "images/navigationon.png",
+    imageDmg = {"images/navigationbreak1.png","images/navigationbreak2.png"},
     imageOrigin = {500, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},

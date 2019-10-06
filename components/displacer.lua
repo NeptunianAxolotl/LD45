@@ -1,6 +1,7 @@
 local conf = {
     imageOff = "images/displacer.png",
     imageOn = "images/displaceron.png",
+    imageDmg = {"images/displacerbreak1.png","images/displacerbreak2.png"},
     imageOrigin = {500, 550},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},
