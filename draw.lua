@@ -275,7 +275,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.push()
 
-    local wantedScale = 120/(math.sqrt((player.ship or player.guy).components.GetIndexMax()) + 120)
+    local wantedScale = 40/(math.sqrt((player.ship or player.guy).components.GetIndexMax()) + 40)
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
@@ -315,7 +315,7 @@ local function LoadComponentResources()
             for i = 1, #def.imageDmg do
                 def.imageDmg[i] = love.graphics.newImage(def.imageDmg[i])
             end
-            def.damBuckets = #def.imageDmg
+            def.damBuckets = #def.imageDmg + 1
         end
     end
 end

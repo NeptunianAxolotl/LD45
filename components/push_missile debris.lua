@@ -1,7 +1,7 @@
 local conf = {
     imageOff = "images/push_missile/push_missile_launch_debris.png",
     imageOn = "images/push_missile/push_missile_launch_debris.png",
-    imageOrigin = {15, 8},
+    imageOrigin = {30, 17.5},
     imageScale = {0.5, 0.5},
     activationOrigin = {0, 0},
     shapeCoords = { 15,8, -15,8, -15,-8, 15,-8},
