@@ -4,6 +4,7 @@ local FORCE = 500
 local conf = {
     imageOff = "images/ion engine 1.png",
     imageOn = "images/ion engine on 1.png",
+    imageDmg = {"images/ion engine damage","images/ion engine damage 2"},
     imageOrigin = {560, 537},
     imageScale = {0.05, 0.05},
     activationOrigin = {-20, 0},
