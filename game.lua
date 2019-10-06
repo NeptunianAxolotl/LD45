@@ -120,6 +120,15 @@ end
 -- Input
 --------------------------------------------------
 
+local function ActivateComponent(ship, comp, junkList, player)
+    local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+    local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
+    local angle = ship.body:getAngle() + comp.angle
+    vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
+    comp.def:onFunction(ship.body, ox + vx, oy + vy, angle, junkList, player)
+end
+
+
 local function UpdateInput(ship)
     if not ship then
         return
@@ -128,11 +137,24 @@ local function UpdateInput(ship)
         local comp = ship.components[i]
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
-                local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
-                local angle = ship.body:getAngle() + comp.angle
-                vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
-                comp.def:onFunction(ship.body, ox + vx, oy + vy, angle)
+                ActivateComponent(ship, comp)
+                comp.activated = true
+            else
+                comp.activated = false
+            end
+        end
+    end
+end
+
+local function KeypressInput(ship, key, isRepeat)
+    if not ship then
+        return
+    end
+    for i = 1, #ship.components do
+        local comp = ship.components[i]
+        if comp.def.holdActivate then
+            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
+                ActivateComponent(ship, comp)
                 comp.activated = true
             else
                 comp.activated = false
@@ -339,6 +361,25 @@ end
 -- Updates
 --------------------------------------------------
 
+function UpdateActivation(player, junkList)
+
+    local ship = player.ship
+    
+    if not ship then
+        return
+    end
+    
+    for i = 1, #ship.components do
+        local comp = ship.components[i]
+        if comp.def.toggleActivate and comp.activated then
+            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
+                ActivateComponent(ship, comp, junkList, player)
+            end
+        end
+    end
+end
+
+
 return {
     SetupComponent = SetupComponent,
     UpdateInput = UpdateInput,
@@ -350,4 +391,6 @@ return {
     MakeJunk = MakeJunk,
     MakeRandomJunk = MakeRandomJunk,
     SetupPlayer = SetupPlayer,
+    KeypressInput = KeypressInput,
+    UpdateActivation = UpdateActivation,
 }

@@ -62,6 +62,8 @@ function love.keypressed(key, scancode, isRepeat)
             end
         end
     end
+    
+    gameSystem.KeypressInput(player.ship, key, isRepeat)
 end
 
 local function MouseHitFunc(fixture)
@@ -109,6 +111,7 @@ end
 
 function love.update(dt)
     gameSystem.UpdateInput(player.ship)
+    gameSystem.UpdateActivation(player, junkList)
 
     local cx, cy = drawSystem.GetCameraTopLeft()
     local mx, my = love.mouse.getX() + cx, love.mouse.getY() + cy

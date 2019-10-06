@@ -3,32 +3,7 @@ local smoothCameraFactor = 0.25
 
 local starfield = require("starfield")
 
-local shipPart 
-
-local function intersection (x1, y1, x2, y2, x3, y3, x4, y4)
-  local d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-  local a = x1 * y2 - y1 * x2
-  local b = x3 * y4 - y3 * x4
-  local x = (a * (x3 - x4) - (x1 - x2) * b) / d
-  local y = (a * (y3 - y4) - (y1 - y2) * b) / d
-  return x, y
-end
-
-local function getAngles(self, sourceX, sourceY)
-    local angles = {}
-    
-    for i = 1, #self / 2 do
-        angles[#angles + 1] = math.atan2(sourceY - self[2 * i], sourceX - self[(2 * i) - 1])
-    end
-    
-    return angles
-end
-
-local function distance (x1, y1, x2, y2)
-      local dx = x1 - x2
-  local dy = y1 - y2
-  return math.sqrt ( dx * dx + dy * dy )    
-end
+local shipPart  
 
 local function paintShadows (bodyList, lightSource, minDistance)
     
@@ -48,7 +23,7 @@ local function paintShadows (bodyList, lightSource, minDistance)
             local _points = {junkList[i]:getWorldPoints(points[1], points[2], points[3], points[4], points[5], points[6], points[7], points[8])}
             
             for i = 1, #_points / 2 do
-                if distance(_points[2 * i - 1], _points[2 * i], lightSource.x, lightSource.y) < minDistance then
+                if Dist(_points[2 * i - 1], _points[2 * i], lightSource.x, lightSource.y) < minDistance then
                     goto continue
                 end
             end
