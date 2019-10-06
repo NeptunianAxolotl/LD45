@@ -138,7 +138,7 @@ local function ActivateComponent(ship, comp, junkList, player)
     comp.def:onFunction(ship.body, ox + vx, oy + vy, angle, junkList, player)
 end
 
-
+toggleKeys = {}
 local function UpdateInput(ship, junkList, player)
     if not ship then
         return
@@ -153,12 +153,32 @@ local function UpdateInput(ship, junkList, player)
                 comp.activated = false
             end
         elseif comp.def.toggleActivate then
+            if comp.activated == true then
+                ActivateComponent(ship, comp, junkList, player)
+            end    
+        
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                if comp.activated == true then
-                    comp.activated = false
-                else
-                    ActivateComponent(ship, comp, junkList, player)
+                for i, key in ipairs(toggleKeys) do
+                    if key == comp.activeKey then
+                        goto keyheld
+                    end
+                end
+                
+                table.insert(toggleKeys, comp.activeKey)
+                
+                if comp.activated == false then
                     comp.activated = true
+                else
+                    comp.activated = false
+                end
+                
+                ::keyheld::
+                
+            else
+                for i, key in ipairs(toggleKeys) do
+                    if key == comp.activeKey then
+                        table.remove(toggleKeys, i)
+                    end
                 end
             end
         end

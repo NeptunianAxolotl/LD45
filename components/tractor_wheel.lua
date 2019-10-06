@@ -54,6 +54,9 @@ local conf = {
             
             drawables = {}
             drawables[#drawables + 1] = object
+            
+            print (drawables)
+            print (#drawables)
         end
     end,
 }
