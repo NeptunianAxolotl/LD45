@@ -1,3 +1,5 @@
+local FORCE = 3000
+
 local conf = {
     imageOff = "images/tractor_wheel.png",
     imageOn = "images/tractor_wheel_on.png",
@@ -25,9 +27,7 @@ local conf = {
         local minDistBody
         
         if junkList then
-            for i = 1, #junkList do
-                local junk = junkList[i]
-                
+            for i, junk in ipairs(junkList) do
                 distance = util.Dist(activeX, activeY, junk.body:getX(), junk.body:getY())
                 
                 if (not minDistance) or (distance < minDistance) then
@@ -43,15 +43,16 @@ local conf = {
             local jx, jy = minDistBody.body:getX(), minDistBody.body:getY()
             local activeAngle = util.Angle(jx - activeX, jy - activeY)
             local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
-            minDistBody:applyForce(fx, fy, activeX, activeY)
+            minDistBody.body:applyForce(fx, fy, activeX, activeY)
             
             local object = {}
             object.type = "tractorbeam"
             object.x = activeX
             object.y = activeY
-            object.x2 = minDistBody:getX()
-            object.y2 = minDistBody:getY()
+            object.x2 = minDistBody.body:getX()
+            object.y2 = minDistBody.body:getY()
             
+            drawables = {}
             drawables[#drawables + 1] = object
         end
     end,

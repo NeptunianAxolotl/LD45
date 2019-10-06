@@ -153,15 +153,7 @@ local function UpdateInput(ship, junkList, player)
                 comp.activated = false
             end
         elseif comp.def.toggleActivate then
-            print(comp.activeKey)
-            
-            if comp.activeKey then
-                print(love.keyboard.isDown(comp.activeKey))
-            end
-            
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                print(comp.activated)
-                
                 if comp.activated == true then
                     comp.activated = false
                 else
@@ -172,24 +164,6 @@ local function UpdateInput(ship, junkList, player)
         end
     end
 end
-
---[[
-local function KeypressInput(ship, key, isRepeat)
-    if not ship then
-        return
-    end
-    for _, comp in ship.components.Iterator() do
-        if comp.def.holdActivate then
-            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                ActivateComponent(ship, comp)
-                comp.activated = true
-            else
-                comp.activated = false
-            end
-        end
-    end
-end
-]]--
 
 local function TestJunkClick(junk)
     junk.selected = not junk.selected
@@ -445,24 +419,6 @@ end
 --------------------------------------------------
 -- Updates
 --------------------------------------------------
-
---[[
-function UpdateActivation(player, junkList)
-
-    local ship = player.ship
-    
-    if not ship then
-        return
-    end
-    
-    for _, comp in ship.components.Iterator() do
-        if comp.def.toggleActivate and comp.activated then
-            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-            end
-        end
-    end
-end
-]]--
 
 return {
     SetupComponent = SetupComponent,
