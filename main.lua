@@ -89,19 +89,17 @@ end
 --------------------------------------------------
 
 local function beginContact(a, b, coll)
-    gameSystem.beginContact(a, b, col1)
+    gameSystem.beginContact(a, b, coll)
 end
 
 local function endContact(a, b, coll)
-    gameSystem.endContact(a, b, col1)
 end
 
 local function preSolve(a, b, coll)
-
 end
 
 local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)
-
+    gameSystem.postSolve(a, b, coll,  normalimpulse, tangentimpulse)
 end
 
 --------------------------------------------------

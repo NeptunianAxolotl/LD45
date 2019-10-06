@@ -60,6 +60,7 @@ local function SetupComponent(body, compDefName, params, reuseTable)
 
     comp.nbhd = IterableMap.New()
 
+    comp.health = comp.def.maxHealth
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
     comp.playerShip  = params.playerShip
@@ -381,27 +382,15 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
             DeleteComponent(ship, comp)
         end
     end
-    
-    for _, comp in ship.components.Iterator() do
-        comp.floodfillVal = false
+end
+
+local function DamageComponent(world, player, junkList, ship, comp, damage)
+    comp.health = comp.health - damage
+    if comp.health > 0 then
+        return
     end
 
-    local guyComponent = GetGuyComponent(player)
-    FloodFromPoint(guyComponent, 1)
-
-    for _, comp in ship.components.Iterator() do
-        if not comp.floodfillVal then
-            if not comp.def.isGirder then
-                local x, y = ship.body:getWorldPoint(comp.xOff, comp.yOff)
-                local vx, vy = ship.body:getLinearVelocity()
-                local angle = ship.body:getAngle() + comp.angle
-
-                local junk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, ship.body:getAngularVelocity(), comp)
-                junkList[junk.junkIndex] = junk
-            end 
-            DeleteComponent(ship, comp)
-        end
-    end
+    RemoveComponent(world, player, junkList, ship, comp)
 end
 
 --------------------------------------------------
@@ -507,7 +496,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
 end
 
 local function ProcessCollision(key, data, index, world, player, junkList)
-    local playerFixture, otherFixture = data[1], data[2]
+    local playerFixture, otherFixture, colSpeed = data[1], data[2], data[3]
     if otherFixture:isDestroyed() or playerFixture:isDestroyed() then
         return true
     end
@@ -519,13 +508,13 @@ local function ProcessCollision(key, data, index, world, player, junkList)
             return true
         end
     end
+
+    local damage = colSpeed
     
     if not playerData.isPlayer then
-        RemoveComponent(world, player, junkList, player.ship, playerData.comp)
-        RemoveComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp)
+        DamageComponent(world, player, junkList, player.ship, playerData.comp, damage)
+        DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, damage)
     end
-
-    print("player.ship", player.ship)
 
     return true
 end
@@ -534,8 +523,9 @@ local function ProcessCollisions(world, player, junkList)
     collisionToAdd.Apply(ProcessCollision, world, player, junkList)
 end
 
-local function beginContact(a, b, col1)
+local function beginContact(a, b, coll)
     local aData, bData = a:getUserData() or {}, b:getUserData() or {}
+
 
     local aIsPlayer = (aData.isPlayer or aData.playerShip)
     local bIsPlayer = (bData.isPlayer or bData.playerShip)
@@ -552,10 +542,18 @@ local function beginContact(a, b, col1)
        return 
     end
 
-    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture})
+    local cx1, cy1, cx2, cy2 = coll:getPositions()
+    local mx, my = (cx1 + (cx2 or cx1))/2, (cy1 + (cy2 or cy1))/2
+
+    local pvx, pvy = playerFixture:getBody():getLinearVelocityFromWorldPoint(mx, my)
+    local ovx, ovy = otherFixture:getBody():getLinearVelocityFromWorldPoint(mx, my)
+    local vx, vy = pvx - ovx, pvy - ovy
+    local speed = util.AbsVal(vx, vy)
+
+    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture, speed})
 end
 
-local function endContact(a, b, col1)
+local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)
 end
 
 --------------------------------------------------
@@ -570,6 +568,7 @@ return {
     ProcessCollisions = ProcessCollisions,
     beginContact = beginContact,
     endContact = endContact,
+    postSolve = postSolve,
     MakeJunk = MakeJunk,
     ExpandJunkspace = ExpandJunkspace,
     SetupPlayer = SetupPlayer,

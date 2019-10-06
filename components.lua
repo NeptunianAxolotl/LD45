@@ -21,6 +21,7 @@ components.navigation = require("components/navigation")
 local compList = {}
 for name, def in pairs(components) do
     def.name = name
+    def.maxHealth = def.maxHealth or 350
     def.walkRadius = def.walkRadius or 34
     if name ~= "player" and not def.isGirder then
         compList[#compList + 1] = def
