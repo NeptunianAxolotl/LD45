@@ -1,5 +1,5 @@
-local MIN_DISTANCE = 700
-local FORCE = 1600
+local FORCE = 2000000
+local CHANGE_SPEED = 3.4
 
 local conf = {
     imageOn = "images/gyro.png",
@@ -20,16 +20,34 @@ local conf = {
         color = {0,0,0,1},
     },
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
-        comp.power = (comp.power or 0) + 0.6*dt
+        local angularVelocity = body:getAngularVelocity()
+        
+        comp.power = (comp.power or 0) + math.tanh(-angularVelocity*6)*CHANGE_SPEED*dt
+        if comp.power < -1 then
+            comp.power = -1
+        end
         if comp.power > 1 then
             comp.power = 1
         end
+        body:applyTorque(FORCE*comp.power)
         comp.drawAngle = ((comp.drawAngle or 0) + dt*5*comp.power)%(math.pi*2)
     end,
     offFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
-        comp.power = (comp.power or 0) - 0.6*dt
-        if comp.power < 0 then
-            comp.power = 0
+        if not comp.power then
+            return
+        end
+        if comp.power > 0 then
+            comp.power = comp.power - CHANGE_SPEED*dt
+            if comp.power < 0 then
+                comp.power = 0
+            end
+            body:applyTorque(FORCE*comp.power)
+        elseif comp.power < 0 then
+            comp.power = comp.power + CHANGE_SPEED*dt
+            if comp.power > 0 then
+                comp.power = 0
+            end
+            body:applyTorque(FORCE*comp.power)
         end
         comp.drawAngle = ((comp.drawAngle or 0) + dt*5*comp.power)%(math.pi*2)
     end,
