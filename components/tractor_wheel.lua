@@ -20,27 +20,28 @@ local conf = {
     toggleActivate = true,
     onFunction = function (self, body, activeX, activeY, angle, junkList, player)
         local distance
-        local _body
         
         local minDistance
         local minDistBody
         
         if junkList then
             for i = 1, #junkList do
-                _body = junkList[i]
+                local junk = junkList[i]
                 
-                print(junkList[i])
-                distance = Dist(activeX, activeY, junkList[i]:getX(), junkList[i]:getY())
+                distance = util.Dist(activeX, activeY, junk.body:getX(), junk.body:getY())
                 
-                if distance < minDistance then
+                if (not minDistance) or (distance < minDistance) then
                     minDistance = distance
-                    minDistBody = _body
+                    minDistBody = junk
                 end
             end
+
+            if not minDistBody then
+                return
+            end
             
-            print("tractorbeam")
-            
-            local activeAngle = minDistBody:getAngles(activeX, activeY)
+            local jx, jy = minDistBody.body:getX(), minDistBody.body:getY()
+            local activeAngle = util.Angle(jx - activeX, jy - activeY)
             local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
             minDistBody:applyForce(fx, fy, activeX, activeY)
             

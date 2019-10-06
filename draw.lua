@@ -224,13 +224,14 @@ local function DrawShip(ship)
     end
 end
 
-local function UpdateCameraPos(player)
+local function UpdateCameraPos(player, scale)
     local ship = player.ship or player.guy
     local px, py = ship.body:getWorldCenter()
     cameraX = (1 - smoothCameraFactor)*cameraX + smoothCameraFactor*px
     cameraY = (1 - smoothCameraFactor)*cameraY + smoothCameraFactor*py
+    cameraScale = (1 - smoothCameraFactor)*cameraScale + smoothCameraFactor*scale
 
-    return cameraX, cameraY
+    return cameraX, cameraY, cameraScale
 end
 
 local externalFunc = {}
@@ -247,13 +248,12 @@ function externalFunc.draw(world, player, junkList, debugEnabled)
 
     love.graphics.push()
 
-    local cx, cy = UpdateCameraPos(player)
+    local wantedScale = 1/math.sqrt(math.sqrt((player.ship or player.guy).components.GetIndexMax()))
+    local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
-    if player.ship then
-        cameraScale = 1/math.sqrt(math.sqrt(player.ship.components.GetIndexMax()))
-    end
-    love.graphics.scale(cameraScale)
+
+    love.graphics.scale(cScale)
     love.graphics.translate(winWidth/(2*cameraScale) - cx, winHeight/(2*cameraScale) - cy)
     -- Worldspace
     for _, junk in pairs(junkList) do

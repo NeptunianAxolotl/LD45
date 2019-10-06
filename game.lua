@@ -144,8 +144,6 @@ local function UpdateInput(ship, junkList, player)
         return
     end
     
-    print ("input")
-    
     for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
@@ -155,7 +153,6 @@ local function UpdateInput(ship, junkList, player)
                 comp.activated = false
             end
         elseif comp.def.toggleActivate then
-            print("toggle")
             print(comp.activeKey)
             
             if comp.activeKey then
@@ -166,10 +163,8 @@ local function UpdateInput(ship, junkList, player)
                 print(comp.activated)
                 
                 if comp.activated == true then
-                    print("toggle off")
                     comp.activated = false
                 else
-                    print ("toggle on")
                     ActivateComponent(ship, comp, junkList, player)
                     comp.activated = true
                 end
@@ -285,7 +280,7 @@ local function RemoveComponent(ship, delComp)
     --end
 
     if #floodValues == 0 then
-        DeleteComponent(ship, delComp)
+        --DeleteComponent(ship, delComp)
         if ship.components.IsEmpty() then
             if ship.junkIndex then
                 --ship.junkIndex
