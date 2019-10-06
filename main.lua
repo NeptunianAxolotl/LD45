@@ -27,6 +27,29 @@ local junkIndex = 0
 local lastDt = 0
 function love.draw()
     if not introSystem.drawIntro() then
+        local winWidth  = love.graphics:getWidth()
+        local winHeight = love.graphics:getHeight()
+        
+        winPoints = {}
+        winPoints[1] = 0
+        winPoints[2] = 0
+        winPoints[3] = 0
+        winPoints[4] = winHeight
+        winPoints[5] = winWidth
+        winPoints[6] = winHeight
+        winPoints[7] = winWidth
+        winPoints[8] = 0
+        
+        local introTimer = introSystem.getIntroTimer()
+        local introCancel = introSystem.getIntroCancel()
+        
+        if introTimer > introCancel + 2 and introTimer < introCancel + 3 then
+            print (math.min((1 - (introTimer - (introCancel + 3)) / 1), 1))
+            love.graphics.setColor(0, 0, 0, math.min((1 - (introTimer - 23) / 1), 1))
+            love.graphics.polygon("fill", winPoints)
+            love.graphics.setColor(1,1,1)
+        end
+        
         drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
     end
 end
@@ -92,7 +115,7 @@ end
 
 function love.update(dt)
     if love.keyboard.isDown("escape") then
-        introSystem.setIntro(false)
+        introSystem.setIntroCancel()
     end
     
     if not introSystem.updateIntro(dt) then
