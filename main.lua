@@ -29,7 +29,7 @@ local junkIndex = 0
 
 local lastDt = 0
 function love.draw()
-    if intro == true
+    if intro == true then
         
     end
     
