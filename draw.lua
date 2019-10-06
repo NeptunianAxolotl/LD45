@@ -152,7 +152,7 @@ local function DrawDebug(world, player)
     love.graphics.setColor(1, 1, 1, 1)
 end
 
-local function DrawShip(ship)
+local function DrawShip(ship, debugEnabled)
     if not ship then
         return
     end
@@ -171,9 +171,8 @@ local function DrawShip(ship)
     -- Draw other things
     for _, comp in ship.components.Iterator() do
 
+        local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
         if not comp.def.isGirder then
-            local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
-
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
 
             love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
@@ -215,6 +214,15 @@ local function DrawShip(ship)
                     love.graphics.setLineWidth(1)
                 end  
             end
+        end
+
+        if debugEnabled and not comp.nbhd.IsEmpty() then
+            love.graphics.setColor(0, 1, 0, 1)
+            for _, other in comp.nbhd.Iterator() do
+                local ox, oy = ship.body:getWorldPoint(other.xOff, other.yOff)
+                love.graphics.line(dx, dy, ox, oy)
+            end
+            love.graphics.setColor(1, 1, 1, 1)
         end
     end
     
@@ -258,7 +266,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.push()
 
-    local wantedScale = 40/((player.ship or player.guy).components.GetIndexMax() + 40)
+    local wantedScale = 120/((player.ship or player.guy).components.GetIndexMax() + 120)
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
@@ -267,11 +275,11 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     love.graphics.translate(winWidth/(2*cameraScale) - cx, winHeight/(2*cameraScale) - cy)
     -- Worldspace
     for _, junk in pairs(junkList) do
-        DrawShip(junk)
+        DrawShip(junk, debugEnabled)
     end
 
-    DrawShip(player.ship)
-    DrawShip(player.guy)
+    DrawShip(player.ship, debugEnabled)
+    DrawShip(player.guy, debugEnabled)
 
     if debugEnabled then
         DrawDebug(world, player)

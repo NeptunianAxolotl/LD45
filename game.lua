@@ -245,7 +245,7 @@ local function DeleteComponent(ship, delComp)
     delComp.fixture:destroy()
 end
 
-local function FloodFromPoint(comp, floodVal, ignoreIndex)
+local function FloodFromPoint(comp, floodVal)
     if comp.floodfillVal then
         return false
     end
@@ -257,7 +257,7 @@ local function FloodFromPoint(comp, floodVal, ignoreIndex)
         vertex.floodfillVal = floodVal
         front[#front] = nil
         for _, comp in vertex.nbhd.Iterator() do
-            if (not comp.floodfillVal) and (not ignoreIndex[comp.index]) then
+            if (not comp.floodfillVal) then
                 front[#front + 1] = comp
             end
         end
@@ -271,74 +271,41 @@ local function GetGuyComponent(player)
     return closestComp
 end
 
-local function SplitPartOffShip(world, junkList, ship, floodfillVal)
-    local parentBody = ship.body
-    local splitJunk, splitBody
-    for _, comp in ship.components.Iterator() do
-        if floodfillVal == comp.floodfillVal then
-            if not splitJunk then
-                local x, y = parentBody:getWorldPoint(comp.xOff, comp.yOff)
-                local vx, vy = parentBody:getLinearVelocity()
-                local angle = parentBody:getAngle() + comp.angle
-
-                splitJunk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, parentBody:getAngularVelocity(), comp)
-                junkList[splitJunk.junkIndex] = splitJunk
-
-                splitBody = splitJunk.body
-            else
-                local xOff, yOff = splitBody:getLocalPoint(parentBody:getWorldPoint(comp.xOff, comp.yOff))
-        
-                local angle = parentBody:getAngle() - splitBody:getAngle() + comp.angle
-        
-                local newComp = SetupComponent(splitBody, comp.def.name, {
-                        playerShip = nil,
-                        fixtureData = {playerShip = nil, compDefName = comp.def.name},
-                        xOff = xOff,
-                        yOff = yOff,
-                        angle = angle,
-                    }
-                )
-                splitJunk.components.Add(comp.index, comp)
-            end
+local function RemoveComponent(world, player, junkList, ship, delComp)
+    DeleteComponent(ship, delComp)
+    if ship.components.IsEmpty() then
+        if ship.junkIndex then
+            ship.body:destroy()
+            junkList[ship.junkIndex] = nil
         else
-            DeleteComponent(ship, comp)
+            player.ship.body:destroy()
+            player.ship = nil
+            player.joint = nil
         end
     end
-end
 
-local function RemoveComponent(world, player, junkList, ship, delComp)
+    if (not ship.playerShip) or (not player.ship) then
+        return
+    end
+
     for _, comp in ship.components.Iterator() do
         comp.floodfillVal = false
     end
 
-    local floodValues = {}
-    for _, comp in delComp.nbhd.Iterator() do
-        local floodIndex = FloodFromPoint(comp, comp.index, {[delComp.index] = true})
-        if floodIndex then
-            floodValues[#floodValues + 1] = floodIndex
-        end
-    end
+    local guyComponent = GetGuyComponent(player)
+    FloodFromPoint(guyComponent, 1)
 
-    DeleteComponent(ship, delComp)
-    if #floodValues <= 1 then
-        if ship.components.IsEmpty() then
-            if ship.junkIndex then
-                ship.body:destroy()
-                junkList[ship.junkIndex] = nil
-            else
-                player.ship.body:destroy()
-                player.ship = nil
-                player.joint = nil
-            end
-        end
-        return
-    end
+    for _, comp in ship.components.Iterator() do
+        if not comp.floodfillVal then
+            if not comp.def.isGirder then
+                local x, y = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+                local vx, vy = ship.body:getLinearVelocity()
+                local angle = ship.body:getAngle() + comp.angle
 
-    local keptPart = (ship.junkIndex and floodValues[1]) or GetGuyComponent(player).floodfillVal
-
-    for i = 1, #floodValues do
-        if floodValues[i] ~= keptPart then
-            SplitPartOffShip(world, junkList, ship, floodValues[i])
+                local junk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, ship.body:getAngularVelocity(), comp)
+                junkList[junk.junkIndex] = junk
+            end 
+            DeleteComponent(ship, comp)
         end
     end
 end
