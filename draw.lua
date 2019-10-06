@@ -2,9 +2,10 @@ local cameraX, cameraY, cameraScale = 0, 0, 1
 local smoothCameraFactor = 0.25
 
 local starfield = require("starfield")
+local animationDefs = {}
+local animations = IterableMap.New()
 
 local shipPart  
-
 
 local function paintShadows (bodyList, lightSource, minDistance)
     
@@ -217,8 +218,6 @@ local function DrawShip(ship)
         end
     end
     
-    
-
     if debugEnabled then
         love.graphics.draw(shipPart, ship.body:getX(), ship.body:getY(), ship.body:getAngle(), 0.02, 0.02, 400, 300)
     end
@@ -242,7 +241,18 @@ function externalFunc.WindowSpaceToWorldSpace(wx, wy)
     return cameraX + (wx-(winWidth/2))/cameraScale, cameraY + (wy-(winHeight/2))/cameraScale
 end
 
-function externalFunc.draw(world, player, junkList, debugEnabled) 
+local function DoAnimation(_, data, _, dt)
+    if data.t >= data.def.duration then
+        return true
+    end
+    local frame = math.floor(#data.def.quads*data.t/data.def.duration) + 1
+    love.graphics.draw(data.def.spriteSheet, data.def.quads[frame], data.x, data.y, 0)
+    data.t = data.t + dt
+
+    return false
+end
+
+function externalFunc.draw(world, player, junkList, debugEnabled, dt) 
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
 
@@ -267,6 +277,8 @@ function externalFunc.draw(world, player, junkList, debugEnabled)
         DrawDebug(world, player)
     end
 
+    animations.Apply(DoAnimation, dt)
+
     love.graphics.pop()
     -- UI space
 
@@ -285,9 +297,38 @@ local function LoadComponentResources()
     end
 end
 
-function externalFunc.load()
+local function LoadAnimation(image, width, height, duration)
+    image = love.graphics.newImage(image)
+    local animation = {}
+    animation.spriteSheet = image
+    animation.quads = {}
+
+    for y = 0, image:getHeight() - height, height do
+        for x = 0, image:getWidth() - width, width do
+            table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
+        end
+    end
+
+    animation.duration = duration or 1
+
+    return animation
+end
+
+local animationIndex = 0
+function externalFunc.PlayAnimation(name, x, y)
+    animationIndex = animationIndex + 1
+    animations.Add(animationIndex, {def = animationDefs[name], x = x, y = y, t = 0})
+end
+
+function externalFunc.load(animationList)
     shipPart = love.graphics.newImage('images/ship.png')
     LoadComponentResources()
+
+    local animationList = require("animations")
+    for i = 1, #animationList do
+        local data = animationList[i]
+        animationDefs[data.name] = LoadAnimation(data.image, data.width, data.height, data.duration)
+    end
 end
 
 return externalFunc

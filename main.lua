@@ -26,8 +26,9 @@ local SPAWN_SIZE = 12000
 -- Draw
 --------------------------------------------------
 
+local lastDt = 0
 function love.draw()
-    drawSystem.draw(world, player, junkList, debugEnabled)
+    drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
 end
 
 --------------------------------------------------
@@ -108,6 +109,7 @@ end
 --------------------------------------------------
 
 function love.update(dt)
+    lastDt = dt
     gameSystem.UpdateInput(player.ship, junkList, player)
 
     local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
@@ -117,6 +119,10 @@ function love.update(dt)
         world:update(dt)
     end
     gameSystem.ProcessCollisions(world, player, junkList)
+
+    if math.random() < 0.05 then
+        drawSystem.PlayAnimation("explosion", math.random()*500 - 250, math.random()*500 - 250)
+    end
 end
 
 --------------------------------------------------

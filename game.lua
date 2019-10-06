@@ -28,17 +28,15 @@ end
 local componentIndex = 0
 local function SetupComponent(body, compDefName, params, reuseTable)
     params = params or {}
-    local comp = reuseTable or {}
+    local comp = {}
     comp.def = compConfig[compDefName]
 
     comp.xOff = params.xOff or 0
     comp.yOff = params.yOff or 0
     comp.angle = params.angle or 0
 
-    if not reuseTable then
-        componentIndex = componentIndex + 1
-        comp.index = componentIndex
-    end
+    componentIndex = componentIndex + 1
+    comp.index = componentIndex
 
     local xOff, yOff, angle = comp.xOff, comp.yOff, comp.angle
     if comp.def.circleShapeRadius then
@@ -82,7 +80,7 @@ local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, reuseCo
 
     local junkBody = love.physics.newBody(world, x, y, "dynamic")
 
-    local comp = SetupComponent(junkBody, compDefName, {fixtureData = {junkIndex = junkIndex, compDefName = compDefName}}, reuseComponent)
+    local comp = SetupComponent(junkBody, compDefName, {fixtureData = {junkIndex = junkIndex, compDefName = compDefName}})
     junkBody:setAngle(angle)
     junkBody:setLinearVelocity(vx, vy)
     junkBody:setAngularVelocity(vangle)
@@ -283,7 +281,7 @@ local function SplitPartOffShip(world, junkList, ship, floodfillVal)
                 local vx, vy = parentBody:getLinearVelocity()
                 local angle = parentBody:getAngle() + comp.angle
 
-                splitJunk = MakeJunk(world, index, compDefName, x, y, angle, vx, vy, parentBody:getAngularVelocity(), comp)
+                splitJunk = MakeJunk(world, comp.def.name, x, y, angle, vx, vy, parentBody:getAngularVelocity(), comp)
                 junkList[splitJunk.junkIndex] = splitJunk
 
                 splitBody = splitJunk.body
@@ -292,14 +290,13 @@ local function SplitPartOffShip(world, junkList, ship, floodfillVal)
         
                 local angle = parentBody:getAngle() - splitBody:getAngle() + comp.angle
         
-                local newComp = SetupComponent(splitBody, otherData.compDefName, {
+                local newComp = SetupComponent(splitBody, comp.def.name, {
                         playerShip = nil,
                         fixtureData = {playerShip = nil, compDefName = comp.def.name},
                         xOff = xOff,
                         yOff = yOff,
                         angle = angle,
-                    },
-                    comp
+                    }
                 )
                 splitJunk.components.Add(comp.index, comp)
             end
@@ -376,9 +373,10 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
 end
 
 local function AddGirders(player, newComp)
+    local on, nearestComp = GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
     for _, comp in player.ship.components.Iterator() do
         if comp ~= newComp.index then
-            if not comp.def.isGirder then
+            if (not comp.def.isGirder) or (nearestComp and nearestComp.index == comp.index) then
                 local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
 
                 if dist > 3 and dist < player.girderAddDist then
