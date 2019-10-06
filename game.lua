@@ -94,11 +94,12 @@ local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, reuseCo
     }
 end
 
-local function MakeRandomJunk(world, midX, midY, size, exclusionRad)
-    local posX = math.random()*size + midX - size/2
-    local posY = math.random()*size + midY - size/2
+local function MakeRandomJunk(world, midX, midY, size, exclX, exclY, exclusionRad)
+    --print("mrj",world, midX, midY, size, exclX, exclY, exclusionRad)
+    local posX = exclX
+    local posY = exclY
 
-    while util.AbsVal(posX - midX, posY - midY) < exclusionRad do
+    while util.AbsVal(posX - exclX, posY - exclY) < exclusionRad do
         posX = math.random()*size + midX - size/2
         posY = math.random()*size + midY - size/2
     end
@@ -106,6 +107,78 @@ local function MakeRandomJunk(world, midX, midY, size, exclusionRad)
     local compDefName = GetRandomComponent()
     return MakeJunk(world, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
 end
+
+local regionsWithJunk = {}
+local function ExpandJunkspace(world, junkList, px, py)
+
+    --Region 0,0 is centered on 0,0; has top left corner at -5000,-5000.
+    local REGION_SIZE = 5000
+    local function WorldPositionToRegionIndex(x, y)
+        return math.floor((x+(REGION_SIZE/2))/REGION_SIZE),math.floor((y+(REGION_SIZE/2))/REGION_SIZE)
+    end
+    local prX, prY = WorldPositionToRegionIndex(px, py)
+    --[[
+    for every junk, if it is not in a region adjacent to the player, delete it
+    ]]--
+    local toDestroy = {}
+    for k, v in pairs(junkList) do
+        local jrX, jrY = WorldPositionToRegionIndex(v.body:getX(),v.body:getY())
+
+        if prX - jrX > 1 or jrX - prX > 1 or prY - jrY > 1 or jrY - prY > 1 then
+            v.body:destroy()
+            toDestroy[#toDestroy+1] = k
+        end
+    end
+    for i, k in ipairs(toDestroy) do
+        junkList[k] = nil
+    end
+    --[[
+    for every region not adjacent to the player;
+     remove that region from regionsWithJunk
+    ]]--
+    local xRegionsToKill = {}
+    local xyRegionsToKill = {}
+
+    for xR, ys in pairs(regionsWithJunk) do
+        if prX - xR > 1 or prX - xR > 1 then
+            xRegionsToKill[xR] = true
+        else
+            xyRegionsToKill[xR] = xyRegionsToKill[xR] or {}
+            for yR, v in pairs(ys) do
+                if prY - yR > 1 or prY - yR > 1 then
+                    xyRegionsToKill[xR][yR] = true
+                end
+            end
+        end
+    end
+    for x, v in pairs(xRegionsToKill) do
+        regionsWithJunk[x] = nil
+    end
+    for x, ys in pairs(xyRegionsToKill) do
+        for y, v in pairs(ys) do
+            regionsWithJunk[x][y] = nil
+        end
+    end
+    --[[
+    for every region adjacent to the player;
+    if the region does not already have junk,
+      add junk to that region, and update regionsWithJunk
+    ]]--
+    for x = -1, 1 do
+        for y = -1, 1 do
+            if not (regionsWithJunk[prX+x] and regionsWithJunk[prX+x][prY+y]) then
+                local JUNK_PER_REGION = 100
+                for i = 1, JUNK_PER_REGION do
+                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py, 1000)
+                    junkList[junk.junkIndex] = junk
+                end
+                if not regionsWithJunk[prX+x] then regionsWithJunk[prX+x] = {} end
+                regionsWithJunk[prX+x][prY+y] = true
+            end
+        end
+    end
+end
+
 
 local function SetupPlayer(world, junkList)
     local body = love.physics.newBody(world, 0, 0, "dynamic")
@@ -498,7 +571,7 @@ return {
     beginContact = beginContact,
     endContact = endContact,
     MakeJunk = MakeJunk,
-    MakeRandomJunk = MakeRandomJunk,
+    ExpandJunkspace = ExpandJunkspace,
     SetupPlayer = SetupPlayer,
     KeypressInput = KeypressInput,
     UpdateActivation = UpdateActivation,

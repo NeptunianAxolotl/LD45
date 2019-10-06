@@ -110,6 +110,8 @@ end
 
 function love.update(dt)
     lastDt = dt
+    local px, py =  (player.ship or player.guy).body:getWorldCenter()
+    gameSystem.ExpandJunkspace(world, junkList, px, py)
     gameSystem.UpdateInput(player.ship, junkList, player)
 
     local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
@@ -132,11 +134,6 @@ end
 local function SetupWorld()
     world = love.physics.newWorld(0, 0, true) -- Last argument is whether sleep is allowed.
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
-
-    for i = 1, 2000 do
-        local junk = gameSystem.MakeRandomJunk(world, 0, 0, SPAWN_SIZE, 1000)
-        junkList[junk.junkIndex] = junk
-    end
 end
 
 function love.load()
