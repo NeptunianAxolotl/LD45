@@ -51,8 +51,7 @@ function love.keypressed(key, scancode, isRepeat)
             if key == 'space' then
                 player.setKeybind = not player.setKeybind
             elseif player.setKeybind then
-                for i = 1, #player.ship.components do
-                    local comp = player.ship.components[i]
+                for _, comp in player.ship.components.Iterator() do
                     if comp.def.text and not comp.activeKey then
                         comp.activeKey = key
                     end

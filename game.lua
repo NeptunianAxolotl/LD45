@@ -12,8 +12,7 @@ end
 local function UpdatePlayerComponentAttributes(player)
     player.needKeybind = false
     if player.ship then
-        for i = 1, #player.ship.components do
-            local comp = player.ship.components[i]
+        for _, comp in player.ship.components.Iterator() do
             if comp.def.text and not comp.activeKey then
                 player.needKeybind = true
                 break
@@ -82,9 +81,12 @@ local function MakeJunk(world, index, compDefName, x, y, angle, vx, vy, vangle)
     junkBody:setAngle(angle)
     junkBody:setLinearVelocity(vx, vy)
     junkBody:setAngularVelocity(vangle)
+    
+    local components = IterableMap.New()
+    components.Add(comp.index, comp)
     return {
         body = junkBody,
-        components = {comp}
+        components = components
     }
 end
 
@@ -113,8 +115,9 @@ local function SetupPlayer(world, junkList, junkIndex)
     local vx, vy = util.ToCart(bodyDir + math.pi, 40)
     junkList[junkIndex] = MakeJunk(world, junkIndex, "booster", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
 
-    local components = {}
-    components[1] = SetupComponent(body, "player", {isPlayer = true, fixtureData = {isPlayer = true, compDefName = compDefName}})
+    local components = IterableMap.New()
+    local newComp = SetupComponent(body, "player", {isPlayer = true, fixtureData = {isPlayer = true, compDefName = compDefName}})
+    components.Add(newComp.index, newComp)
 
     return {
         body = body,
@@ -139,8 +142,7 @@ local function UpdateInput(ship)
     if not ship then
         return
     end
-    for i = 1, #ship.components do
-        local comp = ship.components[i]
+    for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
                 ActivateComponent(ship, comp)
@@ -156,8 +158,7 @@ local function KeypressInput(ship, key, isRepeat)
     if not ship then
         return
     end
-    for i = 1, #ship.components do
-        local comp = ship.components[i]
+    for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
                 ActivateComponent(ship, comp)
@@ -243,18 +244,14 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
         }
     )
 
-    ship.components[#ship.components + 1] = newGirder
+    ship.components.Add(newGirder.index, newGirder)
 
     return newGirder
 end
 
-local function AddGirders(player, newComponentIndex)
-    local newComp = player.ship.components[newComponentIndex]
-
-    local compCount = #player.ship.components -- Avoid iterating over new girders
-    for i = 1, compCount do
-        if i ~= newComponentIndex then
-            local comp = player.ship.components[i]
+local function AddGirders(player, newComp)
+    for _, comp in player.ship.components.Iterator() do
+        if comp ~= newComp.index then
             if not comp.def.isGirder then
                 local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
 
@@ -284,13 +281,12 @@ local function DoMerge(player, junkList, playerFixture, otherFixture)
         player.ship = junk
         junkList[otherData.junkIndex] = nil
 
-        local comp = player.ship.components
-        for i = 1, #comp do
-            comp[i].playerShip = true
-            local fixtureData = comp[i].fixture:getUserData()
+        for _, comp in player.ship.components.Iterator() do
+            comp.playerShip = true
+            local fixtureData = comp.fixture:getUserData()
             fixtureData.playerShip = true
             fixtureData.junkIndex = nil
-            comp[i].fixture:setUserData(fixtureData)
+            comp.fixture:setUserData(fixtureData)
 
             player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
 
@@ -302,13 +298,12 @@ local function DoMerge(player, junkList, playerFixture, otherFixture)
     local playerBody = player.ship.body
     local junkBody = junk.body
 
-    for i = 1, #junk.components do
-        local comp = junk.components[i]
+    for _, comp in junk.components.Iterator() do
         local xOff, yOff = playerBody:getLocalPoint(junkBody:getWorldPoint(comp.xOff, comp.yOff))
 
         local angle = junkBody:getAngle() - playerBody:getAngle() + comp.angle
 
-        player.ship.components[#player.ship.components + 1] = SetupComponent(playerBody, otherData.compDefName, {
+        local newComp = SetupComponent(playerBody, otherData.compDefName, {
                 playerShip = true,
                 fixtureData = {playerShip = true, compDefName = compDefName},
                 xOff = xOff,
@@ -316,7 +311,9 @@ local function DoMerge(player, junkList, playerFixture, otherFixture)
                 angle = angle,
             }
         )
-        AddGirders(player, #player.ship.components)
+        player.ship.components.Add(newComp.index, newComp)
+        
+        AddGirders(player, newComp)
     end
     
     otherFixture:getBody():destroy()
@@ -394,8 +391,7 @@ function UpdateActivation(player, junkList)
         return
     end
     
-    for i = 1, #ship.components do
-        local comp = ship.components[i]
+    for _, comp in ship.components.Iterator() do
         if comp.def.toggleActivate and comp.activated then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
                 ActivateComponent(ship, comp, junkList, player)

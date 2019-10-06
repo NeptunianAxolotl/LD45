@@ -114,8 +114,7 @@ local function paintShadows (bodyList, lightSource, minDistance)
 end
 
 local function DrawShipVectors(ship)
-    for i = 1, #ship.components do
-        local comp = ship.components[i]
+    for _, comp in ship.components.Iterator() do
         local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
         local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
         local angle = ship.body:getAngle() + comp.angle
@@ -157,8 +156,7 @@ local function DrawShip(ship)
     end
 
     -- Draw girders
-    for i = 1, #ship.components do
-        local comp = ship.components[i]
+    for _, comp in ship.components.Iterator() do
         if comp.def.isGirder then
             local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
@@ -169,8 +167,7 @@ local function DrawShip(ship)
         end
     end
     -- Draw other things
-    for i = 1, #ship.components do
-        local comp = ship.components[i]
+    for _, comp in ship.components.Iterator() do
 
         if not comp.def.isGirder then
             local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
