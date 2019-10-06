@@ -111,10 +111,11 @@ end
 --------------------------------------------------
 -- Update
 --------------------------------------------------
-
+local escPressed = false
 function love.update(dt)
-    if love.keyboard.isDown("escape") then
+    if love.keyboard.isDown("escape") and escPressed == false then
         introSystem.setIntroCancel()
+        escPressed = true
     end
     
     if not introSystem.updateIntro(dt) then
