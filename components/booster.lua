@@ -4,6 +4,7 @@ local FORCE = 1500
 local conf = {
     imageOff = "images/booster.png",
     imageOn = "images/booster on.png",
+    imageDmg = {"images/booster damage.png","images/booster damage 2.png"},
     imageOrigin = {670, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {-20, 0},
