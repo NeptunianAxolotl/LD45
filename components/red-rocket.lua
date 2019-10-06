@@ -19,7 +19,7 @@ local conf = {
         color = {0.8,0.1,0.1,1},
     },
     holdActivate = true,
-    onFunction = function (self, body, activeX, activeY, activeAngle)
+    onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         activeAngle = activeAngle - math.pi*0.5
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)

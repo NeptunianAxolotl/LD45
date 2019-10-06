@@ -176,14 +176,15 @@ local function DrawShip(ship, debugEnabled)
         if not comp.def.isGirder then
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
 
-            love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
+            local totalDrawAngle = ship.body:getAngle() + comp.angle + (comp.drawAngle or 0)
+            love.graphics.draw(image, dx, dy, totalDrawAngle, 
                 comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
 
             
             if comp.def.imageDmg then
                 local healthBucket = comp.def.damBuckets - math.ceil(comp.def.damBuckets*comp.health/comp.maxHealth)
                 if healthBucket > 0 and comp.def.imageDmg[healthBucket] then
-                    love.graphics.draw(comp.def.imageDmg[healthBucket], dx, dy, ship.body:getAngle() + comp.angle, 
+                    love.graphics.draw(comp.def.imageDmg[healthBucket], dx, dy, totalDrawAngle, 
                         comp.def.imageScale[1]*(comp.xScale or 1), comp.def.imageScale[2], comp.def.imageOrigin[1], comp.def.imageOrigin[2])
                 end
             end
@@ -193,7 +194,7 @@ local function DrawShip(ship, debugEnabled)
                 local keyName = comp.activeKey or "??"
 
                 love.graphics.setColor(unpack(comp.def.text.color))
-                love.graphics.print(string.upper(keyName), dx, dy, ship.body:getAngle() + comp.angle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
+                love.graphics.print(string.upper(keyName), dx, dy, totalDrawAngle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
                 love.graphics.setColor(1,1,1,1)
             end
 
@@ -211,7 +212,6 @@ local function DrawShip(ship, debugEnabled)
             love.graphics.setColor(1, 1, 1, 1)
         end
     end
-
     
     for _, comp in ship.components.Iterator() do
         if comp.aimX and comp.activated then

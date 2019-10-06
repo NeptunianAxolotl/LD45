@@ -193,12 +193,16 @@ end
 -- Input
 --------------------------------------------------
 
-local function ActivateComponent(ship, comp, junkList, player, dt)
+local function ActivateComponent(ship, comp, junkList, player, dt, enabled)
     local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
     local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
     local angle = ship.body:getAngle() + comp.angle
     vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
-    comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
+    if enabled then
+        comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
+    elseif comp.def.offFunction then
+        comp.def.offFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
+    end
 end
 
 local function UpdateComponentActivation(ship, junkList, player, dt)
@@ -209,13 +213,17 @@ local function UpdateComponentActivation(ship, junkList, player, dt)
     for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                ActivateComponent(ship, comp, junkList, player, dt)
+                ActivateComponent(ship, comp, junkList, player, dt, true)
                 comp.activated = true
             else
                 comp.activated = false
             end
         elseif comp.def.toggleActivate and comp.activated then
-            ActivateComponent(ship, comp, junkList, player, dt)
+            ActivateComponent(ship, comp, junkList, player, dt, true)
+        end
+
+        if (not comp.activated) and comp.def.offFunction then
+            ActivateComponent(ship, comp, junkList, player, dt, false)
         end
     end
 end
@@ -416,19 +424,32 @@ local function AddGirderToPos(ship, playerShip, dist, x1, y1, x2, y2)
     return newGirder
 end
 
+local function AddGirder(player, newComp, comp)
+    local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
+
+    if dist > 3 and dist < player.girderAddDist then
+        local newGirder = AddGirderToPos(player.ship, true, dist, x1, y1, x2, y2)
+        AddLogicalConnection(newGirder, newComp)
+        AddLogicalConnection(newGirder, comp)
+        return true
+    end
+end
+
 local function AddGirders(player, newComp)
     local on, nearestComp = util.GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
+    local girderAdded = false
     for _, comp in player.ship.components.Iterator() do
         if comp ~= newComp.index then
             if (not comp.def.isGirder) or (nearestComp and nearestComp.index == comp.index) then
-                local dist, x1, y1, x2, y2 = love.physics.getDistance(newComp.fixture, comp.fixture)
-
-                if dist > 3 and dist < player.girderAddDist then
-                    local newGirder = AddGirderToPos(player.ship, true, dist, x1, y1, x2, y2)
-                    AddLogicalConnection(newGirder, newComp)
-                    AddLogicalConnection(newGirder, comp)
-                end
+                girderAdded = AddGirder(player, newComp, comp) or girderAdded
             end
+        end
+    end
+
+    if not girderAdded then
+        local onShip, closestComp, closestDist = util.GetNearestComponent(player.ship, player.guy.body:getX(), player.guy.body:getY())
+        if closestComp then
+            AddGirder(player, newComp, closestComp)
         end
     end
 end
