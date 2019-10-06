@@ -97,23 +97,21 @@ end
 
 local function MakeRandomJunk(world, midX, midY, size, exclX, exclY, exclusionRad)
     --print("mrj",world, midX, midY, size, exclX, exclY, exclusionRad)
-    local posX = exclX
-    local posY = exclY
+    local posX = math.random()*size + midX - size/2
+    local posY = math.random()*size + midY - size/2
 
-    while util.AbsVal(posX - exclX, posY - exclY) < exclusionRad do
-        posX = math.random()*size + midX - size/2
-        posY = math.random()*size + midY - size/2
+    if util.AbsVal(posX - exclX, posY - exclY) >= exclusionRad then
+        local compDefName = GetRandomComponent()
+        return MakeJunk(world, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
     end
-
-    local compDefName = GetRandomComponent()
-    return MakeJunk(world, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
+    return nil
 end
 
 local regionsWithJunk = {}
 local function ExpandJunkspace(world, junkList, px, py)
 
     --Region 0,0 is centered on 0,0; has top left corner at -5000,-5000.
-    local REGION_SIZE = 5000
+    local REGION_SIZE = 1500
     local function WorldPositionToRegionIndex(x, y)
         return math.floor((x+(REGION_SIZE/2))/REGION_SIZE),math.floor((y+(REGION_SIZE/2))/REGION_SIZE)
     end
@@ -171,7 +169,9 @@ local function ExpandJunkspace(world, junkList, px, py)
                 local JUNK_PER_REGION = 100
                 for i = 1, JUNK_PER_REGION do
                     local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py, 1000)
-                    junkList[junk.junkIndex] = junk
+                    if junk then
+                        junkList[junk.junkIndex] = junk
+                    end
                 end
                 if not regionsWithJunk[prX+x] then regionsWithJunk[prX+x] = {} end
                 regionsWithJunk[prX+x][prY+y] = true
