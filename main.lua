@@ -43,14 +43,13 @@ function love.draw()
         local introTimer = introSystem.getIntroTimer()
         local introCancel = introSystem.getIntroCancel()
         
-        if introTimer > introCancel + 2 and introTimer < introCancel + 3 then
-            print (math.min((1 - (introTimer - (introCancel + 3)) / 1), 1))
-            love.graphics.setColor(0, 0, 0, math.min((1 - (introTimer - 23) / 1), 1))
+        drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
+
+        if introTimer > introCancel + 2 and introTimer < introCancel + 3 then    
+            love.graphics.setColor(0, 0, 0, math.min((1 - (introTimer - math.min(23, introCancel + 2)) / 1), 1))
             love.graphics.polygon("fill", winPoints)
             love.graphics.setColor(1,1,1)
         end
-        
-        drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
     end
 end
 
