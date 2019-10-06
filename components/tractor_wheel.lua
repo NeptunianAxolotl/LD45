@@ -5,6 +5,7 @@ local conf = {
     imageScale = {1, 1},
     activationOrigin = {0, 0},
     circleShapeRadius = 32,
+    activated = false,
     density = 1,
     text =
     {
@@ -17,35 +18,41 @@ local conf = {
     -- angular velocity here; tractor wheel is always rotating in game
     
     toggleActivate = true,
-    onFunction = function (self, body, activeX, activeY, activeAngle, junkList, player)
+    onFunction = function (self, body, activeX, activeY, angle, junkList, player)
         local distance
         local _body
         
         local minDistance
         local minDistBody
         
-        for i = 1, #junkList do
-            _body = junkList[i]
-            distance = Dist(activeX, activeY, junkList[i]:getX(), junkList[i]:getY())
-            
-            if distance < minDistance then
-                minDistance = distance
-                minDistBody = _body
+        if junkList then
+            for i = 1, #junkList do
+                _body = junkList[i]
+                
+                print(junkList[i])
+                distance = Dist(activeX, activeY, junkList[i]:getX(), junkList[i]:getY())
+                
+                if distance < minDistance then
+                    minDistance = distance
+                    minDistBody = _body
+                end
             end
+            
+            print("tractorbeam")
+            
+            local activeAngle = minDistBody:getAngles(activeX, activeY)
+            local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
+            minDistBody:applyForce(fx, fy, activeX, activeY)
+            
+            local object = {}
+            object.type = "tractorbeam"
+            object.x = activeX
+            object.y = activeY
+            object.x2 = minDistBody:getX()
+            object.y2 = minDistBody:getY()
+            
+            drawables[#drawables + 1] = object
         end
-        
-        local activeAngle = minDistBody:getAngles(activeX, activeY)
-        local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
-        minDistBody:applyForce(fx, fy, activeX, activeY)
-        
-        local object = {}
-        object.type = "tractorbeam"
-        object.x = activeX
-        object.y = activeY
-        object.x2 = minDistBody:getX()
-        object.y2 = minDistBody:getY()
-        
-        drawables[#drawables + 1] = object
     end,
 }
 

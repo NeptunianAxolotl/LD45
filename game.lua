@@ -138,22 +138,46 @@ local function ActivateComponent(ship, comp, junkList, player)
 end
 
 
-local function UpdateInput(ship)
+local function UpdateInput(ship, junkList, player)
     if not ship then
         return
     end
+    
+    print ("input")
+    
     for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                ActivateComponent(ship, comp)
+                ActivateComponent(ship, comp, junkList, player)
                 comp.activated = true
             else
                 comp.activated = false
+            end
+        elseif comp.def.toggleActivate then
+            print("toggle")
+            print(comp.activeKey)
+            
+            if comp.activeKey then
+                print(love.keyboard.isDown(comp.activeKey))
+            end
+            
+            if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
+                print(comp.activated)
+                
+                if comp.activated == true then
+                    print("toggle off")
+                    comp.activated = false
+                else
+                    print ("toggle on")
+                    ActivateComponent(ship, comp, junkList, player)
+                    comp.activated = true
+                end
             end
         end
     end
 end
 
+--[[
 local function KeypressInput(ship, key, isRepeat)
     if not ship then
         return
@@ -169,6 +193,7 @@ local function KeypressInput(ship, key, isRepeat)
         end
     end
 end
+]]--
 
 local function TestJunkClick(junk)
     junk.selected = not junk.selected
@@ -429,6 +454,7 @@ end
 -- Updates
 --------------------------------------------------
 
+--[[
 function UpdateActivation(player, junkList)
 
     local ship = player.ship
@@ -440,12 +466,11 @@ function UpdateActivation(player, junkList)
     for _, comp in ship.components.Iterator() do
         if comp.def.toggleActivate and comp.activated then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                ActivateComponent(ship, comp, junkList, player)
             end
         end
     end
 end
-
+]]--
 
 return {
     SetupComponent = SetupComponent,

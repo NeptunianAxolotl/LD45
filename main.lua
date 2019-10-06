@@ -62,7 +62,7 @@ function love.keypressed(key, scancode, isRepeat)
         end
     end
     
-    gameSystem.KeypressInput(player.ship, key, isRepeat)
+    --gameSystem.KeypressInput(player.ship, key, isRepeat)
 end
 
 local function MouseHitFunc(fixture)
@@ -108,8 +108,7 @@ end
 --------------------------------------------------
 
 function love.update(dt)
-    gameSystem.UpdateInput(player.ship)
-    gameSystem.UpdateActivation(player, junkList)
+    gameSystem.UpdateInput(player.ship, junkList, player)
 
     local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
     gameSystem.UpdateMovePlayerGuy(player, mx, my)
