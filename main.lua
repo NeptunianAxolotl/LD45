@@ -102,11 +102,13 @@ end
 function love.update(dt)
     if not introSystem.updateIntro(dt) then
         lastDt = dt
-        local px, py =  (player.ship or player.guy).body:getWorldCenter()
+        local px, py = (player.ship or player.guy).body:getWorldCenter()
         gameSystem.ExpandJunkspace(world, junkList, px, py)
+        gameSystem.UpdateComponentActivation(player.ship, junkList, player, dt)
 
         local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
         gameSystem.UpdateMovePlayerGuy(player, mx, my)
+        gameSystem.UpdatePlayerComponentAttributes(player)
 
         if dt < 0.4 then
             world:update(dt)

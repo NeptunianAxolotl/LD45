@@ -1,4 +1,4 @@
-local intro = true
+local intro = false
 local introTimer = 0
 
 local function loadIntro ()
