@@ -578,20 +578,19 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
 end
 
 local function ProcessCollision(key, data, index, world, player, junkList)
-    local playerFixture, otherFixture, colSpeed, junkCollision = data[1], data[2], data[3], data[4]
+    local playerFixture, otherFixture, colDamage, colSpeed, junkCollision = data[1], data[2], data[3], data[4], data[5]
     if otherFixture:isDestroyed() or playerFixture:isDestroyed() then
         return true
     end
     local playerData = playerFixture:getUserData()
     local otherData  = otherFixture:getUserData()
-    local damage = colSpeed
 
     if junkCollision then
         local junkFixture = playerFixture
         local junkData = playerData
         if colSpeed > 140 then
-            DamageComponent(world, player, junkList, junkList[junkData.junkIndex], junkData.comp, damage)
-            DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, damage)
+            DamageComponent(world, player, junkList, junkList[junkData.junkIndex], junkData.comp, colDamage)
+            DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
         end
         return true
     end
@@ -603,8 +602,8 @@ local function ProcessCollision(key, data, index, world, player, junkList)
     end
 
     if not playerData.isPlayer then
-        DamageComponent(world, player, junkList, player.ship, playerData.comp, damage)
-        DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, damage)
+        DamageComponent(world, player, junkList, player.ship, playerData.comp, colDamage)
+        DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
     end
 
     return true
@@ -637,7 +636,8 @@ local function beginContact(a, b, coll)
                 return 
             end
             local speed = GetRelativeSpeed(coll, a:getBody(), b:getBody())
-            collisionToAdd.Add(aData.junkIndex, {a, b, speed, true})
+            local damage = speed
+            collisionToAdd.Add(aData.junkIndex, {a, b, damage, speed, true})
         end
         return
     end
@@ -651,7 +651,8 @@ local function beginContact(a, b, coll)
     end
 
     local speed = GetRelativeSpeed(coll, playerFixture:getBody(), otherFixture:getBody())
-    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture, speed, false})
+    local damage = speed
+    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture, damage, speed, false})
 end
 
 local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)
