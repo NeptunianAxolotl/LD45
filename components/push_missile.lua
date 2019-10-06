@@ -1,5 +1,5 @@
 
-local FORCE = 1500
+local FORCE = 20000
 
 local conf = {
     imageOff = "images/push_missile/push_missile_unused.png",
@@ -7,9 +7,9 @@ local conf = {
     imageOn = "images/push_missile/push_missile_firing.png",
     imageOrigin = {30, 95},
     imageScale = {0.5, 0.5},
-    activationOrigin = {-20, 0},
+    activationOrigin = {0, 40},
     shapeCoords = {15,-35, 7,-44, -7,-44, -15,-35, -15,21, -16,26, 16,26, 15,21},
-    density = 1,
+    density = 10,
     text =
     {
         pos = {5, 0},
@@ -19,6 +19,7 @@ local conf = {
     },
     holdActivate = true,
     onFunction = function (self, body, activeX, activeY, activeAngle)
+        activeAngle = activeAngle - math.pi*0.5
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
     end,

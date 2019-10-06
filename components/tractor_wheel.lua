@@ -1,4 +1,5 @@
-local FORCE = 2000
+local MIN_DISTANCE = 700
+local FORCE = 1600
 
 local conf = {
     imageOff = "images/tractor_wheel.png",
@@ -7,7 +8,7 @@ local conf = {
     imageScale = {1, 1},
     activationOrigin = {0, 0},
     circleShapeRadius = 32,
-    activated = false,
+    holdActivate = true,
     density = 1,
     text =
     {
@@ -17,48 +18,55 @@ local conf = {
         color = {0.1,0.6,0.1,1},
     },
     --drawables = {},
-    _type = "tractorbeam",
     -- angular velocity here; tractor wheel is always rotating in game
     
-    toggleActivate = true,
-    onFunction = function (comp, body, activeX, activeY, angle, junkList, player)
-        local distance
-        
-        local minDistance
-        local minDistBody
-        
+    onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+
         if junkList then
-            for i, junk in pairs(junkList) do
-                
-                junkX, junkY = junk.body:getWorldPoints(junk.body:getX(), junk.body:getY())
-                
-                distance = util.Dist(activeX, activeY, junkX, junkY)
-                
-                if (not minDistance) or (distance < minDistance) then
-                    minDistance = distance
-                    minDistBody = junk
+            local nearestJunk
+            local nearestDist
+            for _, junk in pairs(junkList) do
+                local junkX, junkY = junk.body:getX(), junk.body:getY()
+
+                local distance = util.Dist(activeX, activeY, junkX, junkY)
+                if (distance < MIN_DISTANCE) and ((not nearestDist) or (distance < nearestDist)) then
+                    nearestDist = distance
+                    nearestJunk = junk
                 end
             end
 
-            if not minDistBody then
+            if not nearestJunk then
+                comp.aimX = false
+                comp.aimY = false
                 return
             end
             
-            local jx, jy = minDistBody.body:getX(), minDistBody.body:getY()
-            local activeAngle = util.Angle(jx - activeX, jy - activeY)
-            local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
-            minDistBody.body:applyForce(-fx, -fy, activeX, activeY)
+            comp.swankSpeed = comp.swankSpeed or ((math.random() > 0.5 and 7) or -7)
+            comp.swankAngle = ((comp.swankAngle or (math.random()*2*math.pi)) + dt*comp.swankSpeed)%(2*math.pi)
+            local ax, ay = util.ToCart(comp.swankAngle + activeAngle, 20)
+            ax, ay = ax + activeX, ay + activeY
+
+            local jx, jy = nearestJunk.body:getX(), nearestJunk.body:getY()
+            local forceAngle = util.Angle(jx - ax, jy - ay)
+
+            local forceMult = math.tanh((nearestDist - 220)*0.01)
+            if forceMult > 0 then
+                forceMult = forceMult*0.7
+            end
+
+            local fx, fy = forceMult*FORCE*math.cos(forceAngle), forceMult*FORCE*math.sin(forceAngle)
+            nearestJunk.body:applyForce(-fx, -fy, ax, ay)
+            body:applyForce(fx, fy, ax, ay)
             
-            object = {}
-            object.x = activeX
-            object.y = activeY
-            object.x2 = minDistBody.body:getX()
-            object.y2 = minDistBody.body:getY()
-            
-            comp.drawables = {}
-            table.insert(comp.drawables, object)
-            print('inserted', object)
+            comp.emitX = ax
+            comp.emitY = ay
+            comp.aimX = jx
+            comp.aimY = jy
+            return
         end
+
+        comp.aimX = false
+        comp.aimY = false
     end
 }
 

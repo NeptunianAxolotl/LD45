@@ -1,5 +1,5 @@
 
-local FORCE = 500
+local FORCE = 1200
 
 local conf = {
     imageOff = "images/ion engine 1.png",
