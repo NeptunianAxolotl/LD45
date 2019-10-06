@@ -100,6 +100,7 @@ end
 --------------------------------------------------
 
 function love.update(dt)
+
     if not introSystem.updateIntro(dt) then
         lastDt = dt
         local px, py =  (player.ship or player.guy).body:getWorldCenter()
