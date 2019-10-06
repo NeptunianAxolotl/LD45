@@ -4,8 +4,8 @@ local debugEnabled = false
 IterableMap = require("IterableMap")
 util = require("util")
 
-local drawSystem = require("draw")
-local gameSystem = require("game")
+drawSystem = require("draw")
+gameSystem = require("game")
 
 local world
 local player = {
@@ -117,10 +117,6 @@ function love.update(dt)
         world:update(dt)
     end
     gameSystem.ProcessCollisions(world, player, junkList)
-
-    if math.random() < 0.05 then
-        drawSystem.PlayAnimation("explosion", math.random()*500 - 250, math.random()*500 - 250)
-    end
 end
 
 --------------------------------------------------

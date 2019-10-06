@@ -330,6 +330,7 @@ local function FloodFromPoint(comp, floodVal)
     while #front > 0 do
         local vertex = front[#front]
         vertex.floodfillVal = floodVal
+        
         front[#front] = nil
         for _, comp in vertex.nbhd.Iterator() do
             if (not comp.floodfillVal) then
@@ -347,6 +348,9 @@ local function GetGuyComponent(player)
 end
 
 local function RemoveComponent(world, player, junkList, ship, delComp)
+    local xWorld, yWorld = ship.body:getWorldPoint(delComp.xOff, delComp.yOff)
+    drawSystem.PlayAnimation("explosion", xWorld + math.random()*4 - 2, yWorld + math.random()*4 - 2)
+    
     DeleteComponent(ship, delComp)
     if ship.components.IsEmpty() then
         if ship.junkIndex then
@@ -362,7 +366,7 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
     if (not ship.playerShip) or (not player.ship) then
         return
     end
-
+    
     for _, comp in ship.components.Iterator() do
         comp.floodfillVal = false
     end

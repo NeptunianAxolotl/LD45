@@ -271,7 +271,7 @@ local function DoAnimation(_, data, _, dt)
         return true
     end
     local frame = math.floor(#data.def.quads*data.t/data.def.duration) + 1
-    love.graphics.draw(data.def.spriteSheet, data.def.quads[frame], data.x, data.y, 0)
+    love.graphics.draw(data.def.spriteSheet, data.def.quads[frame], data.x, data.y, data.rotation, data.scale, data.scale)
     data.t = data.t + dt
 
     return false
@@ -328,11 +328,13 @@ local function LoadComponentResources()
     end
 end
 
-local function LoadAnimation(image, width, height, duration)
+local function LoadAnimation(image, width, height, duration, scaleMin, scaleMax)
     image = love.graphics.newImage(image)
     local animation = {}
     animation.spriteSheet = image
     animation.quads = {}
+    animation.scaleMin = scaleMin or 1
+    animation.scaleMax = scaleMax or 1
 
     for y = 0, image:getHeight() - height, height do
         for x = 0, image:getWidth() - width, width do
@@ -347,8 +349,12 @@ end
 
 local animationIndex = 0
 function externalFunc.PlayAnimation(name, x, y)
+    local def = animationDefs[name]
+    if not def then
+        return
+    end
     animationIndex = animationIndex + 1
-    animations.Add(animationIndex, {def = animationDefs[name], x = x, y = y, t = 0})
+    animations.Add(animationIndex, {def = def, x = x, y = y, scale = def.scaleMin + math.random()*(def.scaleMax - def.scaleMin), rotation = math.random()*2*math.pi, t = 0})
 end
 
 function externalFunc.load(animationList)
@@ -358,7 +364,7 @@ function externalFunc.load(animationList)
     local animationList = require("animations")
     for i = 1, #animationList do
         local data = animationList[i]
-        animationDefs[data.name] = LoadAnimation(data.image, data.width, data.height, data.duration)
+        animationDefs[data.name] = LoadAnimation(data.image, data.width, data.height, data.duration, data.scaleMin, data.scaleMax)
     end
 end
 
