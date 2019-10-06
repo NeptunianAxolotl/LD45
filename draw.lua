@@ -6,6 +6,8 @@ local animate = require("animations")
 
 local shipPart  
 
+local animation = require("animations")
+
 local function paintShadows (bodyList, lightSource, minDistance)
     
     --bodies

@@ -15,3 +15,6 @@ function animate(image, width, height, duration)
   
   return animation
 end
+
+local animations = {}
+  animations.animate = require("
