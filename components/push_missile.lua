@@ -2,10 +2,10 @@ local conf = {
     imageOff = "images/push_missile/push_missile_unused.png",
 	imageBetween = "images/push_missile/push_missile_launch.png",
     imageOn = "images/push_missile/push_missile_firing.png",
-    imageOrigin = {30, 89},
+    imageOrigin = {15, 44},
     imageScale = {0.5, 0.5},
     activationOrigin = {-20, 0},
-    shapeCoords = {30,-70, 14,-89, -14,-89, -30,-70, -30,43, -16,53, 16,53, 30,43},
+    shapeCoords = {15,-35, 7,-44, -7,-44, -15,-35, -15,21, -16,26, 16,26, 15,21},
     density = 1,
     text =
     {
