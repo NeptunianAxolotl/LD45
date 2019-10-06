@@ -52,6 +52,8 @@ function love.draw()
             love.graphics.polygon("fill", winPoints)
             love.graphics.setColor(1,1,1)
         end
+        
+        drawSystem.drawConsole()
     end
 end
 

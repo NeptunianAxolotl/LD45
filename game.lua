@@ -555,7 +555,10 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
                 health = comp.health,
             }
         )
+        
         player.ship.components.Add(newComp.index, newComp)
+        
+        drawSystem.sendToConsole("> captured a " .. otherData.compDefName)
         
         AddGirders(player, newComp)
     end

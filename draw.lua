@@ -1,3 +1,5 @@
+local externalFunc = {}
+
 local cameraX, cameraY, cameraScale = 0, 0, 1
 local smoothCameraFactor = 0.25
 
@@ -6,6 +8,29 @@ local animationDefs = {}
 local animations = IterableMap.New()
 
 local shipPart  
+
+local consoleText = {}
+local consoleTimer = {}
+local consoleAlpha = {}
+
+function externalFunc.sendToConsole (text)
+    table.insert(consoleText, text)
+    table.insert(consoleTimer, 3)
+end
+
+function externalFunc.drawConsole()
+    for i = 1, #consoleText do
+        love.graphics.setColor(1,1,1, math.min(1,consoleTimer[i]))
+        love.graphics.print(consoleText[i], 50, 730 - (i * 20))
+        love.graphics.setColor(1,1,1)
+    end
+end
+
+function externalFunc.removeFromConsole()
+    table.remove(consoleText, 1)
+    table.remove(consoleTimer, 1)
+    table.remove(consoleAlpha, 1)
+end
 
 local function paintShadows (bodyList, lightSource, minDistance)
     
@@ -243,8 +268,6 @@ local function UpdateCameraPos(player, scale)
     return cameraX, cameraY, cameraScale
 end
 
-local externalFunc = {}
-
 function externalFunc.WindowSpaceToWorldSpace(wx, wy)
     local winWidth  = love.graphics:getWidth()
     local winHeight = love.graphics:getHeight()
@@ -294,6 +317,20 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     if player.needKeybind then
         love.graphics.print("Press any key to bind component controls.", 10, 10, 0, 2, 2)
+    end
+    
+    if consoleTimer then
+        for i = #consoleTimer, 1, -1 do
+            consoleTimer[i] = consoleTimer[i] - dt
+            
+            if consoleTimer[1] < 1 and i ~= 1 then
+                consoleTimer[i] = math.max(consoleTimer[i], 1)
+            end
+            
+            if consoleTimer[i] < 0 then
+                externalFunc.removeFromConsole()
+            end
+        end
     end
 end
 
