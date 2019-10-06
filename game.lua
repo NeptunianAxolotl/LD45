@@ -519,7 +519,6 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
     end
     local junk = junkList[otherData.junkIndex]
 
-
     if not player.ship then
         player.ship = junk
         player.ship.playerShip = true
@@ -570,12 +569,23 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
 end
 
 local function ProcessCollision(key, data, index, world, player, junkList)
-    local playerFixture, otherFixture, colSpeed = data[1], data[2], data[3]
+    local playerFixture, otherFixture, colSpeed, junkCollision = data[1], data[2], data[3], data[4]
     if otherFixture:isDestroyed() or playerFixture:isDestroyed() then
         return true
     end
     local playerData = playerFixture:getUserData()
     local otherData  = otherFixture:getUserData()
+    local damage = colSpeed
+
+    if junkCollision then
+        local junkFixture = playerFixture
+        local junkData = playerData
+        if colSpeed > 140 then
+            DamageComponent(world, player, junkList, junkList[junkData.junkIndex], junkData.comp, damage)
+            DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, damage)
+        end
+        return true
+    end
 
     if (not otherData.noAttach) and (playerData.isPlayer) then
         if DoMerge(player, junkList, playerFixture, otherFixture, playerData, otherData) then
@@ -583,8 +593,6 @@ local function ProcessCollision(key, data, index, world, player, junkList)
         end
     end
 
-    local damage = colSpeed
-    
     if not playerData.isPlayer then
         DamageComponent(world, player, junkList, player.ship, playerData.comp, damage)
         DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, damage)
@@ -597,14 +605,31 @@ local function ProcessCollisions(world, player, junkList)
     collisionToAdd.Apply(ProcessCollision, world, player, junkList)
 end
 
+local function GetRelativeSpeed(coll, body1, body2)
+    local cx1, cy1, cx2, cy2 = coll:getPositions()
+    local mx, my = (cx1 + (cx2 or cx1))/2, (cy1 + (cy2 or cy1))/2
+
+    local pvx, pvy = body1:getLinearVelocityFromWorldPoint(mx, my)
+    local ovx, ovy = body2:getLinearVelocityFromWorldPoint(mx, my)
+    local vx, vy = pvx - ovx, pvy - ovy
+    return util.AbsVal(vx, vy)
+end
+
 local function beginContact(a, b, coll)
     local aData, bData = a:getUserData() or {}, b:getUserData() or {}
-
 
     local aIsPlayer = (aData.isPlayer or aData.playerShip)
     local bIsPlayer = (bData.isPlayer or bData.playerShip)
 
     if aIsPlayer == bIsPlayer then
+        if not aIsPlayer then
+            local aData = a:getUserData()
+            if not aData.junkIndex then
+                return 
+            end
+            local speed = GetRelativeSpeed(coll, a:getBody(), b:getBody())
+            collisionToAdd.Add(aData.junkIndex, {a, b, speed, true})
+        end
         return
     end
 
@@ -616,15 +641,8 @@ local function beginContact(a, b, coll)
        return 
     end
 
-    local cx1, cy1, cx2, cy2 = coll:getPositions()
-    local mx, my = (cx1 + (cx2 or cx1))/2, (cy1 + (cy2 or cy1))/2
-
-    local pvx, pvy = playerFixture:getBody():getLinearVelocityFromWorldPoint(mx, my)
-    local ovx, ovy = otherFixture:getBody():getLinearVelocityFromWorldPoint(mx, my)
-    local vx, vy = pvx - ovx, pvy - ovy
-    local speed = util.AbsVal(vx, vy)
-
-    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture, speed})
+    local speed = GetRelativeSpeed(coll, playerFixture:getBody(), otherFixture:getBody())
+    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture, speed, false})
 end
 
 local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)
