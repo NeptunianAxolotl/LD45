@@ -85,6 +85,18 @@ local function GetNearestComponent(ship, x, y, ignoreGirder)
 	return false, closest, closestDist
 end
 
+local function IsPointOnShip(ship, x, y, ignoreGirder)
+	for _, comp in ship.components.Iterator() do
+		if (not ignoreGirder) or (not comp.isGirder) then
+			if comp.fixture:testPoint(x, y) then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 return {
 	AbsVal = AbsVal,
 	Dist = Dist,
@@ -92,4 +104,5 @@ return {
 	Angle = Angle,
 	ToCart = ToCart,
 	GetNearestComponent = GetNearestComponent,
+	IsPointOnShip = IsPointOnShip,
 }

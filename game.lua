@@ -236,6 +236,44 @@ local function TestJunkClick(junk)
     print("junk selected", junk.body:getX(), junk.body:getY())
 end
 
+local moveAttemptAngles = {
+    0,
+    0.06*math.pi,
+    -0.06*math.pi,
+    -0.12*math.pi,
+    0.12*math.pi,
+    0.18*math.pi,
+    -0.18*math.pi,
+    -0.24*math.pi,
+    0.24*math.pi,
+    0.3*math.pi,
+    -0.3*math.pi,
+}
+
+local function AttemptMoveInDirection(player, px, py, speed, faceAngle, newAngle)
+    local dx, dy = util.ToCart(newAngle, speed)
+    local nx, ny = px + dx, py + dy
+
+    local onShip, comp, compDist = util.GetNearestComponent(player.ship, px, py)
+    local newOnShip, newComp, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
+    
+    if newCompDist and compDist and (newCompDist > compDist - speed*0.8) then
+        if not util.IsPointOnShip(player.ship, nx, ny) then
+            return false
+        end
+    end
+
+    player.joint:destroy()
+
+    player.guy.body:setAngle(faceAngle)
+    player.guy.body:setX(nx)
+    player.guy.body:setY(ny)
+
+    player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
+
+    return true
+end
+
 local function UpdateMovePlayerGuy(player, mx, my)
     if not love.mouse.isDown(1) then
         return
@@ -246,25 +284,24 @@ local function UpdateMovePlayerGuy(player, mx, my)
 
     local px, py = player.guy.body:getX(), player.guy.body:getY()
     local norm = util.Dist(mx, my, px, py)
-    if norm < player.crawlSpeed then
+    local speed = player.crawlSpeed
+    if norm < player.crawlSpeed*0.5 then
         return
+    elseif norm < player.crawlSpeed then
+        speed = norm
     end
+
     local dx, dy = (mx - px)/norm, (my - py)/norm
-    local nx, ny = px + dx*player.crawlSpeed, py + dy*player.crawlSpeed
-
-    local onShip, comp, compDist = util.GetNearestComponent(player.ship, px, py)
-    local newOnShip, newComp, newCompDist = util.GetNearestComponent(player.ship, nx, ny)
-
     local newAngle = util.Angle(dx, dy)
 
-    player.joint:destroy()
-
-    player.guy.body:setAngle(newAngle)
-    if newOnShip or (newCompDist < compDist) then
-        player.guy.body:setX(nx)
-        player.guy.body:setY(ny)
+    for i = 1, #moveAttemptAngles do
+        if AttemptMoveInDirection(player, px, py, speed, newAngle, newAngle + moveAttemptAngles[i]) then
+            return
+        end
     end
-
+    
+    player.joint:destroy()
+    player.guy.body:setAngle(newAngle)
     player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
 end
 
