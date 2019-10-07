@@ -343,9 +343,11 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
         for i = #consoleTimer, 1, -1 do
             consoleTimer[i] = consoleTimer[i] - dt
             
+            --[[
             if consoleTimer[1] < 1 and i ~= 1 then
                 consoleTimer[i] = math.max(consoleTimer[i], 1)
             end
+            ]]--
             
             if consoleTimer[i] < 0 then
                 externalFunc.removeFromConsole()

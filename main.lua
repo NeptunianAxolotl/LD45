@@ -45,22 +45,12 @@ function love.draw()
         introList = introList + 1
     end
         
-    if introList == 2 and introTimer > 5 then
-        drawSystem.sendToConsole("> You hadn't boarded a commercial flight in years", 3) 
-        introList = introList + 1
-        end
-        
-    if introList == 3 and introTimer > 6 then
-        drawSystem.sendToConsole("> without an emergency pressure suit stashed in your carry-on.", 3) 
-        introList = introList + 1
-    end
-    
-    if introList == 4 and introTimer > 9 then
+    if introList == 2 and introTimer > 6 then
         drawSystem.sendToConsole(">  Now, you have nothing.", 3) 
         introList = introList + 1
     end
     
-    if introList == 5 and introTimer > 14 then
+    if introList == 3 and introTimer > 13 then
         drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4) 
         introList = introList + 1
     end
