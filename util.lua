@@ -275,93 +275,6 @@ local function UpdateBullets(dt)
 end
 
 --------------------------------------------------
--- Objectives
---------------------------------------------------
-
-local objectives = IterableMap.New()
-local objectiveID = 0
-local function AddObjective(humanName, requiredComponent, requiredCount)
-	objectiveID = objectiveID + 1
-	objectives.Add(objectiveID, {
-		index = objectiveID,
-		humanName = humanName,
-		requiredComponent = requiredComponent,
-		requiredCount = requiredCount,
-		satisfied = false,
-	})
-end
-
-local function UpdateObjectives(player, junkList)
-	if not player.ship then
-		for _, obj in objectives.Iterator() do
-			obj.satisfied = false
-		end
-		player.closestObjX = false
-		player.closestObjY = false
-		player.objectivesSatisfied = false
-		return
-	end
-
-	local wantedComponents = {}
-	for _, obj in objectives.Iterator() do
-		wantedComponents[obj.requiredComponent] = obj
-		obj.compCount = 0
-	end
-
-	for _, comp in player.ship.components.Iterator() do
-		local obj = wantedComponents[comp.def.name]
-		if obj then
-			obj.compCount = (obj.compCount or 0) + 1
-		end
-	end
-
-	local allSatisfied = true
-	for _, obj in objectives.Iterator() do
-		obj.satisfied = (obj.compCount or 0) >= obj.requiredCount
-		if obj.satisfied then
-			wantedComponents[obj.requiredComponent] = nil
-		else
-			allSatisfied = false
-		end
-	end
-
-	if allSatisfied then
-		player.closestObjX = false
-		player.closestObjY = false
-		player.objectivesSatisfied = not objectives.IsEmpty()
-		if player.objectivesSatisfied then
-			firstTracker.SendCustomTrigger("ready_to_warp")
-		end
-		return allSatisfied
-	end
-	player.objectivesSatisfied = false
-
-	local px, py = player.ship.body:getX(), player.ship.body:getY()
-	local minDist, minDistX, minDistY
-
-	for _, junk in pairs(junkList) do
-		if wantedComponents[junk.compDefName] then
-			local jx, jy = junk.body:getX(), junk.body:getY()
-			local dist = Dist(px, py, jx, jy)
-			if (not minDist) or (dist < minDist) then
-				minDist = dist
-				minDistX = jx
-				minDistY = jy
-			end
-		end
-	end
-
-	player.closestObjX = minDistX
-	player.closestObjY = minDistY
-
-	return allSatisfied
-end
-
-local function GetObjectives()
-	return objectives
-end
-
---------------------------------------------------
 -- Winning
 --------------------------------------------------
  
@@ -435,6 +348,128 @@ end
 local function UpdateWarpWin()
 	engineUsed = false
 end
+
+--------------------------------------------------
+-- Objectives
+--------------------------------------------------
+
+local objectives = IterableMap.New()
+local objectiveID = 0
+local function AddObjective(humanName, requiredComponent, requiredCount)
+	objectiveID = objectiveID + 1
+	objectives.Add(objectiveID, {
+		index = objectiveID,
+		humanName = humanName,
+		requiredComponent = requiredComponent,
+		requiredCount = requiredCount,
+		satisfied = false,
+	})
+end
+
+local prevObjSatisfied = -1
+local function CheckMusicChange(objSatisfied)
+	if GetWinTimerProgress(player) then
+		objSatisfied = 5
+	end
+
+	if objSatisfied == prevObjSatisfied then
+		return
+	end
+	prevObjSatisfied = objSatisfied
+	
+	audioSystem.stopSound("theme1")
+	audioSystem.stopSound("theme2")
+	audioSystem.stopSound("theme2point5")
+	audioSystem.stopSound("theme3")
+	audioSystem.stopSound("themeWin")
+
+	if objSatisfied == 1 or objSatisfied == 2 then
+		audioSystem.playSound("theme2", "theme2", false, 1)
+	elseif objSatisfied == 3 or objSatisfied == 4 then
+		audioSystem.playSound("theme2point5", "theme2point5", true, 1)
+		audioSystem.playSound("theme3", "theme3", false, 1, 13)
+	elseif objSatisfied == 5 then
+		audioSystem.playSound("themeWin", "themeWin", false, 1)
+	else
+		audioSystem.playSound("theme1", "theme1", false, 1, 1.5)
+	end
+end
+
+local function UpdateObjectives(player, junkList)
+	if not player.ship then
+		for _, obj in objectives.Iterator() do
+			obj.satisfied = false
+		end
+		player.closestObjX = false
+		player.closestObjY = false
+		player.objectivesSatisfied = false
+		CheckMusicChange(0)
+		return
+	end
+
+	local wantedComponents = {}
+	for _, obj in objectives.Iterator() do
+		wantedComponents[obj.requiredComponent] = obj
+		obj.compCount = 0
+	end
+
+	for _, comp in player.ship.components.Iterator() do
+		local obj = wantedComponents[comp.def.name]
+		if obj then
+			obj.compCount = (obj.compCount or 0) + 1
+		end
+	end
+
+	local objSatisfied = 0
+	local allSatisfied = true
+	for _, obj in objectives.Iterator() do
+		obj.satisfied = (obj.compCount or 0) >= obj.requiredCount
+		if obj.satisfied then
+			objSatisfied = objSatisfied + 1
+			wantedComponents[obj.requiredComponent] = nil
+		else
+			allSatisfied = false
+		end
+	end
+
+	CheckMusicChange(objSatisfied)
+
+	if allSatisfied then
+		player.closestObjX = false
+		player.closestObjY = false
+		player.objectivesSatisfied = not objectives.IsEmpty()
+		if player.objectivesSatisfied then
+			firstTracker.SendCustomTrigger("ready_to_warp")
+		end
+		return allSatisfied
+	end
+	player.objectivesSatisfied = false
+
+	local px, py = player.ship.body:getX(), player.ship.body:getY()
+	local minDist, minDistX, minDistY
+
+	for _, junk in pairs(junkList) do
+		if wantedComponents[junk.compDefName] then
+			local jx, jy = junk.body:getX(), junk.body:getY()
+			local dist = Dist(px, py, jx, jy)
+			if (not minDist) or (dist < minDist) then
+				minDist = dist
+				minDistX = jx
+				minDistY = jy
+			end
+		end
+	end
+
+	player.closestObjX = minDistX
+	player.closestObjY = minDistY
+
+	return allSatisfied
+end
+
+local function GetObjectives()
+	return objectives
+end
+
 --------------------------------------------------
 -- Loading
 --------------------------------------------------
@@ -454,6 +489,7 @@ local function reset()
 
 	winCompIndex = false
 	engineUsed = false
+	prevObjSatisfied = -1
 end
 
 return {

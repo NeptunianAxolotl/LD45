@@ -19,6 +19,11 @@ local volMult = {
     bulletfire = 0.34,
     bullethit = 0.25,
     explosion = 0.15,
+    theme1 = 0.75,
+    theme2 = 0.75,
+    theme2point5 = 0.75,
+    theme3 = 0.75,
+    themeWin = 0.75,
 }
 
 function addSource(name, id)
@@ -48,10 +53,20 @@ function addSource(name, id)
         return love.audio.newSource("SFX/bullethit.wav", "static")
     elseif name == "explosion" then
         return love.audio.newSource("SFX/explosion.wav", "static")
+    elseif name == "theme1" then
+        return love.audio.newSource("music/theme1.wav", "static")
+    elseif name == "theme2" then
+        return love.audio.newSource("music/theme2.wav", "static")
+    elseif name == "theme2point5" then
+        return love.audio.newSource("music/theme2point5.wav", "static")
+    elseif name == "theme3" then
+        return love.audio.newSource("music/theme3.wav", "static")
+    elseif name == "themeWin" then
+        return love.audio.newSource("music/themeWin.wav", "static")
     end
 end
 
-function externalFunc.playSound(name, id, noLoop)
+function externalFunc.playSound(name, id, noLoop, fadeRate, delay)
     local soundData = sounds.Get(id)
     if not soundData then
         soundData = {
@@ -59,6 +74,8 @@ function externalFunc.playSound(name, id, noLoop)
             want = 1,
             have = 0,
             source = addSource(name, id),
+            fadeRate = fadeRate,
+            delay = delay,
         }
         soundData.source:setLooping(not noLoop)
         sounds.Add(id, soundData)
@@ -69,26 +86,33 @@ end
 
 function externalFunc.Update(player, dt)
     for _, soundData in sounds.Iterator() do
-        if soundData.want > soundData.have then
-            soundData.have = soundData.have + 10*dt
-            if soundData.have > soundData.want then
-                soundData.have = soundData.want
+        if soundData.delay then
+            soundData.delay = soundData.delay - dt
+            if soundData.delay < 0 then
+                soundData.delay = false
             end
-            soundData.source:setVolume(soundData.have*volMult[soundData.name])
-        end
-
-        if soundData.want < soundData.have then
-            soundData.have = soundData.have - 10*dt
-            if soundData.have < soundData.want then
-                soundData.have = soundData.want
+        else
+            if soundData.want > soundData.have then
+                soundData.have = soundData.have + (soundData.fadeRate or 10)*dt
+                if soundData.have > soundData.want then
+                    soundData.have = soundData.want
+                end
+                soundData.source:setVolume(soundData.have*volMult[soundData.name])
             end
-            soundData.source:setVolume(soundData.have*volMult[soundData.name])
-        end
 
-        local winTimer = util.GetWinTimerProgress(player)
-        if winTimer and winTimer > 2 then
-            local wantedVolume = math.max(0, (7 - winTimer)/5)
-            soundData.source:setVolume(soundData.have*wantedVolume*volMult[soundData.name])
+            if soundData.want < soundData.have then
+                soundData.have = soundData.have - (soundData.fadeRate or 10)*dt
+                if soundData.have < soundData.want then
+                    soundData.have = soundData.want
+                end
+                soundData.source:setVolume(soundData.have*volMult[soundData.name])
+            end
+
+            local winTimer = util.GetWinTimerProgress(player)
+            if winTimer and winTimer > 2 then
+                local wantedVolume = math.max(0, (7 - winTimer)/5)
+                soundData.source:setVolume(soundData.have*wantedVolume*volMult[soundData.name])
+            end
         end
     end
 end

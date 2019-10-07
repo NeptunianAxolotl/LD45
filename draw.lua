@@ -443,7 +443,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.push()
 
-    local wantedScale = 30/(((player.ship or player.guy).components.GetIndexMax())^0.72 + 30)
+    local wantedScale = 100/(((player.ship or player.guy).components.GetIndexMax())^0.72 + 100)
     if introTimer < 12.6 then
         wantedScale = wantedScale/0.6
     elseif introTimer < 14 then

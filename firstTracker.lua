@@ -186,7 +186,7 @@ function externalFunc.Update(player, dt)
                     noBooster = false
                 end
             end
-            if math.abs(player.ship.body:getAngularVelocity()) > 1.6 then
+            if math.abs(player.ship.body:getAngularVelocity()) > 1.8 then
                 isSoftlocked = true
             end
         end
