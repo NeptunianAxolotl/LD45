@@ -10,6 +10,7 @@ util = require("util")
 
 
 SUPER_DEBUG_ENABLED = false
+local blockPhysics = false
 
 font = require("font")
 
@@ -48,6 +49,7 @@ local function SetupVars()
         crawlSpeed = 5,
         girderAddDist = 60,
     }
+    blockPhysics = false
 
     junkList = {}
 end
