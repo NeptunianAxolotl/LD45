@@ -222,19 +222,19 @@ end
 -- Input
 --------------------------------------------------
 
-local function ActivateComponent(ship, comp, junkList, player, dt, enabled)
+local function ActivateComponent(ship, comp, junkList, player, dt, enabled, world)
     local ox, oy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
     local vx, vy = comp.def.activationOrigin[1], comp.def.activationOrigin[2]
     local angle = ship.body:getAngle() + comp.angle
     vx, vy = util.RotateVector(vx, vy, ship.body:getAngle() + comp.angle)
     if enabled then
-        comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
+        comp.def.onFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt, world)
     elseif comp.def.offFunction then
-        comp.def.offFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt)
+        comp.def.offFunction(comp, ship.body, ox + vx, oy + vy, angle, junkList, player, dt, world)
     end
 end
 
-local function UpdateComponentActivation(player, junkList, player, dt)
+local function UpdateComponentActivation(player, junkList, player, dt, world)
     local ship = player.ship
     if not ship then
         return
@@ -243,17 +243,17 @@ local function UpdateComponentActivation(player, junkList, player, dt)
     for _, comp in ship.components.Iterator() do
         if comp.def.holdActivate then
             if comp.activeKey and love.keyboard.isDown(comp.activeKey) then
-                ActivateComponent(ship, comp, junkList, player, dt, true)
+                ActivateComponent(ship, comp, junkList, player, dt, true, world)
                 comp.activated = true
             else
                 comp.activated = false
             end
         elseif comp.def.toggleActivate and comp.activated then
-            ActivateComponent(ship, comp, junkList, player, dt, true)
+            ActivateComponent(ship, comp, junkList, player, dt, true, world)
         end
 
         if (not comp.activated) and comp.def.offFunction then
-            ActivateComponent(ship, comp, junkList, player, dt, false)
+            ActivateComponent(ship, comp, junkList, player, dt, false, world)
         end
     end
 end
@@ -619,31 +619,58 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
 end
 
 local function ProcessCollision(key, data, index, world, player, junkList)
-    local playerFixture, otherFixture, colDamage, colSpeed, junkCollision = data[1], data[2], data[3], data[4], data[5]
-    if otherFixture:isDestroyed() or playerFixture:isDestroyed() then
+    local mainFixture, otherFixture, colDamage, colSpeed = data[1], data[2], data[3], data[4], data[5]
+    if otherFixture:isDestroyed() or mainFixture:isDestroyed() then
         return true
     end
-    local playerData = playerFixture:getUserData()
-    local otherData  = otherFixture:getUserData()
+    local mainData  = mainFixture:getUserData()
+    local otherData = otherFixture:getUserData()
+
+    local playerCollision = (mainData.isPlayer or mainData.playerShip)
+    local junkCollision = mainData.junkIndex
+    local otherBullet = (otherData.bulletIndex)
+
+    if not (playerCollision or junkCollision) then
+        -- Must be bullet on bullet
+        if mainFixture.bullet then
+            util.DoBulletDamage(mainFixture.bullet)
+        end
+        if otherData.bullet then
+            util.DoBulletDamage(otherData.bullet)
+        end
+        return true
+    end
 
     if junkCollision then
-        local junkFixture = playerFixture
-        local junkData = playerData
-        if colSpeed > 140 then
-            DamageComponent(world, player, junkList, junkList[junkData.junkIndex], junkData.comp, colDamage)
+        if otherBullet then
+            local damage = util.DoBulletDamage(otherData.bullet)
+            DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, damage)
+        elseif colSpeed > 140 then
+            DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, colDamage)
             DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
         end
         return true
     end
 
-    if (not otherData.noAttach) and (playerData.isPlayer) then
-        if DoMerge(player, junkList, playerFixture, otherFixture, playerData, otherData) then
+    if otherBullet then
+        local damage = util.DoBulletDamage(otherData.bullet)
+        if not mainData.isPlayer then
+            -- Is player ship
+            DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
+        end
+        return true
+    end
+
+    -- Player or player ship is mainFixture
+    if (not otherData.noAttach) and (mainData.isPlayer) then
+        if DoMerge(player, junkList, mainFixture, otherFixture, mainData, otherData) then
             return true
         end
     end
 
-    if not playerData.isPlayer then
-        DamageComponent(world, player, junkList, player.ship, playerData.comp, colDamage)
+    if not mainData.isPlayer then
+        -- Is player ship
+        DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
         DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
     end
 
@@ -664,6 +691,7 @@ local function GetRelativeSpeed(coll, body1, body2)
     return util.AbsVal(vx, vy)
 end
 
+local collIndex = 0
 local function beginContact(a, b, coll)
     local aData, bData = a:getUserData() or {}, b:getUserData() or {}
 
@@ -673,12 +701,18 @@ local function beginContact(a, b, coll)
     if aIsPlayer == bIsPlayer then
         if not aIsPlayer then
             local aData = a:getUserData()
-            if not aData.junkIndex then
-                return 
-            end
             local speed = GetRelativeSpeed(coll, a:getBody(), b:getBody())
             local damage = speed
-            collisionToAdd.Add(aData.junkIndex, {a, b, damage, speed, true})
+            if aData.junkIndex then
+                collIndex = collIndex + 1
+                collisionToAdd.Add(collIndex, {a, b, damage, speed})
+            elseif bData.junkIndex then
+                collIndex = collIndex + 1
+              collisionToAdd.Add(collIndex, {b, a, damage, speed})
+            else
+                collIndex = collIndex + 1
+                collisionToAdd.Add(collIndex, {a, b, damage, speed})
+            end
         end
         return
     end
@@ -687,13 +721,10 @@ local function beginContact(a, b, coll)
     local otherFixture  = (aIsPlayer and b) or a
     local otherData     = otherFixture:getUserData()
 
-    if not otherData.junkIndex then
-       return 
-    end
-
     local speed = GetRelativeSpeed(coll, playerFixture:getBody(), otherFixture:getBody())
     local damage = speed
-    collisionToAdd.Add(otherData.junkIndex, {playerFixture, otherFixture, damage, speed, false})
+    collIndex = collIndex + 1
+    collisionToAdd.Add(collIndex, {playerFixture, otherFixture, damage, speed})
 end
 
 local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)

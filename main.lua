@@ -214,8 +214,10 @@ function love.update(dt)
         lastDt = dt
         local px, py = (player.ship or player.guy).body:getWorldCenter()
         gameSystem.ExpandJunkspace(world, junkList, px, py)
-        gameSystem.UpdateComponentActivation(player, junkList, player, dt)
+        gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
+
         util.UpdatePhasedObjects(dt)
+        util.UpdateBullets(dt)
 
         local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
         gameSystem.UpdateMovePlayerGuy(player, mx, my)
@@ -237,24 +239,25 @@ local function SetupWorld()
 end
 
 function love.load()   
-        math.randomseed(os.clock())
+    math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
-        
-        notifyColor.r = 1
-        notifyColor.g = 1
-        notifyColor.b = 1
-        
-        captureColor.r = 0.8
-        captureColor.g = 0.8
-        captureColor.b = 0.8
+    util.load()
     
-        goalColor.r = 0.2
-        goalColor.g = 0.95
-        goalColor.b = 0.2
-        
-        drawSystem.load()
+    notifyColor.r = 1
+    notifyColor.g = 1
+    notifyColor.b = 1
+    
+    captureColor.r = 0.8
+    captureColor.g = 0.8
+    captureColor.b = 0.8
+    
+    goalColor.r = 0.2
+    goalColor.g = 0.95
+    goalColor.b = 0.2
+    
+    drawSystem.load()
 
-        SetupWorld()
+    SetupWorld()
 
-        player.guy = gameSystem.SetupPlayer(world, junkList)
+    player.guy = gameSystem.SetupPlayer(world, junkList)
 end

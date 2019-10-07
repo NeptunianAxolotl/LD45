@@ -1,4 +1,8 @@
 
+--------------------------------------------------
+-- Vector funcs
+--------------------------------------------------
+
 local function AbsVal(x, y)
 	return math.sqrt(x*x + y*y)
 end
@@ -51,6 +55,10 @@ local function ToCart(dir, rad)
 	return rad*math.cos(dir), rad*math.sin(dir)
 end
 
+--------------------------------------------------
+-- Ship position checks
+--------------------------------------------------
+
 local function GetNearestComponent(ship, x, y, ignoreGirder, wantClosestOn)
     if not ship then
         return false, false, false
@@ -97,6 +105,10 @@ local function IsPointOnShip(ship, x, y, ignoreGirder)
 	return false
 end
 
+--------------------------------------------------
+-- Phase handling
+--------------------------------------------------
+
 local phasedObjects = IterableMap.New()
 local function SetPhaseStatus(comp, isPhase)
 	comp.fixture:setMask((isPhase and 1) or 16)
@@ -141,6 +153,86 @@ local function UpdatePhasedObjects(dt)
 	end
 end
 
+--------------------------------------------------
+-- Bullet handling
+--------------------------------------------------
+
+local bulletImage
+local bullets = IterableMap.New()
+local bulletID = 0
+
+local bulletShape = {
+	-12, -3,
+	12, -3,
+	12, 3,
+	-12, 3,
+}
+
+local BULLET_SPEED = 1500
+
+local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy)
+	bulletID = bulletID + 1
+	
+	local bullet = {}
+	bullet.index = bulletID
+	bullet.body = love.physics.newBody(world, shootX, shootY, "dynamic")
+	bullet.shape = love.physics.newPolygonShape(unpack(bulletShape))
+	bullet.fixture = love.physics.newFixture(bullet.body, bullet.shape, 1)
+
+	bullet.life = 2
+	bullet.damage = 110
+
+	local fixtureData = {
+		bullet = bullet,
+		bulletIndex = bullet.index,
+	}
+	bullet.fixture:setUserData(fixtureData)
+
+	local fx, fy = ToCart(activeAngle, BULLET_SPEED)
+
+    bullet.body:setAngle(activeAngle)
+    bullet.body:setLinearVelocity(vx + fx, vy + fy)
+    bullets.Add(bullet.index, bullet)
+end
+
+local function DrawBullets()
+	for _, bullet in bullets.Iterator() do
+		if not bullet.toDestroy then
+			love.graphics.draw(bulletImage, bullet.body:getX(), bullet.body:getY(), bullet.body:getAngle(), 0.15, 0.15, 87, 22)
+		end
+	end
+end
+
+local function DoBulletDamage(bullet)
+	local damage = 0
+	if not bullet.toDestroy then
+		damage = bullet.damage
+	end
+	bullet.toDestroy = true
+	return damage
+end
+
+local function UpdateBullets(dt)
+    local maxIndex, keyByIndex, dataByKey = bullets.GetBarbarianData()
+	for i = maxIndex, 1, -1 do
+		local key = keyByIndex[i]
+		local bullet = dataByKey[key]
+		bullet.life = bullet.life - dt
+		if bullet.life < 0 or bullet.toDestroy then
+			bullet.body:destroy()
+			bullets.Remove(bullet.index)
+		end
+	end
+end
+
+--------------------------------------------------
+-- Loading
+--------------------------------------------------
+
+local function load()
+	bulletImage = love.graphics.newImage('images/bullet 1.png')
+end
+
 return {
 	AbsVal = AbsVal,
 	Dist = Dist,
@@ -151,4 +243,9 @@ return {
 	IsPointOnShip = IsPointOnShip,
 	AddPhaseRadius = AddPhaseRadius,
 	UpdatePhasedObjects = UpdatePhasedObjects,
+	FireBullet = FireBullet,
+	DrawBullets = DrawBullets,
+	UpdateBullets = UpdateBullets,
+	DoBulletDamage = DoBulletDamage,
+	load = load,
 }

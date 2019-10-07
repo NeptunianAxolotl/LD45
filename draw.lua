@@ -210,6 +210,8 @@ local function DrawShip(ship, debugEnabled)
         return
     end
 
+    util.DrawBullets()
+
     -- Draw girders
     for _, comp in ship.components.Iterator() do
         if comp.def.isGirder then
