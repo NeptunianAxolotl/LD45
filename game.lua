@@ -160,7 +160,7 @@ local function ExpandJunkspace(world, junkList, px, py)
             if not (regionsWithJunk[prX+x] and regionsWithJunk[prX+x][prY+y]) then
                 local JUNK_PER_REGION = 100
                 for i = 1, JUNK_PER_REGION do
-                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py, 1000)
+                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py)
                     if junk then
                         junkList[junk.junkIndex] = junk
                     end
