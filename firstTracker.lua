@@ -6,7 +6,7 @@ local noBooster = true
 local hints = {
 	{
         distanceTrigger = 1200,
-        hint = {"Hold the left mouse button to move towards","that point on your ship."},
+        hint = {"Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
         duration = 15,
         waitTime = 1,
     },
