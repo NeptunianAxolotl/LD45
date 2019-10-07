@@ -8,11 +8,12 @@ SUPER_DEBUG_ENABLED = false
 
 font = require("font")
 
+introTimer = 0
+introList = 0
+
 drawSystem = require("draw")
 gameSystem = require("game")
 
-local introTimer = 0
-local introList = 0
 
 local world
 local player = {
