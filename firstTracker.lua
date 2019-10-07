@@ -30,7 +30,7 @@ local hints = {
     },
     {
         distanceTrigger = 2800,
-        hint = {"> Gather the components listed on the right","to escape this field of flotsam."},
+        hint = {"> Gather the components listed on the right","  to escape this field of flotsam."},
         duration = 9,
         waitTime = 2,
         doFunc = function ()     
@@ -44,19 +44,19 @@ local hints = {
     },
     {
         compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
-        hint = {"> Click and hold the Left Mouse Button to", "crawl around your 'ship'."},
+        hint = {"> Click and hold the Left Mouse Button to", "   crawl around your 'ship'."},
         duration = 8,
         waitTime = 0.5,
     },
     {
         compTrigger = "booster",
-        hint = {"> Press any key to bind it to your booster,", "then hold the key to produce thrust."},
+        hint = {"> Press any key to bind it to your booster,", "   then hold the key to produce thrust."},
         duration = 8,
         waitTime = 5.5,
     },
     {
         compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
-        hint = {"> Grab nearby components with your puny arms", "to enlarge your ship."},
+        hint = {"> Grab nearby components with your puny arms", "   to enlarge your ship."},
         duration = 8,
         waitTime = 11.5,
     },
@@ -68,13 +68,13 @@ local hints = {
     --},
     {
         compTrigger = {{"tractor_wheel","tractor wheel"},{"gyro","stabiliser"},{"displacer","displacement device"}},
-        hint = {"> Activate or deactivate the $NAME","by binding it and pressing the assigned key."},
+        hint = {"> Activate or deactivate the $NAME","   by binding it and pressing the assigned key."},
         duration = 9,
         waitTime = 2,
     },
     {
         compTrigger = "navigation",
-        hint = {"> The scanner points towards the nearest", "warp component."},
+        hint = {"> The scanner points towards the nearest", "   warp component."},
         duration = 9,
         waitTime = 2,
     },
