@@ -417,6 +417,7 @@ local function DeleteComponent(ship, delComp)
         comp.nbhd.Remove(delComp.index)
     end
 
+    audioSystem.stopSound(delComp.index)
     ship.components.Remove(delComp.index)
     delComp.fixture:destroy()
 end
@@ -594,9 +595,9 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
 
             player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
 
-            
             drawSystem.sendToConsole("> You cling desperately onto " .. comp.def.humanName .. ".", 5, captureColor)
-            
+            local sound = "grab" .. math.random(1,3)
+            audioSystem.playSound(sound, sound, true)
             return true
         end
     end
@@ -623,6 +624,8 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
         player.ship.components.Add(newComp.index, newComp)
 
         drawSystem.sendToConsole("> Captured " .. comp.def.humanName .. ".", 5, captureColor)
+        local sound = "grab" .. math.random(1,3)
+        audioSystem.playSound(sound, sound, true)
         
         AddGirders(player, newComp)
     end

@@ -1,50 +1,84 @@
 local externalFunc = {}
 
-local sounds = {}
-local sources = {}
+local sounds = IterableMap.New()
 
 function externalFunc.load ()
 end
 
 function addSource(name, id)
-    local source = nil
-    
     if name == "booster" then
-        source = love.audio.newSource("SFX/booster.wav", "static")
+        return love.audio.newSource("SFX/booster.wav", "static")
     elseif name == "ion" then
-        source = love.audio.newSource("SFX/ion.wav", "static")
+        return love.audio.newSource("SFX/ion.wav", "static")
     elseif name == "redrocket" then
-        source = love.audio.newSource("SFX/redrocket.wav", "static")
+        return love.audio.newSource("SFX/redrocket.wav", "static")
     elseif name == "pushmissile" then
-        source = love.audio.newSource("SFX/pushmissile.wav", "static")
+        return love.audio.newSource("SFX/pushmissile.wav", "static")
     elseif name == "tractor" then
-        source = love.audio.newSource("SFX/tractor.wav", "static")
+        return love.audio.newSource("SFX/tractor.wav", "static")
     elseif name == "displacer_on" then
-        source = love.audio.newSource("SFX/displacer_on.wav", "static")
+        return love.audio.newSource("SFX/displacer_on.wav", "static")
     elseif name == "displacer_off" then
-        source = love.audio.newSource("SFX/displacer_off.wav", "static")
-    end
-
-    sources[name .. id] = source
-end
-
-
-function externalFunc.playSound (name, id)
-    if sources[name .. id] == nil then
-        addSource(name, id)
-    end
-    
-    love.audio.play(sources[name .. id])
-    
-    if sounds[id] == nil then
-        sounds[id] = name
+        return love.audio.newSource("SFX/displacer_off.wav", "static")
+    elseif name == "grab1" then
+        return love.audio.newSource("SFX/grab_lrg.wav", "static")
+    elseif name == "grab2" then
+        return love.audio.newSource("SFX/grab_med.wav", "static")
+    elseif name == "grab3" then
+        return love.audio.newSource("SFX/grab_sml.wav", "static")
     end
 end
 
-function externalFunc.stopSound (id)
-    if sounds[id] ~= nil then
-        love.audio.pause(sources[sounds[id] .. id])
+function externalFunc.playSound(name, id, noLoop)
+    local soundData = sounds.Get(id)
+    if not soundData then
+        soundData = {
+            name = name,
+            want = 1,
+            have = 0,
+            source = addSource(name, id),
+        }
+        soundData.source:setLooping(not noLoop)
+        sounds.Add(id, soundData)
     end
+    love.audio.play(soundData.source)
+    soundData.want = 1
+end
+
+function externalFunc.Update(dt)
+    for _, soundData in sounds.Iterator() do
+        if soundData.want > soundData.have then
+            soundData.have = soundData.have + 10*dt
+            if soundData.have > soundData.want then
+                soundData.have = soundData.want
+            end
+            soundData.source:setVolume(soundData.have)
+        end
+
+        if soundData.want < soundData.have then
+            soundData.have = soundData.have - 10*dt
+            if soundData.have < soundData.want then
+                soundData.have = soundData.want
+            end
+            soundData.source:setVolume(soundData.have)
+        end
+    end
+end
+
+function externalFunc.stopSound(id, death)
+    local soundData = sounds.Get(id)
+    if not soundData then
+        return
+    end
+    soundData.want = 0
+    if death then
+        soundData.source:stop()
+    end
+end
+
+function externalFunc.reset()
+    sources = {}
+    sounds = IterableMap.New()
 end
 
 return externalFunc

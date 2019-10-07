@@ -200,6 +200,7 @@ function love.update(dt)
     gameSystem.ProcessCollisions(world, player, junkList)
 
     firstTracker.Update(player, dt)
+    audioSystem.Update(dt)
     
     --print("distance: " .. util.AbsVal(px, py))
 
