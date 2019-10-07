@@ -4,7 +4,6 @@ local sounds = {}
 local sources = {}
 
 function externalFunc.load ()
-    sources["booster"] = love.audio.newSource("SFX/booster.wav", "static")
 end
 
 function addSource(name, id)
@@ -12,7 +11,8 @@ function addSource(name, id)
     
     if name == "booster" then
         source = love.audio.newSource("SFX/booster.wav", "static")
-    else
+    elseif name == "ion" then
+        source = love.audio.newSource("SFX/ion.wav", "static")
     end
 
     sources[name .. id] = source

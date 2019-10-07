@@ -27,6 +27,7 @@ local conf = {
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
+        audioSystem.playSound("ion", comp.index)
     end,
 }
 
