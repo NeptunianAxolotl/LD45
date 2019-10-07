@@ -245,7 +245,7 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
             
             if comp.def.onSound then
                 if not comp.prevActivated then
-                    audioSystem.playSound(comp.def.onSound, comp.index)
+                    audioSystem.playSound(comp.def.onSound, comp.index, true)
                     comp.prevActivated = true
                 end
             end
@@ -262,7 +262,7 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
             
             if comp.def.offSound then
                 if comp.prevActivated then
-                    audioSystem.playSound(comp.def.offSound, comp.index)
+                    audioSystem.playSound(comp.def.offSound, comp.index, true)
                     comp.prevActivated = false
                 end
             end

@@ -362,7 +362,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.push()
 
-    local wantedScale = 80/(((player.ship or player.guy).components.GetIndexMax())^0.7 + 80)
+    local wantedScale = 80/(((player.ship or player.guy).components.GetIndexMax())^0.78 + 80)
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy)
     love.graphics.points(stars)
