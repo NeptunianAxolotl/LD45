@@ -273,6 +273,7 @@ local objectiveID = 0
 local function AddObjective(humanName, requiredComponent, requiredCount)
 	objectiveID = objectiveID + 1
 	objectives.Add(objectiveID, {
+		index = objectiveID,
 		humanName = humanName,
 		requiredComponent = requiredComponent,
 		requiredCount = requiredCount,
