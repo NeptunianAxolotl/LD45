@@ -26,6 +26,7 @@ components.navigation = require("components/navigation")
 components.displacer = require("components/displacer")
 components.debris_burner = require("components/debris_burner")
 components.warp_drive = require("components/warp_drive")
+components.console = require("components/console")
 
 -- Post processing
 local compList = {}

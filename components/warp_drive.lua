@@ -13,13 +13,13 @@ local conf = {
     maxHealth = 800,
     humanName = "a warp drive",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 20, 0, 0.12, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.12, 0.03)
     end,
     density = 12,
     text =
     {
-        pos = {-15.5, 40},
-        rotation = -math.pi*0.3,
+        pos = {-22.5, 48},
+        rotation = -math.pi*0.5,
         scale = {1, 1},
         color = {0.2,0.2,1,1},
     },
