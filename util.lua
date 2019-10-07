@@ -71,7 +71,7 @@ local function JunkDensityFunc(dist)
         return 0
     end
     
-    return 0.4 + 0.6*(dist - 1000)/8000
+    return (0.4 + 0.6*(dist - 1000)/8000)/2
 end
 
 local function InterpolateOccurrenceDensity(dist, o1, o2, o3, o4)
@@ -92,6 +92,7 @@ local function InterpolateOccurrenceDensity(dist, o1, o2, o3, o4)
 	end
 	return o4
 end
+
 
 --------------------------------------------------
 -- Ship position checks
