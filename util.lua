@@ -177,7 +177,7 @@ local function UpdatePhasedObjects(dt)
 		local key = keyByIndex[i]
 		local comp = dataByKey[key]
 		if comp and not comp.fixture:isDestroyed() then
-			comp.phaseState = comp.phaseState - (comp.def.phaseSpeedMult or 1)*1.4*dt
+			comp.phaseState = comp.phaseState - (comp.def.phaseSpeedMult or 1)*1.55*dt
 			if (comp.phaseState > 0.5) ~= ((comp.phased and true) or false) then
 				comp.phased = (comp.phaseState > 0.5)
 				SetPhaseStatus(comp, comp.phased)

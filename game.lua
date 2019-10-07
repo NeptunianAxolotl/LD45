@@ -197,7 +197,7 @@ local function SetupPlayer(world, junkList)
     local posX, posY = util.ToCart(bodyDir, 800)
     local vx, vy = util.ToCart(bodyDir + math.pi, 35)
 
-    local junk = MakeJunk(world, "tractor_wheel", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
+    local junk = MakeJunk(world, "displacer", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
     junkList[junk.junkIndex] = junk
 
     local components = IterableMap.New()
@@ -242,6 +242,14 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
             end
         elseif comp.def.toggleActivate and comp.activated then
             ActivateComponent(ship, comp, junkList, player, dt, true, world)
+            
+            if comp.def.onSound then
+                if not comp.prevActivated then
+                    audioSystem.playSound(comp.def.onSound, comp.index)
+                    comp.prevActivated = true
+                end
+            end
+            
         elseif comp.def.alwaysOn then
             comp.activated = true
             ActivateComponent(ship, comp, junkList, player, dt, true, world)
@@ -252,7 +260,15 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
                 ActivateComponent(ship, comp, junkList, player, dt, false, world)
             end
             
+            if comp.def.offSound then
+                if comp.prevActivated then
+                    audioSystem.playSound(comp.def.offSound, comp.index)
+                    comp.prevActivated = false
+                end
+            end
+            
             audioSystem.stopSound(comp.index)
+            
         end
     end
 end

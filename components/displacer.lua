@@ -1,4 +1,4 @@
-local POWER = 3.5
+local POWER = 5
 
 local conf = {
     imageOff = "images/displacer.png",
@@ -11,6 +11,8 @@ local conf = {
     walkRadius = 40,
     maxHealth = 400,
     density = 1,
+    onSound = "displacer_on",
+    offSound = "displacer_off",
     humanName = "a phase displacement device",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.005, 0.02)
