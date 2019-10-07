@@ -4,6 +4,8 @@ local debugEnabled = false
 compConfig, compConfigList = unpack(require("components"))
 animationDefs = {}
 
+PHYSICS_TIME = 7
+
 IterableMap = require("IterableMap")
 audioSystem = require("audio")
 util = require("util")
@@ -16,9 +18,10 @@ JUNK_PER_REGION = 170
 
 font = require("font")
 
+
 introTimer = 0
 introList = 0
-fadeSquenceTime = 5
+fadeSquenceTime = PHYSICS_TIME
 winSquenceActive = false
 
 notifyColor = {
@@ -212,7 +215,7 @@ function love.update(dt)
     
     lastDt = dt
 
-    if introTimer < 5 then
+    if introTimer < PHYSICS_TIME then
         return
     end
     local winTimer = util.GetWinTimerProgress(player)
@@ -354,8 +357,8 @@ function RestartFunc()
     firstTracker.reset{}
     util.reset()
 
-    introTimer = 10
-    fadeSquenceTime = 10.5
+    introTimer = PHYSICS_TIME + 5
+    fadeSquenceTime = PHYSICS_TIME + 5.5
     introList = 3
 
     player.guy = gameSystem.SetupPlayer(world, junkList, true)

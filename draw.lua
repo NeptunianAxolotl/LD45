@@ -444,10 +444,10 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     love.graphics.push()
 
     local wantedScale = 100/(((player.ship or player.guy).components.GetIndexMax())^0.72 + 100)
-    if introTimer < 12.6 then
+    if introTimer < PHYSICS_TIME + 7.6 then
         wantedScale = wantedScale/0.6
-    elseif introTimer < 14 then
-        wantedScale = wantedScale/(0.6 + 0.4*(introTimer - 12.6)/1.4)
+    elseif introTimer < PHYSICS_TIME + 9 then
+        wantedScale = wantedScale/(0.6 + 0.4*(introTimer - (PHYSICS_TIME + 7.6))/1.4)
     end
 
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
