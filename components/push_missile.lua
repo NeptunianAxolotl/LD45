@@ -14,6 +14,7 @@ local conf = {
     scaleMax = 1,
     scaleMin = 0.8,
     humanName = "a solid fuel booster",
+    isPropulsion = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.01, 0.2, 0.3, 0.3)
     end,

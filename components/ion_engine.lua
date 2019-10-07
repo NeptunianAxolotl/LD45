@@ -13,6 +13,7 @@ local conf = {
     maxHealth = 240,
     density = 2,
     humanName = "an ion engine",
+    isPropulsion = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.6, 0.5, 0.2, 0.1)
     end,

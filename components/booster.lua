@@ -13,6 +13,7 @@ local conf = {
     density = 6,
     maxHealth = 700,
     humanName = "a booster",
+    isPropulsion = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.4, 0.4, 0.4, 0.2)
     end,

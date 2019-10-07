@@ -14,6 +14,7 @@ local conf = {
     walkRadius = 42,
     maxHealth = 800,
     humanName = "a warp drive",
+    isPropulsion = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0.0001, 0.02, 0.04)
     end,

@@ -107,7 +107,7 @@ function love.draw()
     end
 
     drawSystem.drawConsole()
-    drawSystem.drawGoalConsole(util.GetObjectives(), introTimer)
+    drawSystem.drawGoalConsole(util.GetObjectives(), firstTracker.SoftlockedTime(), introTimer)
 end
 
 --------------------------------------------------

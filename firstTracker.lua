@@ -3,8 +3,10 @@ local externalFunc = {}
 local preShip = true
 local noBooster = true
 
+local softlocked = nil
+
 local hints = {
-	{
+    {
         customTrigger = "console_no_win",
         hint = {"The console requires a warp drive, a phase displacer, and two laser batteries."},
         duration = 5,
@@ -17,7 +19,7 @@ local hints = {
     },
     {
         distanceTrigger = 2500,
-        hint = {"Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
+        hint = {"> Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
         duration = 15,
         waitTime = 2,
         doFunc = function ()     
@@ -31,19 +33,25 @@ local hints = {
     },    
     {
         compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
-        hint = {"Assign a key to your new $NAME,","then hold down that key to activate it."},
-        duration = 15,
-        waitTime = 2,
+        hint = {"> Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
+        duration = 8,
+        waitTime = 0.5,
+    },
+    {
+        compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
+        hint = {"> Assign a key to your new $NAME,","then hold down that key to activate it."},
+        duration = 8,
+        waitTime = 9,
     },
     {
         compTrigger = {{"tractor_wheel","tractor wheel"},{"gyro","stabiliser"},{"displacer","displacement device"}},
-        hint = {"Activate or deactivate the $NAME","by pressing its assigned key."},
+        hint = {"> Activate or deactivate the $NAME","by pressing its assigned key."},
         duration = 15,
         waitTime = 2,
     },
     {
         compTrigger = "navigation",
-        hint = "The scanner points towards the nearest objective component.",
+        hint = "> The scanner points towards the nearest objective component.",
         duration = 15,
         waitTime = 2,
     },
@@ -73,7 +81,7 @@ local function ProcessHint(dt, index, data, distance, compNames)
     if hintSent[index] then
         return
     end
-
+    
     if data.customTrigger then
         return
     end
@@ -143,6 +151,39 @@ function externalFunc.Update(player, dt)
     for i = 1, #hints do
         ProcessHint(dt, i, hints[i], distance, compNames)
     end
+    
+    isSoftlocked = false
+    noBooster = true
+    
+    if player and (not preShip) then
+        if player.ship then
+            -- have a ship that has an engine = not noBooster
+            for _, comp in player.ship.components.Iterator() do
+                if comp.def.isPropulsion then
+                    noBooster = false
+                end
+            end
+            -- 1 revolution per second on a ship = softlock
+            if math.abs(player.ship.body:getAngularVelocity()) > math.pi then isSoftlocked = true end
+        end
+        
+        -- travelling slowly on your own or without any propulsion = softlock
+        if noBooster then
+            local vx, vy = (player.ship or player.guy).body:getLinearVelocity()
+            if util.AbsVal(vx,vy) < 70 then isSoftlocked = true end
+        end
+    end
+    
+    if isSoftlocked then
+        softlocked = softlocked and softlocked + dt or dt
+    else
+        softlocked = nil
+    end
+    
+end
+
+function externalFunc.SoftlockedTime()
+    return softlocked
 end
 
 function externalFunc.IsPreShip()

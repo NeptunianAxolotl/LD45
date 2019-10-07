@@ -2,6 +2,8 @@ local externalFunc = {}
 
 local cameraX, cameraY, cameraScale = 0, 0, 1
 local smoothCameraFactor = 0.25
+local softlockDelay = 4
+local softlockPeriod = 3.6
 
 local starfield = require("starfield")
 local animations = IterableMap.New()
@@ -57,10 +59,21 @@ function externalFunc.removeFromConsole(index)
     table.remove(consoleColorB, index)
 end
 
-function externalFunc.drawGoalConsole(objectives, _timer)
+local function pulse(t, duration)
+    t = (t % duration) / duration
+    if t < 0.1 then return 0
+    elseif t < 0.2 then return (t - 0.1) / (0.2 - 0.1)
+    elseif t < 0.8 then return 1
+    elseif t < 0.9 then return (0.9 - t) / (0.9 - 0.8)
+    else return 0 end
+end
+
+function externalFunc.drawGoalConsole(objectives, softlocked, _timer)
     if not objectives then
         return
     end
+    
+    local vnext = 730
     
     for _, obj in objectives.Iterator() do
         love.graphics.setColor(1,1,1, math.max(0, ((_timer - 20) / 1.5)))
@@ -71,8 +84,20 @@ function externalFunc.drawGoalConsole(objectives, _timer)
         
         font.SetSize(2)
         local text = love.graphics.newText(font.GetFont(), obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"))
-        love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), 730 - (obj.index * 25))
+        vnext = vnext - 25
+        --love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), 730 - (obj.index * 25))
+        love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), vnext)
         
+        love.graphics.setColor(1,1,1)
+    end
+    
+    if softlocked then
+        local intensity = (softlocked > softlockDelay) and pulse(softlocked - softlockDelay, softlockPeriod) or 0
+        love.graphics.setColor(1,0,0,intensity)
+        font.SetSize(2)
+        local text = love.graphics.newText(font.GetFont(), "Press Ctrl-R to restart the game")
+        vnext = vnext - 25
+        love.graphics.print("Press Ctrl-R to restart the game", 974 - text:getWidth(1), vnext)
         love.graphics.setColor(1,1,1)
     end
 end
