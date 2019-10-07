@@ -50,8 +50,9 @@ local conf = {
             end
             
             comp.swankSpeed = comp.swankSpeed or ((math.random() > 0.5 and 7) or -7)
-            comp.swankAngle = ((comp.swankAngle or (math.random()*2*math.pi)) + dt*comp.swankSpeed)%(2*math.pi)
-            local ax, ay = util.ToCart(comp.swankAngle + activeAngle, comp.scaleFactor*20)
+            comp.drawAngle = ((comp.drawAngle or (math.random()*2*math.pi)) + dt*comp.swankSpeed)%(2*math.pi)
+
+            local ax, ay = util.ToCart(comp.drawAngle + activeAngle, comp.scaleFactor*20)
             ax, ay = ax + activeX, ay + activeY
 
             local jx, jy = nearestJunk.body:getX(), nearestJunk.body:getY()
