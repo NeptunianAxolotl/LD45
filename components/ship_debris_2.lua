@@ -8,11 +8,11 @@ local conf = {
     activationOrigin = {0, 0},
 	shapeCoords = { SCALE*11,SCALE*8, SCALE*8,SCALE*1, SCALE*-3,SCALE*-10, SCALE*-10,SCALE*-9, SCALE*-10,SCALE*-1, SCALE*-6,SCALE*10, SCALE*6,SCALE*0 },
     walkRadius = 20,
-    maxHealth = 1100,
+    maxHealth = 1400,
     scaleMax = 1,
     scaleMin = 0.7,
     density = 2.5,
-    humanName = "a piece of hull plating",
+    humanName = "a sturdy piece of hull plating",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.4, 0.3, 0.1, 0.05)
     end,
