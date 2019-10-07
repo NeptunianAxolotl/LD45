@@ -72,7 +72,7 @@ function love.draw()
         
     --intro console messages
     if introList == 0 and introTimer > 0.5 then
-        drawSystem.sendToConsole("> They called you mad for packing a suit.", 4, notifyColor)
+        drawSystem.sendToConsole("> They called you paranoid for packing a space suit.", 4, notifyColor)
         introList = introList + 1
     end
         
