@@ -291,6 +291,7 @@ local function UpdateObjectives(player, junkList)
 		end
 		player.closestObjX = false
 		player.closestObjY = false
+		player.objectivesSatisfied = false
 		return
 	end
 
@@ -320,8 +321,10 @@ local function UpdateObjectives(player, junkList)
 	if allSatisfied then
 		player.closestObjX = false
 		player.closestObjY = false
+		player.objectivesSatisfied = not objectives.IsEmpty()
 		return allSatisfied
 	end
+	player.objectivesSatisfied = false
 
 	local px, py = player.ship.body:getX(), player.ship.body:getY()
 	local minDist, minDistX, minDistY
@@ -349,6 +352,19 @@ local function GetObjectives()
 end
 
 --------------------------------------------------
+-- Win Sequence
+--------------------------------------------------
+
+local winSequenceSet = false
+local function SetWin()
+	winSequenceSet = true
+end
+
+local function GetWin()
+	return winSequenceSet
+end
+
+--------------------------------------------------
 -- Loading
 --------------------------------------------------
 
@@ -364,6 +380,8 @@ local function reset()
 
 	objectives = IterableMap.New()
 	objectiveID = 0
+
+	winSequenceSet = false
 end
 
 return {

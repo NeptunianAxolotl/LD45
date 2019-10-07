@@ -5,6 +5,11 @@ local noBooster = true
 
 local hints = {
 	{
+        customTrigger = "console_no_win",
+        hint = {"The console requires a warp drive, a phase displacer, and two laser batteries."},
+        duration = 5,
+    },
+	{
         distanceTrigger = 1200,
         hint = {"Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
         duration = 15,
@@ -44,6 +49,13 @@ local hints = {
     },
 }
 
+local customTriggerNames = {}
+for i = 1, #hints do
+    if hints[i].customTrigger then
+        customTriggerNames[hints[i].customTrigger] = i
+    end
+end
+
 local hintSent = {}
 local hintSentWait = {}
 
@@ -59,6 +71,10 @@ end
 
 local function ProcessHint(dt, index, data, distance, compNames)
     if hintSent[index] then
+        return
+    end
+
+    if data.customTrigger then
         return
     end
     
@@ -135,6 +151,17 @@ end
 
 function externalFunc.NoBooster()
     return noBooster
+end
+
+function externalFunc.SendCustomTrigger(triggerName)
+    if customTriggerNames[triggerName] then
+        local index = customTriggerNames[triggerName]
+        if not hintSent[index] then
+            local data = hints[index]
+            SendHint(data.hint, data.duration, goalColor) 
+            hintSent[index] = true
+        end
+    end
 end
 
 function externalFunc.reset()

@@ -423,8 +423,8 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     -- UI space
 
     if player.needKeybind then
-        font.SetSize(1)
-        love.graphics.print("Press any key to bind component controls.", 10, 10, 0, 1, 1)
+        --font.SetSize(1)
+        --love.graphics.print("Press any key to bind component controls.", 10, 10, 0, 1, 1)
     end
     
     if consoleTimer then
@@ -465,11 +465,11 @@ function externalFunc.reset()
     animations = IterableMap.New()
 
     -- Camera is intentionally not reset.
-    --consoleText = {}
-    --consoleTimer = {}
-    --consoleColorR = {}
-    --consoleColorG = {}
-    --consoleColorB = {}
+    consoleText = {}
+    consoleTimer = {}
+    consoleColorR = {}
+    consoleColorG = {}
+    consoleColorB = {}
 end
 
 return externalFunc

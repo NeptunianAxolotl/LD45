@@ -24,7 +24,10 @@ local conf = {
     },
     holdActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
-        -- Maybe win the game
+        if not player.objectivesSatisfied then
+            firstTracker.SendCustomTrigger("console_no_win")
+            return
+        end
     end,
 }
 

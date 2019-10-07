@@ -18,6 +18,7 @@ font = require("font")
 introTimer = 0
 introList = 0
 fadeSquenceTime = 5
+winSquenceActive = false
 
 notifyColor = {
     r = 1,
@@ -52,6 +53,7 @@ local function SetupVars()
         girderAddDist = 60,
     }
 
+    winSquenceActive = false
     junkList = {}
 end
 
