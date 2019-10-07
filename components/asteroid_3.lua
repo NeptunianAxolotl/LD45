@@ -12,7 +12,7 @@ local conf = {
     density = 1,
     noAttach = true,
     noSelect = true,
-    getOccurence = function (dist)
+    getOccurrnce = function (dist)
         if dist < 20000 then
             return 0
         elseif dist < 30000 then

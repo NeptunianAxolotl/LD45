@@ -82,23 +82,15 @@ local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, params)
     }
 end
 
-local function JunkDensityFunc(dist)
-    if dist < 1000 then
-        return 0
-    end
-    
-    return 0.4 + 0.6*(dist - 1000)/8000
-end
-
 local function GetRandomComponent(dist)
     local totalSum = 0
     for i = 1, #compConfigList do
-        totalSum = totalSum + compConfigList[i].getOccurence(dist)
+        totalSum = totalSum + compConfigList[i].getOccurrnce(dist)
     end
 
     local ran = math.random()*totalSum
     for i = 1, #compConfigList do
-        ran = ran - compConfigList[i].getOccurence(dist)
+        ran = ran - compConfigList[i].getOccurrnce(dist)
         if ran < 0 then
             return compConfigList[i].name
         end
@@ -113,7 +105,7 @@ local function MakeRandomJunk(world, midX, midY, size)
     local posY = math.random()*size + midY - size/2
 
     local dist = util.AbsVal(posX, posY)
-    if JunkDensityFunc(dist) <= math.random() then
+    if util.JunkDensityFunc(dist) <= math.random() then
         return
     end
 

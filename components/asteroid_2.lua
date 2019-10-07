@@ -13,7 +13,7 @@ local conf = {
     humanName = "a space rock",
     noAttach = true,
     noSelect = true,
-    getOccurence = function (dist)
+    getOccurrnce = function (dist)
         if dist < 8000 then
             return 0
         elseif dist < 30000 then

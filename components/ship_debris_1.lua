@@ -8,7 +8,7 @@ local conf = {
     walkRadius = 20,
     maxHealth = 80,
     humanName = "some ship debris",
-    getOccurence = function (dist)
+    getOccurrnce = function (dist)
         if dist < 3000 then
             return 0
         elseif dist < 15000 then
