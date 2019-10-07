@@ -21,9 +21,9 @@ local volMult = {
     explosion = 0.15,
     theme1 = 0.75,
     theme2 = 0.75,
-    theme2point5 = 0.75,
+    theme2point5 = 0.82,
     theme3 = 0.75,
-    themeWin = 0.75,
+    themeWin = 0.82,
 }
 
 function addSource(name, id)
