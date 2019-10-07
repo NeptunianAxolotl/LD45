@@ -367,7 +367,7 @@ local function AddObjective(humanName, requiredComponent, requiredCount)
 end
 
 local prevObjSatisfied = -1
-local function CheckMusicChange(objSatisfied)
+local function CheckMusicChange(player, objSatisfied)
 	if GetWinTimerProgress(player) then
 		objSatisfied = 5
 	end
@@ -403,7 +403,7 @@ local function UpdateObjectives(player, junkList)
 		player.closestObjX = false
 		player.closestObjY = false
 		player.objectivesSatisfied = false
-		CheckMusicChange(0)
+		CheckMusicChange(player, 0)
 		return
 	end
 
@@ -432,7 +432,7 @@ local function UpdateObjectives(player, junkList)
 		end
 	end
 
-	CheckMusicChange(objSatisfied)
+	CheckMusicChange(player, objSatisfied)
 
 	if allSatisfied then
 		player.closestObjX = false
