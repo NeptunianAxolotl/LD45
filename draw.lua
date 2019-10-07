@@ -449,7 +449,6 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     elseif introTimer < 14 then
         wantedScale = wantedScale/(0.6 + 0.4*(introTimer - 12.6)/1.4)
     end
-    print("wantedScale", wantedScale)
 
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
     local stars = starfield.locations(cx, cy, cScale)
