@@ -80,8 +80,12 @@ function externalFunc.playSound(name, id, noLoop, fadeRate, delay)
         soundData.source:setLooping(not noLoop)
         sounds.Add(id, soundData)
     end
-    love.audio.play(soundData.source)
+
     soundData.want = 1
+    soundData.delay = delay
+    if not soundData.delay then
+        love.audio.play(soundData.source)
+    end
 end
 
 function externalFunc.Update(player, dt)
@@ -90,6 +94,9 @@ function externalFunc.Update(player, dt)
             soundData.delay = soundData.delay - dt
             if soundData.delay < 0 then
                 soundData.delay = false
+                if soundData.want > 0 then
+                    love.audio.play(soundData.source)
+                end
             end
         else
             if soundData.want > soundData.have then
