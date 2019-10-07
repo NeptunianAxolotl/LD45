@@ -12,6 +12,7 @@ components.asteroidsmall1 = require("components/asteroid_small_1")
 components.asteroidsmall2 = require("components/asteroid_small_2")
 components.asteroidsmall3 = require("components/asteroid_small_3")
 components.ship_debris1 = require("components/ship_debris_1")
+components.ship_debris2 = require("components/ship_debris_2")
 components.push_missile = require("components/push_missile")
 components.push_missile_debris = require("components/push_missile_debris")
 components.red_rocket = require("components/red_rocket")
@@ -36,7 +37,7 @@ for name, def in pairs(components) do
         print("Missing walkRadius for", def.name)
     end
 
-    if name ~= "player" and not def.isGirder then
+    if name ~= "player" and name ~= "push_missile_debris" and not def.isGirder then
         compList[#compList + 1] = def
     end
 end

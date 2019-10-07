@@ -486,7 +486,7 @@ local function DamageComponent(world, player, junkList, ship, comp, damage)
 end
 
 --------------------------------------------------
--- Colisions
+-- Collisions
 --------------------------------------------------
 
 local collisionToAdd = IterableMap.New()
@@ -635,7 +635,7 @@ local function ProcessCollision(key, data, index, world, player, junkList)
         if otherBullet then
             local damage = util.DoBulletDamage(otherData.bullet)
             DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, damage)
-        elseif colSpeed > 140 then
+        elseif colSpeed > 120 then
             DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, colDamage)
             DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
         end
@@ -660,8 +660,10 @@ local function ProcessCollision(key, data, index, world, player, junkList)
 
     if not mainData.isPlayer then
         -- Is player ship
-        DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
-        DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
+        if colSpeed > 80 then
+            DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
+            DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
+        end
     end
 
     return true
