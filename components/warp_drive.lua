@@ -15,7 +15,7 @@ local conf = {
     maxHealth = 800,
     humanName = "a warp drive",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 20, 0, 0.12, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.12, 0.03)
     end,
     density = 12,
     text =
