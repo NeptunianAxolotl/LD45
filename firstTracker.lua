@@ -4,49 +4,61 @@ local preShip = true
 local noBooster = true
 
 local hints = {
-    {
+	{
         distanceTrigger = 1200,
-        hint = "distance!",
+        hint = {"Hold the left mouse button to move towards","that point on your ship."},
         duration = 15,
-        waitTime = 4,
+        waitTime = 1,
     },
     {
-        compTrigger = "booster",
-        hint = "booster!",
+        distanceTrigger = 2500,
+        hint = {"Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
         duration = 15,
-        waitTime = 4,
+        waitTime = 2,
     },
     {
-        compTrigger = "booster",
-        hint = "booster!",
+        compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
+        hint = {"Assign a key to your new $NAME,","then hold down that key to activate it."},
         duration = 15,
-        waitTime = 4,
+        waitTime = 2,
     },
     {
-        compTrigger = "booster",
-        hint = "booster!",
+        compTrigger = {{"tractor_wheel","tractor wheel"},{"gyro","stabiliser"},{"displacer","displacement device"}},
+        hint = {"Activate or deactivate the $NAME","by pressing its assigned key."},
         duration = 15,
-        waitTime = 4,
+        waitTime = 2,
     },
     {
-        compTrigger = "tractor_wheel",
-        hint = "booster!",
+        compTrigger = "navigation",
+        hint = "The scanner points towards the nearest objective component.",
         duration = 15,
-        waitTime = 4,
+        waitTime = 2,
     },
 }
 
 local hintSent = {}
 local hintSentWait = {}
 
+local function SendHint(hint, duration, color)
+    if type(hint) == "table" then
+        for j = 1, #hint do
+            drawSystem.sendToConsole(hint[j], duration, color) 
+        end
+    else
+        drawSystem.sendToConsole(hint, duration, color) 
+    end
+end
+
 local function ProcessHint(dt, index, data, distance, compNames)
     if hintSent[index] then
         return
     end
+    
+    local hintMessage = data.hint
 
     if data.distanceTrigger then
-        if distance < data.distanceTrigger then
-            drawSystem.sendToConsole(data.hint, data.duration, goalColor) 
+        if distance > data.distanceTrigger then
+            SendHint(hintMessage, data.duration, goalColor) 
             hintSent[index] = true
             if data.doFunc then
                 data.doFunc()
@@ -55,16 +67,36 @@ local function ProcessHint(dt, index, data, distance, compNames)
         return
     end
 
-    if not compNames[data.compTrigger] then
-        return
+    if type(data.compTrigger) == "table" then
+        local foundComp = false
+        for i = 1, #data.compTrigger do
+            if compNames[data.compTrigger[i][1]] then
+                foundComp = true
+                if type(hintMessage) == "table" then
+                    for j = 1, #hintMessage do
+                        hintMessage[j] = hintMessage[j]:gsub("$NAME",data.compTrigger[i][2])
+                    end
+                else
+                    hintMessage = hintMessage:gsub("$NAME",data.compTrigger[i][2])
+                end
+            end
+        end
+        if not foundComp then
+            return
+        end
+	else
+        if not compNames[data.compTrigger] then
+            return
+        end
     end
 
     if data.waitTime and (hintSentWait[index] or 0) < data.waitTime then
         hintSentWait[index] = (hintSentWait[index] or 0) + dt
         return
     end
-
-    drawSystem.sendToConsole(data.hint, data.duration, goalColor) 
+        
+    SendHint(hintMessage, data.duration, goalColor) 
+    
     hintSent[index] = true
     if data.doFunc then
         data.doFunc()
