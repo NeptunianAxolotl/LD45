@@ -14,7 +14,15 @@ local conf = {
     maxHealth = 700,
     humanName = "a booster",
     getOccurence = function (dist)
-        return 1
+        if dist < 5000 then
+            return 0
+        elseif dist < 20000 then
+            return 0.1
+        elseif dist < 40000 then
+            return 0.5
+        else
+            return 0
+        end
     end,
     text =
     {

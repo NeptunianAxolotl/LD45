@@ -9,7 +9,13 @@ local conf = {
     maxHealth = 250,
     humanName = "a laser prism",
     getOccurence = function (dist)
-        return 1
+        if dist < 20000 then
+            return 0
+        elseif dist < 70000 then
+            return 0.1
+        else
+            return 0.05
+        end
     end,
     density = 1,
 }

@@ -15,7 +15,13 @@ local conf = {
     scaleMin = 0.5,
     humanName = "a tractor beam",
     getOccurence = function (dist)
-        return 1
+        if dist < 10000 then
+            return 0
+        elseif dist < 70000 then
+            return 0.04
+        else
+            return 0.02
+        end
     end,
     density = 1,
     text =

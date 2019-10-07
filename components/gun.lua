@@ -9,7 +9,13 @@ local conf = {
     maxHealth = 220,
     humanName = "a gun",
     getOccurence = function (dist)
-        return 1
+        if dist < 15000 then
+            return 0
+        elseif dist < 70000 then
+            return 0.2
+        else
+            return 0.1
+        end
     end,
     density = 1,
 }

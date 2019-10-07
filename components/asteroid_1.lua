@@ -14,7 +14,15 @@ local conf = {
     noAttach = true,
     noSelect = true,
     getOccurence = function (dist)
-        return 1
+        if dist < 5000 then
+            return 0
+        elseif dist < 30000 then
+            return 0.1
+        elseif dist < 70000 then
+            return 0.3
+        else
+            return 0
+        end
     end,
 }
 

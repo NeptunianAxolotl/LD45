@@ -14,7 +14,11 @@ local conf = {
     density = 8,
     humanName = "an ion engine",
     getOccurence = function (dist)
-        return 1
+        if dist < 2000 then
+            return 0
+        else
+            return 0.4
+        end
     end,
     text =
     {

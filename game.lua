@@ -86,6 +86,7 @@ local function JunkDensityFunc(dist)
     if dist < 1000 then
         return 0
     end
+    
     return 0.4 + 0.6*(dist - 1000)/8000
 end
 
@@ -107,11 +108,11 @@ local function GetRandomComponent(dist)
     return compConfigList[num].name
 end
 
-local function MakeRandomJunk(world, midX, midY, size, exclX, exclY)
+local function MakeRandomJunk(world, midX, midY, size)
     local posX = math.random()*size + midX - size/2
     local posY = math.random()*size + midY - size/2
 
-    local dist = util.AbsVal(posX - exclX, posY - exclY)
+    local dist = util.AbsVal(posX, posY)
     if JunkDensityFunc(dist) <= math.random() then
         return
     end
@@ -181,7 +182,7 @@ local function ExpandJunkspace(world, junkList, px, py)
             if not (regionsWithJunk[prX+x] and regionsWithJunk[prX+x][prY+y]) then
                 local JUNK_PER_REGION = 100
                 for i = 1, JUNK_PER_REGION do
-                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py)
+                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE)
                     if junk then
                         junkList[junk.junkIndex] = junk
                     end

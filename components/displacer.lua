@@ -13,7 +13,13 @@ local conf = {
     density = 1,
     humanName = "a phase engine",
     getOccurence = function (dist)
-        return 1
+        if dist < 25000 then
+            return 0
+        elseif dist < 55000 then
+            return 0.5
+        else
+            return 0.2
+        end
     end,
     text =
     {

@@ -13,7 +13,13 @@ local conf = {
     maxHealth = 220,
     humanName = "a solid fuel booster",
     getOccurence = function (dist)
-        return 1
+        if dist < 10000 then
+            return 0
+        elseif dist < 40000 then
+            return 0.6
+        else
+            return 0.3
+        end
     end,
     density = 10,
     text =

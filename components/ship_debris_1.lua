@@ -9,7 +9,15 @@ local conf = {
     maxHealth = 80,
     humanName = "some ship debris",
     getOccurence = function (dist)
-        return 1
+        if dist < 3000 then
+            return 0
+        elseif dist < 15000 then
+            return 0.2
+        elseif dist < 60000 then
+            return 0.4
+        else
+            return 0.2
+        end
     end,
     density = 1,
 }

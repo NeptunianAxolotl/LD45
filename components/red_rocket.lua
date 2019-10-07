@@ -14,7 +14,15 @@ local conf = {
     scaleMin = 0.6,
     humanName = "a large rocket",
     getOccurence = function (dist)
-        return 1
+        if dist < 20000 then
+            return 0
+        elseif dist < 35000 then
+            return 0.2
+        elseif dist < 55000 then
+            return 0.4
+        else
+            return 0.1
+        end
     end,
     density = 6,
     text =
