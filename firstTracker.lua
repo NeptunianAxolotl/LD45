@@ -6,10 +6,29 @@ local noBooster = true
 local softlocked = nil
 
 local hints = {
-    {
+	{
         customTrigger = "console_no_win",
+        hint = {"The console requires a warp drive, a phase displacer, and two laser batteries."},
         hint = {"> The console requires a warp drive, a phase displacer, and two laser batteries."},
         duration = 5,
+    },
+	{
+        customTrigger = "console_win",
+        hint = {"Welcome home."},
+        colorOverride = notifyColor,
+        duration = 500000000000000000,
+    },
+	{
+        customTrigger = "console_restart",
+        hint = {"Press Ctrl + R to restart."},
+        colorOverride = notifyColor,
+        duration = 50000000000000000000,
+    },
+	{
+        distanceTrigger = 1200,
+        hint = {"Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
+        duration = 15,
+        waitTime = 1,
     },
     {
         distanceTrigger = 2500,
@@ -84,7 +103,7 @@ local function ProcessHint(dt, index, data, distance, compNames)
 
     if data.distanceTrigger then
         if distance > data.distanceTrigger then
-            SendHint(hintMessage, data.duration, goalColor) 
+            SendHint(hintMessage, data.duration, data.colorOverride or goalColor)
             hintSent[index] = true
             if data.doFunc then
                 data.doFunc()
@@ -121,7 +140,7 @@ local function ProcessHint(dt, index, data, distance, compNames)
         return
     end
         
-    SendHint(hintMessage, data.duration, goalColor) 
+    SendHint(hintMessage, data.duration, data.colorOverride or goalColor) 
     
     hintSent[index] = true
     if data.doFunc then
@@ -193,7 +212,7 @@ function externalFunc.SendCustomTrigger(triggerName)
         local index = customTriggerNames[triggerName]
         if not hintSent[index] then
             local data = hints[index]
-            SendHint(data.hint, data.duration, goalColor) 
+            SendHint(data.hint, data.duration, data.colorOverride or goalColor)
             hintSent[index] = true
         end
     end

@@ -17,7 +17,7 @@ local conf = {
     offSound = "displacer_off",
     humanName = "a phase displacement device",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.0001, 0.025, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 20, 0.0001, 0.025, 0.03)
     end,
     text =
     {
@@ -28,9 +28,19 @@ local conf = {
     },
     toggleActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        local winTimer = util.GetWinTimerProgress(player)
+        if winTimer then
+            comp.activated = true
+        end
         util.AddPhaseRadius(player.guy, activeX, activeY, 400, dt*POWER)
         if player.ship then
             util.AddPhaseRadius(player.ship, activeX, activeY, 400, dt*POWER)
+        end
+    end,
+    offFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        local winTimer = util.GetWinTimerProgress(player)
+        if winTimer then
+            comp.activated = true
         end
     end,
 }

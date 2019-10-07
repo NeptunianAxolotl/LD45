@@ -164,6 +164,7 @@ local function AddPhaseRadius(ship, px, py, radius, power)
 		local dist = Dist(x, y, px, py)
 		if dist < radius then
 			comp.phaseState = (comp.phaseState or 0) + (comp.def.phaseSpeedMult or 1)*power*(2*radius - dist)/(2*radius)
+			comp.enteringPhase = 2
 			if comp.phaseState > 1 then
 				comp.phaseState = 1
 			end
@@ -179,6 +180,12 @@ local function UpdatePhasedObjects(dt)
 		local comp = dataByKey[key]
 		if comp and not comp.fixture:isDestroyed() then
 			comp.phaseState = comp.phaseState - (comp.def.phaseSpeedMult or 1)*1.55*dt
+			if comp.enteringPhase then
+				comp.enteringPhase = comp.enteringPhase - 1
+				if comp.enteringPhase < 0 then
+					comp.enteringPhase = false
+				end
+			end
 			if (comp.phaseState > 0.5) ~= ((comp.phased and true) or false) then
 				comp.phased = (comp.phaseState > 0.5)
 				SetPhaseStatus(comp, comp.phased)
@@ -352,18 +359,79 @@ local function GetObjectives()
 end
 
 --------------------------------------------------
--- Win Sequence
+-- Winning
 --------------------------------------------------
+ 
+local winCompIndex
+local function WinCheckFunc(comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+	if not player.objectivesSatisfied then
+		if comp.winTimer then
+			drawSystem.sendToConsole("> Warp sequence interrupted!", 5, badColor)
+			comp.winTimer = false
+		else
+			firstTracker.SendCustomTrigger("console_no_win")
+		end
+		return
+	end
+	if not comp.winTimer then
+		drawSystem.sendToConsole("> Warp sequence intitialised.", 5, goalColor)
+	end
+	comp.winTimer = (comp.winTimer or 0) + dt
+	winCompIndex = comp.index
 
-local winSequenceSet = false
-local function SetWin()
-	winSequenceSet = true
+	local ship = player.ship
+	for _, comp in ship.components.Iterator() do
+		comp.phaseState = (comp.phaseState or 0) + (comp.def.phaseSpeedMult or 1)*4*dt
+		comp.enteringPhase = 2
+		if comp.phaseState > 1 then
+			comp.phaseState = 1
+		end
+		phasedObjects.Add(comp.index, comp)
+	end
+
+	for _, comp in player.guy.components.Iterator() do
+		comp.phaseState = (comp.phaseState or 0) + (comp.def.phaseSpeedMult or 1)*4*dt
+		comp.enteringPhase = 2
+		if comp.phaseState > 1 then
+			comp.phaseState = 1
+		end
+		phasedObjects.Add(comp.index, comp)
+	end
 end
 
-local function GetWin()
-	return winSequenceSet
+local function GetWinTimerProgress(player)
+	if (not winCompIndex) or (not player.ship) then
+		return
+	end
+	local comp = player.ship.components.Get(winCompIndex)
+	if not comp then
+		return
+	end
+	return comp.winTimer
 end
 
+local engineUsed = false
+local function WarpWinPower(comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+	if engineUsed then
+		return
+	end
+	engineUsed = true
+	local angularVelocity = body:getAngularVelocity()
+	local winTimer = GetWinTimerProgress(player)
+	if not winTimer then
+		return
+	end
+	winTimer = math.min(3, winTimer)
+	body:setAngularVelocity(angularVelocity*0.9*(3 - winTimer)/3)
+
+	local fx, fy = 400000*math.cos(activeAngle), 500000*(1 + winTimer*0.4)*math.sin(activeAngle)
+	body:applyForce(fx, fy, activeX, activeY)
+	audioSystem.playSound("booster", comp.index)
+end
+
+local function UpdateWarpWin()
+	engineUsed = false
+end
 --------------------------------------------------
 -- Loading
 --------------------------------------------------
@@ -381,7 +449,8 @@ local function reset()
 	objectives = IterableMap.New()
 	objectiveID = 0
 
-	winSequenceSet = false
+	winCompIndex = false
+	engineUsed = false
 end
 
 return {
@@ -403,6 +472,10 @@ return {
 	AddObjective = AddObjective,
 	UpdateObjectives = UpdateObjectives,
 	GetObjectives = GetObjectives,
+	WinCheckFunc = WinCheckFunc,
+	GetWinTimerProgress = GetWinTimerProgress,
+	WarpWinPower = WarpWinPower,
+	UpdateWarpWin = UpdateWarpWin,
 	load = load,
 	reset = reset,
 }

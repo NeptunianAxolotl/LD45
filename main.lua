@@ -36,6 +36,11 @@ goalColor = {
     g = 0.95,
     b = 0.2,
 }
+badColor = {
+    r = 0.95,
+    g = 0.2,
+    b = 0.2,
+}
 
 drawSystem = require("draw")
 firstTracker = require("firstTracker")
@@ -92,7 +97,6 @@ function love.draw()
     
     drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
     
-    
     if introTimer < fadeSquenceTime + 1.5 then
         local winWidth  = love.graphics:getWidth()
         local winHeight = love.graphics:getHeight()
@@ -109,6 +113,35 @@ function love.draw()
         love.graphics.setColor(0,0,0, math.max(0, 1 - ((introTimer - fadeSquenceTime) / 1.5)))
         love.graphics.polygon("fill", winPoints)
         love.graphics.setColor(1,1,1)
+    end
+
+    local winTimer = util.GetWinTimerProgress(player)
+    if winTimer then
+        if winTimer > 6 then
+            local winWidth  = love.graphics:getWidth()
+            local winHeight = love.graphics:getHeight()
+
+            local winPoints = {}
+            winPoints[1] = 0
+            winPoints[2] = 0
+            winPoints[3] = 0
+            winPoints[4] = winHeight
+            winPoints[5] = winWidth
+            winPoints[6] = winHeight
+            winPoints[7] = winWidth
+            winPoints[8] = 0
+            love.graphics.setColor(0,0,0, math.max(0, 1 - ((7.5 - winTimer) / 1.5)))
+            love.graphics.polygon("fill", winPoints)
+            love.graphics.setColor(1,1,1)
+        end
+        
+        if winTimer > 9.5 then
+            firstTracker.SendCustomTrigger("console_win")
+        end
+
+        if winTimer > 13 then
+            firstTracker.SendCustomTrigger("console_restart")
+        end
     end
 
     drawSystem.drawConsole()
@@ -186,7 +219,12 @@ function love.update(dt)
     if introTimer < 5 then
         return
     end
+    local winTimer = util.GetWinTimerProgress(player)
 
+    if winTimer and winTimer > 15 then
+        return
+    end
+    
     local px, py = (player.ship or player.guy).body:getWorldCenter()
     gameSystem.ExpandJunkspace(world, junkList, px, py)
     gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
@@ -199,13 +237,16 @@ function love.update(dt)
     gameSystem.UpdateMovePlayerGuy(player, mx, my)
     gameSystem.UpdatePlayerComponentAttributes(player)
 
-    if dt < 0.4 then
-        world:update(dt)
+    if (not winTimer) or (winTimer < 8) then 
+        if dt < 0.4 then
+            world:update(dt)
+        end
+        gameSystem.ProcessCollisions(world, player, junkList)
     end
-    gameSystem.ProcessCollisions(world, player, junkList)
-    
+
     util.UpdatePhasedObjects(dt)
     util.UpdateBullets(dt)
+    util.UpdateWarpWin()
 
     local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
     gameSystem.UpdateMovePlayerGuy(player, mx, my)
@@ -217,7 +258,7 @@ function love.update(dt)
     gameSystem.ProcessCollisions(world, player, junkList)
 
     firstTracker.Update(player, dt)
-    audioSystem.Update(dt)
+    audioSystem.Update(player, dt)
     
     --print("distance: " .. util.AbsVal(px, py))
 

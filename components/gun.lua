@@ -1,6 +1,6 @@
 local FORCE = -900
 local DAMAGE = 90
-local SPEED = 1400
+local SHOT_SPEED = 1400
 local LIFE = 2
 
 local conf = {
@@ -32,8 +32,8 @@ local conf = {
         end
 
         local vx, vy = body:getLinearVelocityFromWorldPoint(activeX, activeY)
-        util.FireBullet(world, body, activeX, activeY, activeAngle, vx, vy, DAMAGE, SPEED, LIFE)
-        comp.reloadTime = 0.12
+        util.FireBullet(world, body, activeX, activeY, activeAngle, vx, vy, DAMAGE, SHOT_SPEED, LIFE)
+        comp.reloadTime = 0.16
 
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)

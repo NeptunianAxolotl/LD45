@@ -252,14 +252,17 @@ local function DrawDebug(world, player)
     love.graphics.setColor(1, 1, 1, 1)
 end
 
-local function DrawShip(ship, debugEnabled, dt)
+local function DrawShip(player, ship, debugEnabled, dt)
     if not ship then
         return
     end
     
     dt = dt or 0
 
-    util.DrawBullets()
+    local winAlpha = 1
+    if util.GetWinTimerProgress(player) and (ship.playerShip or ship.isPlayer) then
+        winAlpha = (6 - util.GetWinTimerProgress(player))/6
+    end
 
     -- Draw girders
     for _, comp in ship.components.Iterator() do
@@ -267,10 +270,10 @@ local function DrawShip(ship, debugEnabled, dt)
             local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
             if comp.phaseState then
-                love.graphics.setColor(1, 1, 1, 1 - 0.75*comp.phaseState)
+                love.graphics.setColor(1, 1, 1, (1 - 0.75*comp.phaseState)*winAlpha)
             end
 
-            local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+            local image = ((comp.activated or comp.winTimer) and comp.def.imageOn) or comp.def.imageOff
             local drawScale = comp.scaleFactor
 
             love.graphics.draw(image, dx, dy, ship.body:getAngle() + comp.angle, 
@@ -294,10 +297,10 @@ local function DrawShip(ship, debugEnabled, dt)
                 comp.animationTimer = comp.animationTimer % comp.def.imageFrameDuration
             end
         
-            local image = (comp.activated and (comp.currentFrame and comp.def.imageOnAnim[comp.currentFrame] or comp.def.imageOn)) or comp.def.imageOff
+            local image = ((comp.activated or comp.winTimer) and (comp.currentFrame and comp.def.imageOnAnim[comp.currentFrame] or comp.def.imageOn)) or comp.def.imageOff
 
             if comp.phaseState then
-                love.graphics.setColor(1, 1, 1, 1 - 0.75*comp.phaseState)
+                love.graphics.setColor(1, 1, 1, (1 - 0.75*comp.phaseState)*winAlpha)
             end
 
             local totalDrawAngle = ship.body:getAngle() + comp.angle + (comp.drawAngle or 0)
@@ -315,8 +318,8 @@ local function DrawShip(ship, debugEnabled, dt)
             if comp.def.text ~= nil and comp.playerShip then
                 local textDef = comp.def.text
                 local keyName = comp.activeKey or "?"
-
-                love.graphics.setColor(unpack(comp.def.text.color))
+                
+                love.graphics.setColor(comp.def.text.color[1], comp.def.text.color[2], comp.def.text.color[3], comp.def.text.color[4]*winAlpha)
                 font.SetSize(3)
                 love.graphics.print(string.upper(keyName), dx, dy, totalDrawAngle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
                 love.graphics.setColor(1,1,1,1)
@@ -341,7 +344,7 @@ local function DrawShip(ship, debugEnabled, dt)
         local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
         if comp.aimX and comp.activated then
-            love.graphics.setColor(0,1,0,0.7)
+            love.graphics.setColor(0,1,0,0.7*winAlpha)
             love.graphics.setLineStyle("rough")
             love.graphics.setLineWidth(6)
             
@@ -369,9 +372,20 @@ end
 local function UpdateCameraPos(player, scale)
     local ship = (player.ship or player.guy)
     local px, py = ship.body:getWorldCenter()
-    cameraX = (1 - smoothCameraFactor)*cameraX + smoothCameraFactor*px
-    cameraY = (1 - smoothCameraFactor)*cameraY + smoothCameraFactor*py
-    cameraScale = (1 - smoothCameraFactor)*cameraScale + smoothCameraFactor*scale
+    if util.GetWinTimerProgress(player) then
+        local timer = util.GetWinTimerProgress(player)
+        local factor = timer*smoothCameraFactor/3
+        if factor < 0 then
+            factor = 0
+        end
+        cameraX = (1 - factor)*cameraX + factor*px
+        cameraY = (1 - factor)*cameraY + factor*py
+        cameraScale = (1 - factor)*cameraScale + factor*scale
+    else
+        cameraX = (1 - smoothCameraFactor)*cameraX + smoothCameraFactor*px
+        cameraY = (1 - smoothCameraFactor)*cameraY + smoothCameraFactor*py
+        cameraScale = (1 - smoothCameraFactor)*cameraScale + smoothCameraFactor*scale
+    end
 
     return cameraX, cameraY, cameraScale
 end
@@ -430,13 +444,16 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
 
     love.graphics.scale(cScale)
     love.graphics.translate(winWidth/(2*cameraScale) - cx, winHeight/(2*cameraScale) - cy)
+
+    util.DrawBullets()
+
     -- Worldspace
     for _, junk in pairs(junkList) do
-        DrawShip(junk, debugEnabled, dt)
+        DrawShip(player, junk, debugEnabled, dt)
     end
 
-    DrawShip(player.ship, debugEnabled, dt)
-    DrawShip(player.guy, debugEnabled, dt)
+    DrawShip(player, player.ship, debugEnabled, dt)
+    DrawShip(player, player.guy, debugEnabled, dt)
 
     if debugEnabled then
         DrawDebug(world, player)

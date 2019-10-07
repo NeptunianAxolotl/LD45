@@ -51,7 +51,7 @@ function externalFunc.playSound(name, id, noLoop)
     soundData.want = 1
 end
 
-function externalFunc.Update(dt)
+function externalFunc.Update(player, dt)
     for _, soundData in sounds.Iterator() do
         if soundData.want > soundData.have then
             soundData.have = soundData.have + 10*dt
@@ -67,6 +67,12 @@ function externalFunc.Update(dt)
                 soundData.have = soundData.want
             end
             soundData.source:setVolume(soundData.have)
+        end
+
+        local winTimer = util.GetWinTimerProgress(player)
+        if winTimer and winTimer > 2 then
+            local wantedVolume = math.max(0, (9 - winTimer)/7)
+            soundData.source:setVolume(soundData.have*wantedVolume)
         end
     end
 end

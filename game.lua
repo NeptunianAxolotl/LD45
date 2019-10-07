@@ -208,6 +208,7 @@ local function SetupPlayer(world, junkList, quickRestart)
     return {
         body = body,
         components = components,
+        isPlayer = true,
     }
 end
 
@@ -500,7 +501,7 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
 end
 
 local function DamageComponent(world, player, junkList, ship, comp, damage)
-    if comp.phaseState then
+    if comp.phaseState and not comp.enteringPhase then
         damage = 1000000
     end
     
@@ -665,10 +666,10 @@ local function ProcessCollision(key, data, index, world, player, junkList)
             local damage = util.DoBulletDamage(otherData.bullet)
             DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, damage)
         else
-            if colSpeed > 120 or mainData.comp.phaseState then
+            if colSpeed > 120 or (mainData.comp.phaseState and not mainData.comp.enteringPhase) then
                 DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, colDamage)
             end
-            if colSpeed > 40 or otherData.comp.phaseState then
+            if colSpeed > 40 or (otherData.comp.phaseState and not otherData.comp.enteringPhase) then
                 DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
             end
         end
@@ -693,10 +694,10 @@ local function ProcessCollision(key, data, index, world, player, junkList)
 
     if not mainData.isPlayer then
         -- Is player ship
-        if colSpeed > 40 or mainData.comp.phaseState then
+        if colSpeed > 40 or (mainData.comp.phaseState and not mainData.comp.enteringPhase) then
             DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
         end
-        if colSpeed > 40 or otherData.comp.phaseState then
+        if colSpeed > 40 or (otherData.comp.phaseState and not otherData.comp.enteringPhase) then
             DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
         end
     end

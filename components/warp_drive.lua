@@ -16,7 +16,7 @@ local conf = {
     humanName = "a warp drive",
     isPropulsion = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.0001, 0.02, 0.04)
+        return util.InterpolateOccurrenceDensity(dist, 20, 0.0001, 0.02, 0.04)
     end,
     density = 12,
     text =
@@ -29,6 +29,13 @@ local conf = {
     holdActivate = true,
     
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        local winTimer = util.GetWinTimerProgress(player)
+        if winTimer and winTimer > 1 then
+            comp.activated = true
+            util.WarpWinPower(comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+            return
+        end
+
         local angularVelocity = body:getAngularVelocity()
         
         comp.power = (comp.power or 0) + math.tanh(-angularVelocity*10)*CHANGE_SPEED*dt
@@ -47,6 +54,13 @@ local conf = {
         audioSystem.playSound("booster", comp.index)
     end,
     offFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        local winTimer = util.GetWinTimerProgress(player)
+        if winTimer and winTimer > 1 then
+            comp.activated = true
+            util.WarpWinPower(comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+            return
+        end
+
         if not comp.power then
             return
         end
