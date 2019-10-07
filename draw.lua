@@ -246,16 +246,14 @@ local function DrawShip(ship, debugEnabled)
             end
 
             local totalDrawAngle = ship.body:getAngle() + comp.angle + (comp.drawAngle or 0)
-            local drawScale = comp.scaleFactor
             love.graphics.draw(image, dx, dy, totalDrawAngle, 
-                comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                comp.def.imageScale[1]*(comp.xScale or 1)*comp.scaleFactor, comp.def.imageScale[2]*comp.scaleFactor, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
 
-            
             if comp.def.imageDmg then
                 local healthBucket = comp.def.damBuckets - math.ceil(comp.def.damBuckets*comp.health/comp.maxHealth)
                 if healthBucket > 0 and comp.def.imageDmg[healthBucket] then
                     love.graphics.draw(comp.def.imageDmg[healthBucket], dx, dy, totalDrawAngle, 
-                        comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                        comp.def.imageScale[1]*(comp.xScale or 1)*comp.scaleFactor, comp.def.imageScale[2]*comp.scaleFactor, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
                 end
             end
 
@@ -267,11 +265,6 @@ local function DrawShip(ship, debugEnabled)
                 font.SetSize(3)
                 love.graphics.print(string.upper(keyName), dx, dy, totalDrawAngle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
                 love.graphics.setColor(1,1,1,1)
-            end
-            
-            if comp.def.imageExtra and comp.extraAngle then
-                love.graphics.draw(comp.def.imageExtra[1], dx, dy, comp.extraAngle, 
-                    comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
             end
             
             if comp.phaseState then
@@ -290,6 +283,8 @@ local function DrawShip(ship, debugEnabled)
     end
     
     for _, comp in ship.components.Iterator() do
+        local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
+
         if comp.aimX and comp.activated then
             love.graphics.setColor(0,1,0,0.7)
             love.graphics.setLineStyle("rough")
@@ -301,6 +296,13 @@ local function DrawShip(ship, debugEnabled)
             love.graphics.setColor(1,1,1)
             love.graphics.setLineStyle("smooth")
             love.graphics.setLineWidth(1)
+        end
+        
+        if not comp.def.isGirder then
+            if comp.def.imageExtra and comp.extraAngle then
+                love.graphics.draw(comp.def.imageExtra[1], dx, dy, comp.extraAngle, 
+                    comp.def.imageScale[1]*(comp.xScale or 1)*comp.scaleFactor, comp.def.imageScale[2]*comp.scaleFactor, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+            end
         end
     end
 end
