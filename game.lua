@@ -598,7 +598,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
 
             player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
 
-            drawSystem.sendToConsole("> You cling desperately onto " .. comp.def.humanName .. ".", 5, captureColor)
+            drawSystem.sendToConsole("> You cling desperately onto " .. comp.def.humanName, 5, captureColor)
             local sound = "grab" .. math.random(1,3)
             audioSystem.playSound(sound, sound, true)
             return true
@@ -626,7 +626,7 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
         
         player.ship.components.Add(newComp.index, newComp)
 
-        drawSystem.sendToConsole("> Captured " .. comp.def.humanName .. ".", 5, captureColor)
+        drawSystem.sendToConsole("> Captured " .. comp.def.humanName, 5, captureColor)
         local sound = "grab" .. math.random(1,3)
         audioSystem.playSound(sound, sound, true)
         
