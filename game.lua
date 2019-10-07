@@ -269,8 +269,9 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
                 end
             end
             
-            audioSystem.stopSound(comp.index)
-            
+            if (not comp.activated) then
+                audioSystem.stopSound(comp.index)
+            end
         end
     end
 end

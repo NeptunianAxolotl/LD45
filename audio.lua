@@ -71,7 +71,7 @@ function externalFunc.Update(player, dt)
 
         local winTimer = util.GetWinTimerProgress(player)
         if winTimer and winTimer > 2 then
-            local wantedVolume = math.max(0, (9 - winTimer)/7)
+            local wantedVolume = math.max(0, (7 - winTimer)/5)
             soundData.source:setVolume(soundData.have*wantedVolume)
         end
     end

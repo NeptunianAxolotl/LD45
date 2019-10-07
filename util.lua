@@ -412,6 +412,7 @@ end
 
 local engineUsed = false
 local function WarpWinPower(comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+	audioSystem.playSound("booster", comp.index)
 	if engineUsed then
 		return
 	end
@@ -426,7 +427,6 @@ local function WarpWinPower(comp, body, activeX, activeY, activeAngle, junkList,
 
 	local fx, fy = 400000*math.cos(activeAngle), 500000*(1 + winTimer*0.4)*math.sin(activeAngle)
 	body:applyForce(fx, fy, activeX, activeY)
-	audioSystem.playSound("booster", comp.index)
 end
 
 local function UpdateWarpWin()

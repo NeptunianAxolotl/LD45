@@ -68,18 +68,25 @@ local function pulse(t, duration)
     else return 0 end
 end
 
-function externalFunc.drawGoalConsole(objectives, softlocked, _timer)
+function externalFunc.drawGoalConsole(player, objectives, softlocked, _timer)
     if not objectives then
         return
     end
     
     local vnext = 730
+    local winAlpha = 1
+    if util.GetWinTimerProgress(player) then
+        winAlpha = (5.5 - util.GetWinTimerProgress(player))/5.5
+        if winAlpha < 0 then
+            winAlpha = 0
+        end
+    end
     
     for _, obj in objectives.Iterator() do
-        love.graphics.setColor(1,1,1, math.max(0, ((_timer - 20) / 1.5)))
+        love.graphics.setColor(1,1,1, winAlpha*math.max(0, ((_timer - 20) / 1.5)))
         
         if obj.satisfied then
-            love.graphics.setColor(0,1,0, math.max(0, ((_timer - 20) / 1.5)))
+            love.graphics.setColor(0,1,0, winAlpha*math.max(0, ((_timer - 20) / 1.5)))
         end
         
         font.SetSize(2)
@@ -88,17 +95,17 @@ function externalFunc.drawGoalConsole(objectives, softlocked, _timer)
         --love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), 730 - (obj.index * 25))
         love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), vnext)
         
-        love.graphics.setColor(1,1,1)
+        love.graphics.setColor(1,1,1,1)
     end
     
     if softlocked then
         local intensity = (softlocked > softlockDelay) and pulse(softlocked - softlockDelay, softlockPeriod) or 0
-        love.graphics.setColor(1,0,0,intensity)
+        love.graphics.setColor(1,0,0,winAlpha*intensity)
         font.SetSize(2)
         local text = love.graphics.newText(font.GetFont(), "Press Ctrl-R to restart the game")
         vnext = vnext - 25
         love.graphics.print("Press Ctrl-R to restart the game", 974 - text:getWidth(1), vnext)
-        love.graphics.setColor(1,1,1)
+        love.graphics.setColor(1,1,1,1)
     end
 end
 
@@ -261,7 +268,10 @@ local function DrawShip(player, ship, debugEnabled, dt)
 
     local winAlpha = 1
     if util.GetWinTimerProgress(player) and (ship.playerShip or ship.isPlayer) then
-        winAlpha = (6 - util.GetWinTimerProgress(player))/6
+        winAlpha = (5.5 - util.GetWinTimerProgress(player))/5.5
+        if winAlpha < 0 then
+            winAlpha = 0
+        end
     end
 
     -- Draw girders

@@ -24,12 +24,6 @@ local hints = {
         colorOverride = notifyColor,
         duration = 50000000000000000000,
     },
-	{
-        distanceTrigger = 1200,
-        hint = {"Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
-        duration = 15,
-        waitTime = 1,
-    },
     {
         distanceTrigger = 2500,
         hint = {"> Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
