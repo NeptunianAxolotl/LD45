@@ -79,7 +79,7 @@ function love.draw()
     winPoints[7] = winWidth
     winPoints[8] = 0
     
-    love.graphics.setColor(0,0,0, 1 - ((introTimer - 5) / 10))
+    love.graphics.setColor(0,0,0, math.max(0, 1 - ((introTimer - 6.5) / 1.5)))
     love.graphics.polygon("fill", winPoints)
     love.graphics.setColor(1,1,1)
     
