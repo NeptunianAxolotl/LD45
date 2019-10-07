@@ -1,17 +1,17 @@
 
-local FORCE = 1200
+local FORCE = 1400
 
 local conf = {
     imageOff = "images/ion engine 1.png",
     imageOn = "images/ion engine on 1.png",
     imageDmg = {"images/ion engine damage.png","images/ion engine damage 2.png"},
-    imageOrigin = {560, 537},
+    imageOrigin = {700, 637},
     imageScale = {0.05, 0.05},
-    activationOrigin = {-20, 0},
-    shapeCoords = {7,17, 7,-17, -7,-17, -7,17},
+    activationOrigin = {-12.1, 0},
+    shapeCoords = {-12.1, -7.35, -9.8, -16.4, 22.5, 0, -9.8, 16.4, -12.1, 7.35},
     walkRadius = 30,
     maxHealth = 240,
-    density = 5,
+    density = 2,
     humanName = "an ion engine",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.6, 0.5, 0.2, 0.1)
