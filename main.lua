@@ -11,13 +11,25 @@ font = require("font")
 introTimer = 0
 introList = 0
 
-notifyColor = {}
-captureColor = {}
-goalColor = {}
+notifyColor = {
+    r = 1,
+    g = 1,
+    b = 1,
+}
+captureColor = {
+    r = 0.8,
+    g = 0.8,
+    b = 0.8,
+
+}
+goalColor = {
+    r = 0.2,
+    g = 0.95,
+    b = 0.2,
+}
 
 drawSystem = require("draw")
 gameSystem = require("game")
-
 
 local world
 local player = {
@@ -161,6 +173,10 @@ function love.mousereleased(x, y, button, istouch, presses)
 end
 
 function love.keypressed(key, scancode, isRepeat)
+    if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
+        return
+    end
+
     if key == debugHitboxKey and not isRepeat then
         debugEnabled = not debugEnabled
     end
@@ -242,19 +258,6 @@ function love.load()
     math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     util.load()
-    
-    notifyColor.r = 1
-    notifyColor.g = 1
-    notifyColor.b = 1
-    
-    captureColor.r = 0.8
-    captureColor.g = 0.8
-    captureColor.b = 0.8
-    
-    goalColor.r = 0.2
-    goalColor.g = 0.95
-    goalColor.b = 0.2
-    
     drawSystem.load()
 
     SetupWorld()
