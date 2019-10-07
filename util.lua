@@ -440,7 +440,7 @@ end
 --------------------------------------------------
 
 local function load()
-	bulletImage = love.graphics.newImage('images/bullet 1.png')
+	bulletImage = love.graphics.newImage('Images/bullet 1.png')
 end
 
 local function reset()

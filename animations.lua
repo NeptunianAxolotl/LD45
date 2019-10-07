@@ -1,7 +1,7 @@
 return {
     {
         name = "explosion",
-        image = "images/animations/explosion.png",
+        image = "Images/animations/explosion.png",
         height = 200,
         width = 200,
         scaleMin = 0.4,

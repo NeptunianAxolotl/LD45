@@ -2,8 +2,8 @@ local FORCE = 1000000
 local CHANGE_SPEED = 3.4
 
 local conf = {
-    imageOn = "images/gyro.png",
-    imageOff = "images/gyro.png",
+    imageOn = "Images/gyro.png",
+    imageOff = "Images/gyro.png",
     imageOrigin = {63, 56},
     imageScale = {0.8, 0.8},
     activationOrigin = {0, 0},

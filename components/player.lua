@@ -1,6 +1,6 @@
 local conf = {
-    imageOff = "images/player.png",
-    imageOn = "images/player on.png",
+    imageOff = "Images/player.png",
+    imageOn = "Images/player on.png",
     imageOrigin = {470, 450},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},

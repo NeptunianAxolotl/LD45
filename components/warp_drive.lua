@@ -3,8 +3,8 @@ local GYRO_FORCE = 400000
 local CHANGE_SPEED = 3.4
 
 local conf = {
-    imageOff = "images/warpdriveoff.png",
-    imageOn = "images/warpdriveon.png",
+    imageOff = "Images/warpdriveoff.png",
+    imageOn = "Images/warpdriveon.png",
     imageAnimateOnFrames = 8,
     imageFrameDuration = 0.1,
     imageOrigin = {500, 500},

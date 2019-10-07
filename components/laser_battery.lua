@@ -1,9 +1,9 @@
 local SCALE = 1.8
 
 local conf = {
-    imageOff = "images/laserbattery.png",
-    imageOn = "images/laserbatteryon.png",
-    imageDmg = {"images/laserbatterybreak1.png","images/laserbatterybreak2.png"},
+    imageOff = "Images/laserbattery.png",
+    imageOn = "Images/laserbatteryon.png",
+    imageDmg = {"Images/laserbatterybreak1.png","Images/laserbatterybreak2.png"},
     imageAnimateOnFrames = 7,
     imageFrameDuration = 0.1,
     imageOrigin = {480, 480},

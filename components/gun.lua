@@ -4,8 +4,8 @@ local SHOT_SPEED = 1400
 local LIFE = 2
 
 local conf = {
-    imageOff = "images/gun.png",
-    imageOn = "images/gun.png",
+    imageOff = "Images/gun.png",
+    imageOn = "Images/gun.png",
     imageOrigin = {500, 415},
     imageScale = {0.2, 0.2},
     activationOrigin = {46, 0},

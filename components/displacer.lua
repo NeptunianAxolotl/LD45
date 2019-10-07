@@ -1,9 +1,9 @@
 local POWER = 5
 
 local conf = {
-    imageOff = "images/displacer.png",
-    imageOn = "images/displaceron.png",
-    imageDmg = {"images/displacerbreak1.png","images/displacerbreak2.png"},
+    imageOff = "Images/displacer.png",
+    imageOn = "Images/displaceron.png",
+    imageDmg = {"Images/displacerbreak1.png","Images/displacerbreak2.png"},
     imageAnimateOnFrames = 4,
     imageFrameDuration = 0.1,
     imageOrigin = {500, 550},

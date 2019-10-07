@@ -2,9 +2,9 @@
 local FORCE = 2300
 
 local conf = {
-    imageOff = "images/booster.png",
-    imageOn = "images/boosteron.png",
-    imageDmg = {"images/boosterbreak1.png","images/boosterbreak2.png"},
+    imageOff = "Images/booster.png",
+    imageOn = "Images/boosteron.png",
+    imageDmg = {"Images/boosterbreak1.png","Images/boosterbreak2.png"},
     imageOrigin = {670, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {-20, 0},

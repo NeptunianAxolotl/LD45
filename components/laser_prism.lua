@@ -4,8 +4,8 @@ local SPEED = 380
 local LIFE = 4
 
 local conf = {
-    imageOff = "images/laser_prism.png",
-    imageOn = "images/laser_prism.png",
+    imageOff = "Images/laser_prism.png",
+    imageOn = "Images/laser_prism.png",
     imageOrigin = {500, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},

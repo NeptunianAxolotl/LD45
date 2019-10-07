@@ -2,9 +2,9 @@
 local FORCE = 20000
 
 local conf = {
-    imageOff = "images/push_missile/push_missile_unused.png",
-	imageBetween = "images/push_missile/push_missile_launch.png",
-    imageOn = "images/push_missile/push_missile_firing.png",
+    imageOff = "Images/push_missile/push_missile_unused.png",
+	imageBetween = "Images/push_missile/push_missile_launch.png",
+    imageOn = "Images/push_missile/push_missile_firing.png",
     imageOrigin = {30, 95},
     imageScale = {0.5, 0.5},
     activationOrigin = {0, 26},

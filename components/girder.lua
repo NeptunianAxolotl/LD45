@@ -1,6 +1,6 @@
 local conf = {
-    imageOff = "images/Girder 1.png",
-    imageOn = "images/Girder 1.png",
+    imageOff = "Images/girder 1.png",
+    imageOn = "Images/girder 1.png",
     imageOrigin = {500, 500},
     imageScale = {0.06, 0.06},
     activationOrigin = {0, 0},

@@ -1,7 +1,7 @@
 local conf = {
-    imageOff = "images/command module.png",
-    imageOn = "images/command module.png",
-    imageDmg = {"images/command module damage.png","images/command module damage 2.png"},
+    imageOff = "Images/command module.png",
+    imageOn = "Images/command module.png",
+    imageDmg = {"Images/command module damage.png","Images/command module damage 2.png"},
     imageOrigin = {598, 466},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},

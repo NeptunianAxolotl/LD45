@@ -2,8 +2,8 @@
 local FORCE = 16000
 
 local conf = {
-    imageOff = "images/red-rocket-off.png",
-    imageOn = "images/red-rocket-on.png",
+    imageOff = "Images/red-rocket-off.png",
+    imageOn = "Images/red-rocket-on.png",
     imageOrigin = {500, 600},
     imageScale = {0.35, 0.35}, 
     activationOrigin = {0, 66},

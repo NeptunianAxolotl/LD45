@@ -2,8 +2,8 @@ local MIN_DISTANCE = 700
 local FORCE = 2400
 
 local conf = {
-    imageOff = "images/tractor_wheel.png",
-    imageOn = "images/tractor_wheel_on.png",
+    imageOff = "Images/tractor_wheel.png",
+    imageOn = "Images/tractor_wheel_on.png",
     imageOrigin = {32, 32},
     imageScale = {1, 1},
     activationOrigin = {0, 0},

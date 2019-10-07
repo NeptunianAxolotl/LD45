@@ -2,9 +2,9 @@
 local FORCE = 1400
 
 local conf = {
-    imageOff = "images/ion engine 1.png",
-    imageOn = "images/ion engine on 1.png",
-    imageDmg = {"images/ionenginebreak1.png","images/ionenginebreak2.png"},
+    imageOff = "Images/ion engine 1.png",
+    imageOn = "Images/ion engine on 1.png",
+    imageDmg = {"Images/ionenginebreak1.png","Images/ionenginebreak2.png"},
     imageOrigin = {700, 637},
     imageScale = {0.05, 0.05},
     activationOrigin = {-12.1, 0},

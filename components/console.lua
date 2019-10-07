@@ -1,7 +1,7 @@
 local conf = {
-    imageOff = "images/console.png",
-    imageOn = "images/consoleon.png",
-    imageDmg = {"images/consolebreak1.png","images/consolebreak2.png"},
+    imageOff = "Images/console.png",
+    imageOn = "Images/consoleon.png",
+    imageDmg = {"Images/consolebreak1.png","Images/consolebreak2.png"},
     imageAnimateOnFrames = 6,
     imageFrameDuration = 0.1,
     imageOrigin = {500, 500},

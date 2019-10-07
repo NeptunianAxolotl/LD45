@@ -1,8 +1,8 @@
 local SCALE = 0.16/0.06
 
 local conf = {
-    imageOff = "images/ship debris 2.png",
-    imageOn = "images/ship debris 2.png",
+    imageOff = "Images/ship debris 2.png",
+    imageOn = "Images/ship debris 2.png",
     imageOrigin = {464, 400}, 
     imageScale = {SCALE*0.06, SCALE*0.06},
     activationOrigin = {0, 0},
