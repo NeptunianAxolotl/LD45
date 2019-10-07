@@ -33,11 +33,23 @@ local compList = {}
 for name, def in pairs(components) do
     def.name = name
     if not def.maxHealth then
-        print("Missing maxHealth for", def.name)
+        print("Missing maxHealth for ", def.name)
     end
     if not def.walkRadius then
-        print("Missing walkRadius for", def.name)
+        print("Missing walkRadius for ", def.name)
     end
+    if def.imageAnimateOnFrames then
+        def.imageOnAnim = {}
+        for i = 1, def.imageAnimateOnFrames do
+            local enddot = def.imageOn:find("%.")
+            def.imageOnAnim[i] = def.imageOn:sub(1,enddot-1) .. i .. def.imageOn:sub(enddot)
+        end
+        if not def.imageFrameDuration then
+            print("Missing imageFrameDuration for ", def.name)
+            def.imageFrameDuration = 1
+        end
+    end
+    
 
     if name ~= "player" and name ~= "push_missile_debris" and name ~= "command_module" and not def.isGirder then
         compList[#compList + 1] = def

@@ -256,6 +256,11 @@ local function LoadComponentResources()
                 def.imageExtra[i] = love.graphics.newImage(def.imageExtra[i])
             end
         end
+        if def.imageOnAnim then
+            for i = 1, #def.imageOnAnim do
+                def.imageOnAnim[i] = love.graphics.newImage(def.imageOnAnim[i])
+            end
+        end
     end
 end
 

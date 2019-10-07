@@ -260,10 +260,12 @@ local function DrawDebug(world, player)
     love.graphics.setColor(1, 1, 1, 1)
 end
 
-local function DrawShip(ship, debugEnabled)
+local function DrawShip(ship, debugEnabled, dt)
     if not ship then
         return
     end
+    
+    dt = dt or 0
 
     util.DrawBullets()
 
@@ -293,7 +295,14 @@ local function DrawShip(ship, debugEnabled)
 
         local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
         if not comp.def.isGirder then
-            local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
+        
+            if comp.def.imageAnimateOnFrames and comp.def.imageFrameDuration and comp.animationTimer and comp.currentFrame then
+                comp.animationTimer = comp.animationTimer + dt
+                comp.currentFrame = (comp.currentFrame + math.floor(comp.animationTimer / comp.def.imageFrameDuration) - 1) % comp.def.imageAnimateOnFrames + 1
+                comp.animationTimer = comp.animationTimer % comp.def.imageFrameDuration
+            end
+        
+            local image = (comp.activated and (comp.currentFrame and comp.def.imageOnAnim[comp.currentFrame] or comp.def.imageOn)) or comp.def.imageOff
 
             if comp.phaseState then
                 love.graphics.setColor(1, 1, 1, 1 - 0.75*comp.phaseState)
@@ -425,11 +434,11 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     love.graphics.translate(winWidth/(2*cameraScale) - cx, winHeight/(2*cameraScale) - cy)
     -- Worldspace
     for _, junk in pairs(junkList) do
-        DrawShip(junk, debugEnabled)
+        DrawShip(junk, debugEnabled, dt)
     end
 
-    DrawShip(player.ship, debugEnabled)
-    DrawShip(player.guy, debugEnabled)
+    DrawShip(player.ship, debugEnabled, dt)
+    DrawShip(player.guy, debugEnabled, dt)
 
     if debugEnabled then
         DrawDebug(world, player)

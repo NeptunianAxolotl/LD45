@@ -49,6 +49,9 @@ local function SetupComponent(body, compDefName, params)
     comp.xScale      = params.xScale
     comp.scaleFactor = scaleFactor
 
+    comp.animationTimer = comp.def.imageAnimateOnFrames and 0 or nil
+    comp.currentFrame = comp.def.imageAnimateOnFrames and 1 or nil
+    
     local fixtureData = params.fixtureData or {}
     fixtureData.noAttach = comp.def.noAttach
     fixtureData.noSelect = comp.def.noSelect
