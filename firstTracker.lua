@@ -8,14 +8,8 @@ local softlocked = nil
 local hints = {
     {
         customTrigger = "console_no_win",
-        hint = {"The console requires a warp drive, a phase displacer, and two laser batteries."},
+        hint = {"> The console requires a warp drive, a phase displacer, and two laser batteries."},
         duration = 5,
-    },
-	{
-        distanceTrigger = 1200,
-        hint = {"Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
-        duration = 15,
-        waitTime = 1,
     },
     {
         distanceTrigger = 2500,
