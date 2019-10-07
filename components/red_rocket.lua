@@ -12,7 +12,7 @@ local conf = {
     maxHealth = 1800,
     scaleMax = 1,
     scaleMin = 0.6,
-    humanName = "a large red rocket.",
+    humanName = "a large rocket.",
     isPropulsion = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0.02, 0.08, 0.15)
