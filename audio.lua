@@ -26,6 +26,12 @@ function addSource(name, id)
         return love.audio.newSource("SFX/grab_med.wav", "static")
     elseif name == "grab3" then
         return love.audio.newSource("SFX/grab_sml.wav", "static")
+    elseif name == "bulletfire" then
+        return love.audio.newSource("SFX/bulletfire.wav", "static")
+    elseif name == "bullethit" then
+        return love.audio.newSource("SFX/bullethit.wav", "static")
+    elseif name == "explosion" then
+        return love.audio.newSource("SFX/explosion.wav", "static")
     end
 end
 

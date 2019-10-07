@@ -1,6 +1,6 @@
 local FORCE = -1700
 local DAMAGE = 90
-local SPEED = 400
+local SPEED = 380
 local LIFE = 4
 
 local conf = {

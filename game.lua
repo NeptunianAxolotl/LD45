@@ -305,11 +305,6 @@ local function KeyPressed(player, junkList, key)
     end
 end
 
-local function TestJunkClick(junk)
-    junk.selected = not junk.selected
-    print("junk selected", junk.body:getX(), junk.body:getY())
-end
-
 local moveAttemptAngles = {
     0,
     0.06*math.pi,
@@ -452,6 +447,7 @@ end
 local function RemoveComponent(world, player, junkList, ship, delComp)
     local xWorld, yWorld = ship.body:getWorldPoint(delComp.xOff, delComp.yOff)
     drawSystem.PlayAnimation("explosion", xWorld + math.random()*4 - 2, yWorld + math.random()*4 - 2)
+    audioSystem.playSound("explosion", "explosion", true)
 
     if delComp.def.onDeathFunc then
         delComp.def.onDeathFunc(world, delComp, ship)
@@ -777,7 +773,6 @@ return {
     KeyPressed = KeyPressed,
     UpdateMovePlayerGuy = UpdateMovePlayerGuy,
     UpdatePlayerComponentAttributes = UpdatePlayerComponentAttributes,
-    TestJunkClick = TestJunkClick,
     ProcessCollisions = ProcessCollisions,
     beginContact = beginContact,
     endContact = endContact,

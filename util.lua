@@ -208,6 +208,7 @@ local bulletShape = {
 }
 
 local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy, damage, speed, life, offset)
+    audioSystem.playSound("bulletfire", "bulletfire", true)
 	bulletID = bulletID + 1
 	
 	local ox, oy = ToCart(activeAngle, offset or 0)
@@ -245,6 +246,7 @@ end
 local function DoBulletDamage(bullet)
 	local damage = 0
 	if not bullet.toDestroy then
+		audioSystem.playSound("bullethit", "bullethit", true)
 		damage = bullet.damage
 	end
 	bullet.toDestroy = true
