@@ -1,4 +1,4 @@
-local SCALE = 0.14/0.06
+local SCALE = 0.16/0.06
 
 local conf = {
     imageOff = "images/ship debris 1.png",
@@ -9,6 +9,8 @@ local conf = {
 	shapeCoords = { SCALE*-11,SCALE*8, SCALE*-8,SCALE*1, SCALE*3,SCALE*-10, SCALE*10,SCALE*-9, SCALE*10,SCALE*-1, SCALE*6,SCALE*10, SCALE*-6,SCALE*0 },
     walkRadius = 20,
     maxHealth = 1100,
+    scaleMax = 1,
+    scaleMin = 0.7,
     density = 2.5,
     humanName = "a piece of hull plating",
     getOccurrence = function (dist)

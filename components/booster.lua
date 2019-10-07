@@ -1,5 +1,5 @@
 
-local FORCE = 2200
+local FORCE = 2300
 
 local conf = {
     imageOff = "images/booster.png",
@@ -10,7 +10,7 @@ local conf = {
     activationOrigin = {-20, 0},
     shapeCoords = {26,0, 15,16, 15,-16, -14,-26, -26,-14, -26,14, -14,26},
     walkRadius = 35,
-    density = 7,
+    density = 4,
     maxHealth = 700,
     humanName = "a booster",
     getOccurrence = function (dist)

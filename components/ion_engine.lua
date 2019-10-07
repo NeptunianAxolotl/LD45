@@ -10,8 +10,8 @@ local conf = {
     activationOrigin = {-20, 0},
     shapeCoords = {7,17, 7,-17, -7,-17, -7,17},
     walkRadius = 30,
-    maxHealth = 150,
-    density = 8,
+    maxHealth = 240,
+    density = 5,
     humanName = "an ion engine",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.8, 0.6, 0.2, 0.1)
