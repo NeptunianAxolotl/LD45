@@ -10,7 +10,6 @@ font = require("font")
 
 drawSystem = require("draw")
 gameSystem = require("game")
-introSystem = require("intro")
 
 local introTimer = 0
 local introList = 0
@@ -55,28 +54,35 @@ function love.draw()
         introList = introList + 1
     end
     
-    if introList == 4 and introTimer > 8 then
-        drawSystem.sendToConsole("> After all, it's not paranoia", 3) 
+    if introList == 4 and introTimer > 9 then
+        drawSystem.sendToConsole(">  Now, you have nothing.", 3) 
         introList = introList + 1
     end
     
-    if introList == 5 and introTimer > 9 then
-        drawSystem.sendToConsole("> if you really are surrounded by incompetents.", 3) 
-        introList = introList + 1
-    end
-    
-    if introList == 6 and introTimer > 13 then
-        drawSystem.sendToConsole("> Now, you have nothing.", 3) 
-        introList = introList + 1
-    end
-    
-    if introList == 7 and introTimer > 18 then
+    if introList == 5 and introTimer > 14 then
         drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4) 
         introList = introList + 1
     end
     
-    love.graphics.setColor(1,1,1, (introTimer - 5) / 10)
     drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
+    
+    local winWidth  = love.graphics:getWidth()
+    local winHeight = love.graphics:getHeight()
+    
+    winPoints = {}
+    winPoints[1] = 0
+    winPoints[2] = 0
+    winPoints[3] = 0
+    winPoints[4] = winHeight
+    winPoints[5] = winWidth
+    winPoints[6] = winHeight
+    winPoints[7] = winWidth
+    winPoints[8] = 0
+    
+    love.graphics.setColor(0,0,0, 1 - ((introTimer - 5) / 10))
+    love.graphics.polygon("fill", winPoints)
+    love.graphics.setColor(1,1,1)
+    
     drawSystem.drawConsole()
 
 end

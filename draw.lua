@@ -25,6 +25,7 @@ end
 function externalFunc.drawConsole()
     for i = #consoleText, 1, -1 do
         love.graphics.setColor(1,1,1, math.min(1,consoleTimer[#consoleText + 1 - i]))
+        --font.setSize(2)
         love.graphics.print(consoleText[#consoleText + 1 - i], 50, 730 - (i * 20))
         love.graphics.setColor(1,1,1)
     end
