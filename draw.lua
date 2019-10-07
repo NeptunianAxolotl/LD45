@@ -12,12 +12,6 @@ local consoleColorR = {}
 local consoleColorG = {}
 local consoleColorB = {}
 
-local goalConsoleText = {}
-local goalConsoleTimer = {}
-local goalConsoleColorR = {}
-local goalConsoleColorG = {}
-local goalConsoleColorB = {}
-
 function externalFunc.sendToConsole (text, timer, color)
     
     if timer == nil then
@@ -63,52 +57,21 @@ function externalFunc.removeFromConsole(index)
     table.remove(consoleColorB, index)
 end
 
-function externalFunc.sendToGoalConsole (text, timer, color)    
-    if timer == nil then
-        timer = 5
-    end
-
-    if color == nil then
-        color = {}
-        color.r = 0
-        color.g = 1
-        color.b = 0
+function externalFunc.drawGoalConsole(objectives, _timer)
+    if not objectives then
+        return
     end
     
-    table.insert(goalConsoleText, text)
-    table.insert(goalConsoleTimer, timer)
-    table.insert(goalConsoleColorR, color.r)
-    table.insert(goalConsoleColorG, color.g)
-    table.insert(goalConsoleColorB, color.b)
-end
-
-function externalFunc.drawGoalConsole()
-    for i = #goalConsoleText, 1, -1 do
-
-        love.graphics.setColor(
-            goalConsoleColorR[#goalConsoleText + 1 - i],
-            goalConsoleColorG[#goalConsoleText + 1 - i],
-            goalConsoleColorB[#goalConsoleText + 1 - i],
-            math.min(1, goalConsoleTimer[#goalConsoleText + 1 - i]))
+    for _, obj in objectives.Iterator() do
+        love.graphics.setColor(1,1,1, math.max(0, ((_timer - 20) / 1.5)))
         
         font.SetSize(2)
-        local text = love.graphics.newText(font.GetFont(), goalConsoleText[#goalConsoleText + 1 - i])
-        print(text)
-        love.graphics.print(goalConsoleText[#goalConsoleText + 1 - i], 974 - text:getWidth(1), 730 - (i * 25))
+        local text = love.graphics.newText(font.GetFont(), obj.humanName)
+        love.graphics.print(obj.humanName, 974 - text:getWidth(1), 730 - (obj.index * 25))
         
         love.graphics.setColor(1,1,1)
     end
 end
-
-function externalFunc.removeFromGoalConsole (index)    
-    table.remove(goalConsoleText, index)
-    table.remove(goalConsoleTimer, index)
-    table.remove(goalConsoleColorR, index)
-    table.remove(goalConsoleColorG, index)
-    table.remove(goalConsoleColorB, index)
-end
-
-
 
 
 local function paintShadows (bodyList, lightSource, minDistance)
