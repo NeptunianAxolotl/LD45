@@ -288,11 +288,11 @@ end
 function RestartFunc()
     world:destroy()
 
-    drawSystem = require("draw")
-    gameSystem = require("game")
-
     SetupVars()
     SetupWorld()
+
+    gameSystem.reset()
+    drawSystem.reset()
 
     player.guy = gameSystem.SetupPlayer(world, junkList)
 end

@@ -401,5 +401,17 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     end
 end
 
+function externalFunc.reset()
+    animationIndex = 0
+    animations = IterableMap.New()
+
+    -- Camera is intentionally not reset.
+    --consoleText = {}
+    --consoleTimer = {}
+    --consoleColorR = {}
+    --consoleColorG = {}
+    --consoleColorB = {}
+end
+
 return externalFunc
 

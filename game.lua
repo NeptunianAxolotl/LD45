@@ -724,6 +724,14 @@ end
 -- Updates
 --------------------------------------------------
 
+local function reset()
+    componentIndex = 0
+    junkIndex = 0
+    collIndex = 0
+    collisionToAdd = IterableMap.New()
+    regionsWithJunk = {}
+end
+
 return {
     UpdateComponentActivation = UpdateComponentActivation,
     KeyPressed = KeyPressed,
@@ -739,4 +747,5 @@ return {
     SetupPlayer = SetupPlayer,
     KeypressInput = KeypressInput,
     UpdateActivation = UpdateActivation,
+    reset = reset,
 }

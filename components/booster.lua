@@ -14,7 +14,7 @@ local conf = {
     maxHealth = 700,
     humanName = "a booster",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrnceDensity(dist, 0.4, 0.4, 0.4, 0.2)
+        return util.InterpolateOccurrenceDensity(dist, 0.4, 0.4, 0.4, 0.2)
     end,
     text =
     {
