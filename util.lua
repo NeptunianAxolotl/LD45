@@ -389,9 +389,9 @@ local function CheckMusicChange(player, objSatisfied)
 		audioSystem.playSound("theme2point5", "theme2point5", true, 1)
 		audioSystem.playSound("theme3", "theme3", false, 1, 13)
 	elseif objSatisfied == 5 then
-		audioSystem.playSound("themeWin", "themeWin", false, 1)
+		audioSystem.playSound("themeWin", "themeWin", false, 1, 1.5)
 	else
-		audioSystem.playSound("theme1", "theme1", false, 1, 1.5)
+		audioSystem.playSound("theme1", "theme1", false, 1, 5)
 	end
 end
 
