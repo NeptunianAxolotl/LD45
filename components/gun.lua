@@ -1,4 +1,7 @@
 local FORCE = -1700
+local DAMAGE = 90
+local SPEED = 1500
+local LIFE = 2
 
 local conf = {
     imageOff = "images/gun.png",
@@ -29,7 +32,7 @@ local conf = {
         end
 
         local vx, vy = body:getLinearVelocityFromWorldPoint(activeX, activeY)
-        util.FireBullet(world, body, activeX, activeY, activeAngle, vx, vy)
+        util.FireBullet(world, body, activeX, activeY, activeAngle, vx, vy, DAMAGE, SPEED, LIFE)
         comp.reloadTime = 0.16
 
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)

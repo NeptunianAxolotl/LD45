@@ -207,9 +207,7 @@ local bulletShape = {
 	-12, 3,
 }
 
-local BULLET_SPEED = 1500
-
-local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy)
+local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy, damage, speed, life)
 	bulletID = bulletID + 1
 	
 	local bullet = {}
@@ -218,8 +216,8 @@ local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy)
 	bullet.shape = love.physics.newPolygonShape(unpack(bulletShape))
 	bullet.fixture = love.physics.newFixture(bullet.body, bullet.shape, 1)
 
-	bullet.life = 2
-	bullet.damage = 110
+	bullet.life = life
+	bullet.damage = damage
 
 	local fixtureData = {
 		bullet = bullet,
@@ -227,7 +225,7 @@ local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy)
 	}
 	bullet.fixture:setUserData(fixtureData)
 
-	local fx, fy = ToCart(activeAngle, BULLET_SPEED)
+	local fx, fy = ToCart(activeAngle, speed)
 
     bullet.body:setAngle(activeAngle)
     bullet.body:setLinearVelocity(vx + fx, vy + fy)
