@@ -71,6 +71,9 @@ local conf = {
             comp.emitY = ay
             comp.aimX = jx
             comp.aimY = jy
+            
+            audioSystem.playSound("tractor", comp.index)
+            
             return
         end
 
