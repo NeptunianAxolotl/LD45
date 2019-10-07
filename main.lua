@@ -8,6 +8,8 @@ IterableMap = require("IterableMap")
 audioSystem = require("audio")
 util = require("util")
 
+firstTracker = require("firstTracker")
+
 SUPER_DEBUG_ENABLED = false
 
 font = require("font")
@@ -196,6 +198,8 @@ function love.update(dt)
         world:update(dt)
     end
     gameSystem.ProcessCollisions(world, player, junkList)
+
+    firstTracker.Update(player, dt)
     
     --print("distance: " .. util.AbsVal(px, py))
 
@@ -290,6 +294,7 @@ function RestartFunc()
 
     gameSystem.reset()
     drawSystem.reset()
+    firstTracker.reset{}
     util.reset()
 
     player.guy = gameSystem.SetupPlayer(world, junkList)
