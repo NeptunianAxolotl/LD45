@@ -66,21 +66,26 @@ function love.draw()
         
     --intro console messages
     if introList == 0 and introTimer > 0.5 then
-        drawSystem.sendToConsole("> They told you the freighter was safe.", 3, notifyColor)
+        drawSystem.sendToConsole("> These days, passenger liners have a six-sigma safety designation.", 3, notifyColor)
         introList = introList + 1
     end
         
     if introList == 1 and introTimer > 1.5 then
-        drawSystem.sendToConsole("> You knew better.", 3, notifyColor) 
+        drawSystem.sendToConsole("> You still pack a pressure suit on every trip.", 3, notifyColor) 
+        introList = introList + 1
+    end
+    
+    if introList == 2 and introTimer > 2.5 then
+        drawSystem.sendToConsole("> You only wish that it had pockets.", 3, notifyColor) 
         introList = introList + 1
     end
         
-    if introList == 2 and introTimer > 5 then
+    if introList == 3 and introTimer > 6 then
         drawSystem.sendToConsole("> Now, you have nothing.", 3, notifyColor) 
         introList = introList + 1
     end
     
-    if introList == 3 and introTimer > 16 then
+    if introList == 4 and introTimer > 16 then
         drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4, notifyColor) 
         introList = introList + 1
     end

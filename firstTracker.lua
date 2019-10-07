@@ -14,7 +14,7 @@ local hints = {
     {
         distanceTrigger = 2500,
         hint = {"> Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
-        duration = 15,
+        duration = 9,
         waitTime = 2,
         doFunc = function ()     
             if util.GetObjectives().IsEmpty() then
@@ -40,13 +40,13 @@ local hints = {
     {
         compTrigger = {{"tractor_wheel","tractor wheel"},{"gyro","stabiliser"},{"displacer","displacement device"}},
         hint = {"> Activate or deactivate the $NAME","by pressing its assigned key."},
-        duration = 15,
+        duration = 9,
         waitTime = 2,
     },
     {
         compTrigger = "navigation",
         hint = "> The scanner points towards the nearest objective component.",
-        duration = 15,
+        duration = 9,
         waitTime = 2,
     },
 }
