@@ -5,6 +5,7 @@ local conf = {
     imageOff = "images/warpdriveoff.png",
     imageOn = "images/warpdriveon.png",
     imageAnimateOnFrames = 8,
+    imageFrameDuration = 0.1,
     imageOrigin = {500, 500},
     imageScale = {0.2, 0.2},
     activationOrigin = {-52, 0},

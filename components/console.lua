@@ -1,7 +1,9 @@
 local conf = {
     imageOff = "images/console.png",
-    imageOn = "images/console.png",
+    imageOn = "images/consoleon.png",
     imageDmg = {"images/consolebreak1.png","images/consolebreak2.png"},
+    imageAnimateOnFrames = 6,
+    imageFrameDuration = 0.1,
     imageOrigin = {500, 500},
     imageScale = {0.1, 0.1},
     activationOrigin = {0, 0},
