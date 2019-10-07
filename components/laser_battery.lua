@@ -15,7 +15,7 @@ local conf = {
     humanName = "a laser battery",
     alwaysOn = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 20, 0, 0.002, 0.04)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.002, 0.04)
     end,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         -- do nothing

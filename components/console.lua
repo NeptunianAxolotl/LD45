@@ -13,7 +13,7 @@ local conf = {
     humanName = "a navigation console",
     density = 2,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 20, 0, 0.008, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.008, 0.03)
     end,
     text =
     {
