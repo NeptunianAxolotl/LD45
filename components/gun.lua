@@ -11,13 +11,7 @@ local conf = {
     maxHealth = 220,
     humanName = "a gun",
     getOccurrence = function (dist)
-        if dist < 15000 then
-            return 0
-        elseif dist < 70000 then
-            return 0.2
-        else
-            return 0.1
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0.02, 0.1, 0.15, 0.1)
     end,
     density = 1,
     text =

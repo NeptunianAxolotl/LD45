@@ -14,15 +14,7 @@ local conf = {
     noAttach = true,
     noSelect = true,
     getOccurrence = function (dist)
-        if dist < 5000 then
-            return 0
-        elseif dist < 30000 then
-            return 0.1
-        elseif dist < 70000 then
-            return 0.3
-        else
-            return 0
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.2, 0.6, 1)
     end,
 }
 

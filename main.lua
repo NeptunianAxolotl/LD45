@@ -197,22 +197,24 @@ local escPressed = false
 function love.update(dt)
     introTimer = introTimer + dt
     
-        lastDt = dt
-        local px, py = (player.ship or player.guy).body:getWorldCenter()
-        gameSystem.ExpandJunkspace(world, junkList, px, py)
-        gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
+    lastDt = dt
+    local px, py = (player.ship or player.guy).body:getWorldCenter()
+    gameSystem.ExpandJunkspace(world, junkList, px, py)
+    gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
 
-        util.UpdatePhasedObjects(dt)
-        util.UpdateBullets(dt)
+    util.UpdatePhasedObjects(dt)
+    util.UpdateBullets(dt)
 
-        local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
-        gameSystem.UpdateMovePlayerGuy(player, mx, my)
-        gameSystem.UpdatePlayerComponentAttributes(player)
+    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+    gameSystem.UpdateMovePlayerGuy(player, mx, my)
+    gameSystem.UpdatePlayerComponentAttributes(player)
 
-        if dt < 0.4 then
-            world:update(dt)
-        end
-        gameSystem.ProcessCollisions(world, player, junkList)
+    if dt < 0.4 then
+        world:update(dt)
+    end
+    gameSystem.ProcessCollisions(world, player, junkList)
+    
+    print ("distance: " .. util.AbsVal(px, py))
 end
 
 --------------------------------------------------

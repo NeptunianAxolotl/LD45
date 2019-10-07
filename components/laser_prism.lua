@@ -9,13 +9,7 @@ local conf = {
     maxHealth = 250,
     humanName = "a laser prism",
     getOccurrence = function (dist)
-        if dist < 20000 then
-            return 0
-        elseif dist < 70000 then
-            return 0.1
-        else
-            return 0.05
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.01, 0.1, 0.1)
     end,
     density = 1,
 }

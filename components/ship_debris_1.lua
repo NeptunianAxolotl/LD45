@@ -9,15 +9,7 @@ local conf = {
     maxHealth = 80,
     humanName = "some ship debris",
     getOccurrence = function (dist)
-        if dist < 3000 then
-            return 0
-        elseif dist < 15000 then
-            return 0.2
-        elseif dist < 60000 then
-            return 0.4
-        else
-            return 0.2
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0.8, 0.6, 0.2, 0.1)
     end,
     density = 1,
 }

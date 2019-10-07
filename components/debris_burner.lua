@@ -11,15 +11,7 @@ local conf = {
     density = 2,
     humanName = "some burner debris",
     getOccurrence = function (dist)
-        if dist < 10000 then
-            return 0
-        elseif dist < 30000 then
-            return 0.2
-        elseif dist < 60000 then
-            return 0.4
-        else
-            return 0.2
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.05, 0.05)
     end,
     text =
     {

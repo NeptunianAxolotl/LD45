@@ -9,15 +9,9 @@ local conf = {
     walkRadius = 32,
     maxHealth = 400,
     density = 1,
-    humanName = "a radar module",
+    humanName = "a navigation module",
     getOccurrence = function (dist)
-        if dist < 40000 then
-            return 0
-        elseif dist < 70000 then
-            return 0.2
-        else
-            return 0.1
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.05, 0.1, 0.05)
     end,
     text =
     {

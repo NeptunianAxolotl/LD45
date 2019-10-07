@@ -11,13 +11,7 @@ local conf = {
     density = 1,
     humanName = "a command module",
     getOccurrence = function (dist)
-        if dist < 40000 then
-            return 0
-        elseif dist < 70000 then
-            return 0.2
-        else
-            return 0.1
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0.25, 0.2, 0.07, 0.03)
     end,
 }
 

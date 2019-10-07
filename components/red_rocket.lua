@@ -5,7 +5,7 @@ local conf = {
     imageOff = "images/red-rocket-off.png",
     imageOn = "images/red-rocket-on.png",
     imageOrigin = {500, 600},
-    imageScale = {0.35, 0.35},
+    imageScale = {0.35, 0.35}, 
     activationOrigin = {0, 66},
     shapeCoords = {0, -106.75, 38.5, -47.25, 54.25, 35.7, 36.75, 66.5, -36.75, 66.5, -54.25, 35.7, -38.5, -47.25},
     walkRadius = 70,
@@ -14,15 +14,7 @@ local conf = {
     scaleMin = 0.6,
     humanName = "a large rocket",
     getOccurrence = function (dist)
-        if dist < 20000 then
-            return 0
-        elseif dist < 35000 then
-            return 0.2
-        elseif dist < 55000 then
-            return 0.4
-        else
-            return 0.1
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.02, 0.08, 0.15)
     end,
     density = 6,
     text =

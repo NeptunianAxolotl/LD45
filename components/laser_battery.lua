@@ -10,13 +10,7 @@ local conf = {
     maxHealth = 180,
     humanName = "a laser battery",
     getOccurrence = function (dist)
-        if dist < 15000 then
-            return 0
-        elseif dist < 70000 then
-            return 0.4
-        else
-            return 0.2
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.01, 0.03)
     end,
     density = 1,
 }

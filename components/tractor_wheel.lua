@@ -15,13 +15,7 @@ local conf = {
     scaleMin = 0.5,
     humanName = "a tractor beam",
     getOccurrence = function (dist)
-        if dist < 10000 then
-            return 0
-        elseif dist < 70000 then
-            return 0.04
-        else
-            return 0.02
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.12, 0.3, 0.2)
     end,
     density = 1,
     text =

@@ -15,13 +15,7 @@ local conf = {
     scaleMin = 0.3,
     humanName = "a gyroscopic stabiliser",
     getOccurrence = function (dist)
-        if dist < 15000 then
-            return 0
-        elseif dist < 50000 then
-            return 0.8
-        else
-            return 0.3
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0.01, 0.1, 0.2, 0.1)
     end,
     density = 1,
     text =

@@ -13,13 +13,7 @@ local conf = {
     density = 1,
     humanName = "a phase engine",
     getOccurrence = function (dist)
-        if dist < 25000 then
-            return 0
-        elseif dist < 55000 then
-            return 0.5
-        else
-            return 0.2
-        end
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0, 0.01)
     end,
     text =
     {
