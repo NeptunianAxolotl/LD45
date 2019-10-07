@@ -660,9 +660,13 @@ local function ProcessCollision(key, data, index, world, player, junkList)
         if otherBullet then
             local damage = util.DoBulletDamage(otherData.bullet)
             DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, damage)
-        elseif colSpeed > 120 then
-            DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, colDamage)
-            DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
+        else
+            if colSpeed > 120 or mainData.comp.phaseState then
+                DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, colDamage)
+            end
+            if colSpeed > 40 or otherData.comp.phaseState then
+                DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
+            end
         end
         return true
     end
@@ -685,8 +689,10 @@ local function ProcessCollision(key, data, index, world, player, junkList)
 
     if not mainData.isPlayer then
         -- Is player ship
-        if colSpeed > 40 then
+        if colSpeed > 40 or mainData.comp.phaseState then
             DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
+        end
+        if colSpeed > 40 or otherData.comp.phaseState then
             DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
         end
     end
