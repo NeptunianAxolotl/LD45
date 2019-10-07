@@ -11,6 +11,10 @@ font = require("font")
 introTimer = 0
 introList = 0
 
+notifyColor = {}
+captureColor = {}
+goalColor = {}
+
 drawSystem = require("draw")
 gameSystem = require("game")
 
@@ -36,22 +40,22 @@ function love.draw()
         
     --intro console messages
     if introList == 0 and introTimer > 0.5 then
-        drawSystem.sendToConsole("> They told you the freighter was safe.", 3) 
+        drawSystem.sendToConsole("> They told you the freighter was safe.", 3, notifyColor) 
         introList = introList + 1
     end
         
     if introList == 1 and introTimer > 1.5 then
-        drawSystem.sendToConsole("> You knew better.", 3) 
+        drawSystem.sendToConsole("> You knew better.", 3, notifyColor) 
         introList = introList + 1
     end
         
-    if introList == 2 and introTimer > 6 then
-        drawSystem.sendToConsole(">  Now, you have nothing.", 3) 
+    if introList == 2 and introTimer > 5 then
+        drawSystem.sendToConsole("> Now, you have nothing.", 3, notifyColor) 
         introList = introList + 1
     end
     
     if introList == 3 and introTimer > 13 then
-        drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4) 
+        drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4, notifyColor) 
         introList = introList + 1
     end
     
@@ -70,7 +74,7 @@ function love.draw()
     winPoints[7] = winWidth
     winPoints[8] = 0
     
-    love.graphics.setColor(0,0,0, math.max(0, 1 - ((introTimer - 6.5) / 1.5)))
+    love.graphics.setColor(0,0,0, math.max(0, 1 - ((introTimer - 5) / 1.5)))
     love.graphics.polygon("fill", winPoints)
     love.graphics.setColor(1,1,1)
     
@@ -235,6 +239,19 @@ end
 function love.load()   
         math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
+        
+        notifyColor.r = 1
+        notifyColor.g = 1
+        notifyColor.b = 1
+        
+        captureColor.r = 0.8
+        captureColor.g = 0.8
+        captureColor.b = 0.8
+    
+        goalColor.r = 0.2
+        goalColor.g = 0.95
+        goalColor.b = 0.2
+        
         drawSystem.load()
 
         SetupWorld()

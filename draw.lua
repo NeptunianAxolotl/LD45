@@ -11,29 +11,53 @@ local shipPart
 
 local consoleText = {}
 local consoleTimer = {}
+local consoleColorR = {}
+local consoleColorG = {}
+local consoleColorB = {}
 
-function externalFunc.sendToConsole (text, timer)
+function externalFunc.sendToConsole (text, timer, color)
     
     if timer == nil then
         timer = 5
     end
+
+    if color == nil then
+        color = {}
+        color.r = 1
+        color.g = 1
+        color.b = 1
+    end
     
     table.insert(consoleText, text)
     table.insert(consoleTimer, timer)
+    table.insert(consoleColorR, color.r)
+    table.insert(consoleColorG, color.g)
+    table.insert(consoleColorB, color.b)
 end
 
 function externalFunc.drawConsole()
     for i = #consoleText, 1, -1 do
-        love.graphics.setColor(1,1,1, math.min(1,consoleTimer[#consoleText + 1 - i]))
+
+        love.graphics.setColor(
+            consoleColorR[#consoleText + 1 - i],
+            consoleColorG[#consoleText + 1 - i],
+            consoleColorB[#consoleText + 1 - i],
+            math.min(1,consoleTimer[#consoleText + 1 - i]))
+        
         font.SetSize(2)
+        
         love.graphics.print(consoleText[#consoleText + 1 - i], 50, 730 - (i * 20))
+        
         love.graphics.setColor(1,1,1)
     end
 end
 
-function externalFunc.removeFromConsole()
-    table.remove(consoleText, 1)
-    table.remove(consoleTimer, 1)
+function externalFunc.removeFromConsole(index)
+    table.remove(consoleText, index)
+    table.remove(consoleTimer, index)
+    table.remove(consoleColorR, index)
+    table.remove(consoleColorG, index)
+    table.remove(consoleColorB, index)
 end
 
 local function paintShadows (bodyList, lightSource, minDistance)
@@ -350,7 +374,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
             ]]--
             
             if consoleTimer[i] < 0 then
-                externalFunc.removeFromConsole()
+                externalFunc.removeFromConsole(i)
             end
         end
     end

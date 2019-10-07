@@ -577,8 +577,9 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
             comp.fixture:setUserData(fixtureData)
 
             player.joint = love.physics.newWeldJoint(player.ship.body, player.guy.body, player.guy.body:getX(), player.guy.body:getY(), false)
-                        
-            drawSystem.sendToConsole("> You cling desperately onto " .. comp.def.humanName .. ".")
+
+            
+            drawSystem.sendToConsole("> You cling desperately onto " .. comp.def.humanName .. ".", 5, captureColor)
             
             return true
         end
@@ -604,8 +605,8 @@ local function DoMerge(player, junkList, playerFixture, otherFixture, playerData
         )
         
         player.ship.components.Add(newComp.index, newComp)
-        
-        drawSystem.sendToConsole("> Captured " .. comp.def.humanName .. ".")
+
+        drawSystem.sendToConsole("> Captured " .. comp.def.humanName .. ".", 5, captureColor)
         
         AddGirders(player, newComp)
     end
