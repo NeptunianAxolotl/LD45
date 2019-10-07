@@ -18,7 +18,7 @@ local conf = {
     end,
     text =
     {
-        pos = {5.5, 5},
+        pos = {6.5, 5},
         rotation = math.pi/2,
         scale = {1, 1},
         color = {0.8,0.1,0.1,1},

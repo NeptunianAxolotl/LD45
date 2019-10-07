@@ -20,7 +20,7 @@ local conf = {
     density = 10,
     text =
     {
-        pos = {5, 0},
+        pos = {5, 20},
         rotation = 0,
         scale = {1,1},
         color = {0.8,0.1,0.1,1},
