@@ -13,7 +13,7 @@ local conf = {
     humanName = "a scanner.",
     alwaysOn = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.18, 0.15, 0.12)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.14, 0.15, 0.12)
     end,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         if not player.closestObjX then

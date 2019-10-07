@@ -61,9 +61,9 @@ end
 
 local OCCURRENCE_BANDS = {
 	2200,
-	5000,
-	8000,
-	12000,
+	5500,
+	9000,
+	14000,
 }
 
 local function JunkDensityFunc(dist)

@@ -5,6 +5,22 @@ local sounds = IterableMap.New()
 function externalFunc.load ()
 end
 
+local volMult = {
+    booster = 1,
+    ion = 1,
+    redrocket = 1,
+    pushmissile = 1,
+    tractor = 0.8,
+    displacer_on = 1,
+    displacer_off = 1,
+    grab1 = 0.8,
+    grab2 = 0.8,
+    grab3 = 0.8,
+    bulletfire = 0.34,
+    bullethit = 0.25,
+    explosion = 0.15,
+}
+
 function addSource(name, id)
     if name == "booster" then
         return love.audio.newSource("SFX/booster.wav", "static")
@@ -58,7 +74,7 @@ function externalFunc.Update(player, dt)
             if soundData.have > soundData.want then
                 soundData.have = soundData.want
             end
-            soundData.source:setVolume(soundData.have)
+            soundData.source:setVolume(soundData.have*volMult[soundData.name])
         end
 
         if soundData.want < soundData.have then
@@ -66,13 +82,13 @@ function externalFunc.Update(player, dt)
             if soundData.have < soundData.want then
                 soundData.have = soundData.want
             end
-            soundData.source:setVolume(soundData.have)
+            soundData.source:setVolume(soundData.have*volMult[soundData.name])
         end
 
         local winTimer = util.GetWinTimerProgress(player)
         if winTimer and winTimer > 2 then
             local wantedVolume = math.max(0, (7 - winTimer)/5)
-            soundData.source:setVolume(soundData.have*wantedVolume)
+            soundData.source:setVolume(soundData.have*wantedVolume*volMult[soundData.name])
         end
     end
 end

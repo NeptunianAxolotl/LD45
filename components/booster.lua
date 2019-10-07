@@ -15,7 +15,7 @@ local conf = {
     humanName = "a booster.",
     isPropulsion = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.4, 0.4, 0.4, 0.2)
+        return util.InterpolateOccurrenceDensity(dist, 0.35, 0.3, 0.24, 0.2)
     end,
     text =
     {

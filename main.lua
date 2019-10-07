@@ -12,7 +12,7 @@ local LOCK_DEBUG_AWAY = true
 SUPER_DEBUG_ENABLED = false
 
 REGION_SIZE = 2800
-JUNK_PER_REGION = 180
+JUNK_PER_REGION = 170
 
 font = require("font")
 

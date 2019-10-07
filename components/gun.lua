@@ -1,5 +1,5 @@
 local FORCE = -900
-local DAMAGE = 90
+local DAMAGE = 130
 local SHOT_SPEED = 1400
 local LIFE = 2
 
@@ -11,10 +11,10 @@ local conf = {
     activationOrigin = {46, 0},
     shapeCoords = { 20,8, 20,-8, -30,-8, -30,8},
     walkRadius = 50,
-    maxHealth = 220,
+    maxHealth = 360,
     humanName = "a blaster.",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.1, 0.12, 0.15, 0.18)
+        return util.InterpolateOccurrenceDensity(dist, 0.13, 0.17, 0.19, 0.2)
     end,
     density = 2,
     text =

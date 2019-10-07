@@ -1,5 +1,5 @@
 local FORCE = -1700
-local DAMAGE = 90
+local DAMAGE = 130
 local SPEED = 380
 local LIFE = 4
 
@@ -14,7 +14,7 @@ local conf = {
     maxHealth = 200,
     humanName = "a laser prism.",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.04, 0.12, 0.20)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.04, 0.12, 0.22)
     end,
     density = 1,
     onDeathFunc = function(world, comp, ship)

@@ -1,6 +1,7 @@
 local conf = {
     imageOff = "images/asteroid_r1.png",
     imageOn = "images/asteroid_r1.png",
+    imageDmg = {"images/asteroid_r1_dmg1.png","images/asteroid_r1_dmg1.png"},
     imageOrigin = {120, 111},
     imageScale = {1, 1},
     activationOrigin = {0, 0},
@@ -14,7 +15,7 @@ local conf = {
     noAttach = true,
     noSelect = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.001, 0.02, 0.08, 0.09)
+        return util.InterpolateOccurrenceDensity(dist, 0.001, 0.03, 0.09, 0.12)
     end,
 }
 

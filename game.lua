@@ -670,7 +670,7 @@ local function ProcessCollision(key, data, index, world, player, junkList)
             if colSpeed > 120 or (mainData.comp.phaseState and not mainData.comp.enteringPhase) then
                 DamageComponent(world, player, junkList, junkList[mainData.junkIndex], mainData.comp, colDamage)
             end
-            if colSpeed > 40 or (otherData.comp.phaseState and not otherData.comp.enteringPhase) then
+            if colSpeed > 120 or (otherData.comp.phaseState and not otherData.comp.enteringPhase) then
                 DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
             end
         end
@@ -695,10 +695,10 @@ local function ProcessCollision(key, data, index, world, player, junkList)
 
     if not mainData.isPlayer then
         -- Is player ship
-        if colSpeed > 40 or (mainData.comp.phaseState and not mainData.comp.enteringPhase) then
+        if colSpeed > 30 or (mainData.comp.phaseState and not mainData.comp.enteringPhase) then
             DamageComponent(world, player, junkList, player.ship, mainData.comp, colDamage)
         end
-        if colSpeed > 40 or (otherData.comp.phaseState and not otherData.comp.enteringPhase) then
+        if colSpeed > 30 or (otherData.comp.phaseState and not otherData.comp.enteringPhase) then
             DamageComponent(world, player, junkList, junkList[otherData.junkIndex], otherData.comp, colDamage)
         end
     end
@@ -751,7 +751,7 @@ local function beginContact(a, b, coll)
     local otherData     = otherFixture:getUserData()
 
     local speed = GetRelativeSpeed(coll, playerFixture:getBody(), otherFixture:getBody())
-    local damage = math.max(10, speed - 30)
+    local damage = math.max(10, speed - 20)
     collIndex = collIndex + 1
     collisionToAdd.Add(collIndex, {playerFixture, otherFixture, damage, speed})
 end
