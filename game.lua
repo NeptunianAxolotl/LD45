@@ -241,21 +241,12 @@ local function KeyPressed(player, junkList, key)
         return
     end
 
-    local keyUsed = false
     if player.ship and player.needKeybind and player.onComponent then
         local comp = player.onComponent
         if comp and comp.def.text and not comp.activeKey then
             comp.activeKey = key
             player.needKeybind = false
-            keyUsed = true
-            if comp.def.toggleActivate then
-                comp.activated = true
-            end
         end
-    end
-    
-    if keyUsed then
-        return
     end
 
     local onlyActivate = false
@@ -470,6 +461,10 @@ local function RemoveComponent(world, player, junkList, ship, delComp)
 end
 
 local function DamageComponent(world, player, junkList, ship, comp, damage)
+    if comp.phaseState then
+        damage = 1000000
+    end
+    
     comp.health = comp.health - damage
     if comp.health > 0 then
         return

@@ -192,7 +192,7 @@ local function DrawShip(ship, debugEnabled)
             local dx, dy = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 
             if comp.phaseState then
-                love.graphics.setColor(1, 1, 1, 1 - 0.8*comp.phaseState)
+                love.graphics.setColor(1, 1, 1, 1 - 0.75*comp.phaseState)
             end
 
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
@@ -215,7 +215,7 @@ local function DrawShip(ship, debugEnabled)
             local image = (comp.activated and comp.def.imageOn) or comp.def.imageOff
 
             if comp.phaseState then
-                love.graphics.setColor(1, 1, 1, 1 - 0.8*comp.phaseState)
+                love.graphics.setColor(1, 1, 1, 1 - 0.75*comp.phaseState)
             end
 
             local totalDrawAngle = ship.body:getAngle() + comp.angle + (comp.drawAngle or 0)
@@ -234,7 +234,7 @@ local function DrawShip(ship, debugEnabled)
 
             if comp.def.text ~= nil and comp.playerShip then
                 local textDef = comp.def.text
-                local keyName = comp.activeKey or "??"
+                local keyName = comp.activeKey or "?"
 
                 love.graphics.setColor(unpack(comp.def.text.color))
                 font.SetSize(3)

@@ -1,13 +1,13 @@
-local POWER = 3
+local POWER = 3.5
 
 local conf = {
     imageOff = "images/displacer.png",
     imageOn = "images/displaceron.png",
     imageDmg = {"images/displacerbreak1.png","images/displacerbreak2.png"},
     imageOrigin = {500, 550},
-    imageScale = {0.1, 0.1},
+    imageScale = {0.2, 0.2},
     activationOrigin = {0, 0},
-    shapeCoords = {-30,-15, 30,-15, 30,5, 12.5,15, -12.5,15, -30,5},
+    shapeCoords = {-60,-30, 60,-30, 60,10, 25,30, -25,30, -60,10},
     walkRadius = 40,
     maxHealth = 400,
     density = 1,
@@ -21,9 +21,9 @@ local conf = {
     },
     toggleActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
-        util.AddPhaseRadius(player.guy, activeX, activeY, 700, dt*POWER)
+        util.AddPhaseRadius(player.guy, activeX, activeY, 400, dt*POWER*6)
         if player.ship then
-            util.AddPhaseRadius(player.ship, activeX, activeY, 700, dt*POWER)
+            util.AddPhaseRadius(player.ship, activeX, activeY, 400, dt*POWER)
         end
     end,
 }
