@@ -14,6 +14,9 @@ local conf = {
     scaleMax = 1,
     scaleMin = 0.3,
     humanName = "a gyroscopic stabiliser",
+    getOccurence = function (dist)
+        return 1
+    end,
     density = 1,
     text =
     {

@@ -12,6 +12,10 @@ local conf = {
     walkRadius = 35,
     density = 7,
     maxHealth = 700,
+    humanName = "a booster",
+    getOccurence = function (dist)
+        return 1
+    end,
     text =
     {
         pos = {5.5, 5},
@@ -19,7 +23,6 @@ local conf = {
         scale = {1, 1},
         color = {0.8,0.1,0.1,1},
     },
-    humanName = "a booster",
     holdActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)

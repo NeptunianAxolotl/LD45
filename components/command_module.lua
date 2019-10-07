@@ -10,7 +10,9 @@ local conf = {
     maxHealth = 200,
     density = 1,
     humanName = "a command module",
-    name = "command module",
+    getOccurence = function (dist)
+        return 1
+    end,
 }
 
 return conf

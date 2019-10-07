@@ -9,6 +9,9 @@ local conf = {
     maxHealth = 1000,
     density = 15,
     phaseSpeedMult = 4,
+    getOccurence = function (dist)
+        return 1
+    end,
 }
 
 return conf

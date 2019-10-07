@@ -12,6 +12,9 @@ local conf = {
     walkRadius = 55,
     maxHealth = 220,
     humanName = "a solid fuel booster",
+    getOccurence = function (dist)
+        return 1
+    end,
     density = 10,
     text =
     {

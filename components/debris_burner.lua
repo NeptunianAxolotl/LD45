@@ -10,6 +10,9 @@ local conf = {
     maxHealth = 320,
     density = 2,
     humanName = "some burner debris",
+    getOccurence = function (dist)
+        return 1
+    end,
     text =
     {
         pos = {-5, 5},

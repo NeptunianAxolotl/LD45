@@ -14,6 +14,9 @@ local conf = {
     scaleMax = 1.6,
     scaleMin = 0.5,
     humanName = "a tractor beam",
+    getOccurence = function (dist)
+        return 1
+    end,
     density = 1,
     text =
     {

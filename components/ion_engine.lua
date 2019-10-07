@@ -13,6 +13,9 @@ local conf = {
     maxHealth = 150,
     density = 8,
     humanName = "an ion engine",
+    getOccurence = function (dist)
+        return 1
+    end,
     text =
     {
         pos = {5.5, 5},

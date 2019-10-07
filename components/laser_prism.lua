@@ -8,6 +8,9 @@ local conf = {
     walkRadius = 45,
     maxHealth = 250,
     humanName = "a laser prism",
+    getOccurence = function (dist)
+        return 1
+    end,
     density = 1,
 }
 

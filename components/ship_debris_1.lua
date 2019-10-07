@@ -8,6 +8,9 @@ local conf = {
     walkRadius = 20,
     maxHealth = 80,
     humanName = "some ship debris",
+    getOccurence = function (dist)
+        return 1
+    end,
     density = 1,
 }
 

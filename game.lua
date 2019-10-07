@@ -1,10 +1,5 @@
 local compConfig, compConfigList = unpack(require("components"))
 
-local function GetRandomComponent()
-    local num = math.random(1, #compConfigList)
-    return compConfigList[num].name
-end
-
 --------------------------------------------------
 -- Component handling
 --------------------------------------------------
@@ -87,16 +82,42 @@ local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, params)
     }
 end
 
-local function MakeRandomJunk(world, midX, midY, size, exclX, exclY, exclusionRad)
-    --print("mrj",world, midX, midY, size, exclX, exclY, exclusionRad)
+local function JunkDensityFunc(dist)
+    if dist < 1000 then
+        return 0
+    end
+    return 0.4 + 0.6*(dist - 1000)/8000
+end
+
+local function GetRandomComponent(dist)
+    local totalSum = 0
+    for i = 1, #compConfigList do
+        totalSum = totalSum + compConfigList[i].getOccurence(dist)
+    end
+
+    local ran = math.random()*totalSum
+    for i = 1, #compConfigList do
+        ran = ran - compConfigList[i].getOccurence(dist)
+        if ran < 0 then
+            return compConfigList[i].name
+        end
+    end
+
+    local num = math.random(1, #compConfigList)
+    return compConfigList[num].name
+end
+
+local function MakeRandomJunk(world, midX, midY, size, exclX, exclY)
     local posX = math.random()*size + midX - size/2
     local posY = math.random()*size + midY - size/2
 
-    if util.AbsVal(posX - exclX, posY - exclY) >= exclusionRad then
-        local compDefName = GetRandomComponent()
-        return MakeJunk(world, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
+    local dist = util.AbsVal(posX - exclX, posY - exclY)
+    if JunkDensityFunc(dist) <= math.random() then
+        return
     end
-    return nil
+
+    local compDefName = GetRandomComponent(dist)
+    return MakeJunk(world, compDefName, posX, posY, math.random()*2*math.pi, math.random()*25, math.random()*25, math.random()*0.3*math.pi)
 end
 
 local regionsWithJunk = {}
@@ -160,7 +181,7 @@ local function ExpandJunkspace(world, junkList, px, py)
             if not (regionsWithJunk[prX+x] and regionsWithJunk[prX+x][prY+y]) then
                 local JUNK_PER_REGION = 100
                 for i = 1, JUNK_PER_REGION do
-                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py, 1000)
+                    local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE, px, py)
                     if junk then
                         junkList[junk.junkIndex] = junk
                     end

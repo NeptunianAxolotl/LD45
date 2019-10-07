@@ -8,6 +8,9 @@ local conf = {
     walkRadius = 50,
     maxHealth = 220,
     humanName = "a gun",
+    getOccurence = function (dist)
+        return 1
+    end,
     density = 1,
 }
 

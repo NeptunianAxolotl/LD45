@@ -12,6 +12,9 @@ local conf = {
     maxHealth = 400,
     density = 1,
     humanName = "a phase engine",
+    getOccurence = function (dist)
+        return 1
+    end,
     text =
     {
         pos = {-5, 5},

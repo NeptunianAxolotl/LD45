@@ -10,6 +10,9 @@ local conf = {
     maxHealth = 400,
     density = 1,
     humanName = "a radar module",
+    getOccurence = function (dist)
+        return 1
+    end,
     text =
     {
         pos = {0, 0},
