@@ -13,7 +13,7 @@ local conf = {
     maxHealth = 150,
     density = 8,
     humanName = "an ion engine",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 2000 then
             return 0
         else

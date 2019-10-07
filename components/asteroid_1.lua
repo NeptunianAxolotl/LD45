@@ -13,7 +13,7 @@ local conf = {
     humanName = "an asteroid",
     noAttach = true,
     noSelect = true,
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 5000 then
             return 0
         elseif dist < 30000 then

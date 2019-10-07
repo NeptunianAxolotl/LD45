@@ -13,7 +13,7 @@ local conf = {
     scaleMax = 1,
     scaleMin = 0.6,
     humanName = "a large rocket",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 20000 then
             return 0
         elseif dist < 35000 then

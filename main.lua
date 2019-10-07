@@ -32,16 +32,19 @@ drawSystem = require("draw")
 gameSystem = require("game")
 
 local world
-local player = {
-    guy = nil,
-    ship = nil,
-    needKeybind = false,
-    crawlSpeed = 5,
-    girderAddDist = 60,
-}
+local player, junkList
 
-local junkList = {}
-local junkIndex = 0
+local function SetupVars()
+    player = {
+        guy = nil,
+        ship = nil,
+        needKeybind = false,
+        crawlSpeed = 5,
+        girderAddDist = 60,
+    }
+
+    junkList = {}
+end
 
 --------------------------------------------------
 -- Draw
@@ -106,6 +109,12 @@ function love.mousereleased(x, y, button, istouch, presses)
 end
 
 function love.keypressed(key, scancode, isRepeat)
+    print("RestartFunc", key, love.keyboard.isDown("lctrl"), love.keyboard.isDown("rctrl"))
+    if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
+        RestartFunc()
+        return
+    end
+
     if key == debugHitboxKey and not isRepeat then
         debugEnabled = not debugEnabled
     end
@@ -260,6 +269,20 @@ function love.load()
     util.load()
     drawSystem.load()
 
+    SetupVars()
+    SetupWorld()
+
+    player.guy = gameSystem.SetupPlayer(world, junkList)
+end
+
+function RestartFunc()
+    world:destroy()
+
+    drawSystem = require("draw")
+    gameSystem = require("game")
+    drawSystem.load(true)
+
+    SetupVars()
     SetupWorld()
 
     player.guy = gameSystem.SetupPlayer(world, junkList)

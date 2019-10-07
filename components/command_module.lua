@@ -10,7 +10,7 @@ local conf = {
     maxHealth = 200,
     density = 1,
     humanName = "a command module",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 40000 then
             return 0
         elseif dist < 70000 then

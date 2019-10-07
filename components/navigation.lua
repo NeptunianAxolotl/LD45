@@ -10,7 +10,7 @@ local conf = {
     maxHealth = 400,
     density = 1,
     humanName = "a radar module",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 40000 then
             return 0
         elseif dist < 70000 then

@@ -14,7 +14,7 @@ local conf = {
     scaleMax = 1,
     scaleMin = 0.3,
     humanName = "a gyroscopic stabiliser",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 15000 then
             return 0
         elseif dist < 50000 then

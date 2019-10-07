@@ -85,12 +85,12 @@ end
 local function GetRandomComponent(dist)
     local totalSum = 0
     for i = 1, #compConfigList do
-        totalSum = totalSum + compConfigList[i].getOccurrnce(dist)
+        totalSum = totalSum + compConfigList[i].getOccurrence(dist)
     end
 
     local ran = math.random()*totalSum
     for i = 1, #compConfigList do
-        ran = ran - compConfigList[i].getOccurrnce(dist)
+        ran = ran - compConfigList[i].getOccurrence(dist)
         if ran < 0 then
             return compConfigList[i].name
         end

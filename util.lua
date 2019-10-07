@@ -59,7 +59,7 @@ end
 -- Junk spawning
 --------------------------------------------------
 
-local OCCURRNCE_BANDS = {
+local OCCURRENCE_BANDS = {
 	3000,
 	6000,
 	10000,
@@ -74,20 +74,20 @@ local function JunkDensityFunc(dist)
     return 0.4 + 0.6*(dist - 1000)/8000
 end
 
-local function InterpolateOccurrnceDensity(dist, o1, o2, o3, o4)
-	if dist < OCCURRNCE_BANDS[1] then
+local function InterpolateOccurrenceDensity(dist, o1, o2, o3, o4)
+	if dist < OCCURRENCE_BANDS[1] then
 		return o1
 	end
-	if dist < OCCURRNCE_BANDS[2] then
-		local prop = (dist - OCCURRNCE_BANDS[1])/OCCURRNCE_BANDS[2]
+	if dist < OCCURRENCE_BANDS[2] then
+		local prop = (dist - OCCURRENCE_BANDS[1])/OCCURRENCE_BANDS[2]
 		return (1 - prop)*o1 + prop*o2
 	end
-	if dist < OCCURRNCE_BANDS[3] then
-		local prop = (dist - OCCURRNCE_BANDS[2])/OCCURRNCE_BANDS[3]
+	if dist < OCCURRENCE_BANDS[3] then
+		local prop = (dist - OCCURRENCE_BANDS[2])/OCCURRENCE_BANDS[3]
 		return (1 - prop)*o2 + prop*o3
 	end
-	if dist < OCCURRNCE_BANDS[4] then
-		local prop = (dist - OCCURRNCE_BANDS[3])/OCCURRNCE_BANDS[4]
+	if dist < OCCURRENCE_BANDS[4] then
+		local prop = (dist - OCCURRENCE_BANDS[3])/OCCURRENCE_BANDS[4]
 		return (1 - prop)*o3 + prop*o4
 	end
 	return o4
@@ -278,7 +278,7 @@ return {
 	Angle = Angle,
 	ToCart = ToCart,
 	JunkDensityFunc = JunkDensityFunc,
-	InterpolateOccurrnceDensity = InterpolateOccurrnceDensity,
+	InterpolateOccurrenceDensity = InterpolateOccurrenceDensity,
 	GetNearestComponent = GetNearestComponent,
 	IsPointOnShip = IsPointOnShip,
 	AddPhaseRadius = AddPhaseRadius,

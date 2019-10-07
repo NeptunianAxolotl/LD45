@@ -8,7 +8,7 @@ local conf = {
     walkRadius = 45,
     maxHealth = 250,
     humanName = "a laser prism",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 20000 then
             return 0
         elseif dist < 70000 then

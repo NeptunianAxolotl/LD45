@@ -12,7 +12,7 @@ local conf = {
     maxHealth = 400,
     density = 1,
     humanName = "a phase engine",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 25000 then
             return 0
         elseif dist < 55000 then

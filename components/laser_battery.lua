@@ -9,7 +9,7 @@ local conf = {
     walkRadius = 42,
     maxHealth = 180,
     humanName = "a laser battery",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 15000 then
             return 0
         elseif dist < 70000 then

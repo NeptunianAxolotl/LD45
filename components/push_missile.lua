@@ -12,7 +12,7 @@ local conf = {
     walkRadius = 55,
     maxHealth = 220,
     humanName = "a solid fuel booster",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 10000 then
             return 0
         elseif dist < 40000 then

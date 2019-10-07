@@ -9,7 +9,7 @@ local conf = {
     maxHealth = 120,
     density = 0.2,
     humanName = "a girder",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         return 1
     end,
     isGirder = true,

@@ -13,7 +13,7 @@ local conf = {
     density = 7,
     maxHealth = 700,
     humanName = "a booster",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 5000 then
             return 0
         elseif dist < 20000 then

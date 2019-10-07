@@ -10,7 +10,7 @@ local conf = {
     maxHealth = 320,
     density = 2,
     humanName = "some burner debris",
-    getOccurrnce = function (dist)
+    getOccurrence = function (dist)
         if dist < 10000 then
             return 0
         elseif dist < 30000 then
