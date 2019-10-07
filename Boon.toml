@@ -5,15 +5,15 @@ description = "Ludum Dare 45 Neptunian Axolotl"
 
 email = "mankarse.git@alethrea.net"
 
-package_name = "ld45"
+package_name = "WTF"
 
-title = "LudumDare45"
+title = "Warp Trash Flotilla"
 
 url = "https://ldjam.com/events/ludum-dare/45/$165937"
 
 uti = "com.ldjam.ld45.165937"
 
-version = "v0.0"
+version = "v1.0"
 
 [build]
 output_directory = "release"
