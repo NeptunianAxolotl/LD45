@@ -189,18 +189,18 @@ local function ExpandJunkspace(world, junkList, px, py)
     end
 end
 
-local function SetupPlayer(world, junkList)
-    local body = love.physics.newBody(world, 0, 0, "dynamic")
-    body:setAngularVelocity(0.4)
-
+local function SetupPlayer(world, junkList, quickRestart)
+    local dist = (quickRestart and 150) or 400
     local bodyDir = math.random()*2*math.pi
+    local posX, posY = util.ToCart(bodyDir, dist)
 
-    body:setLinearVelocity(util.ToCart(bodyDir, 35))
+    local body = love.physics.newBody(world, posX, posY, "dynamic")
+    body:setAngularVelocity(0.3)
+    body:setLinearVelocity(util.ToCart(bodyDir, -30))
 
-    local posX, posY = util.ToCart(bodyDir, 800)
-    local vx, vy = util.ToCart(bodyDir + math.pi, 35)
+    local vx, vy = util.ToCart(bodyDir, 20)
 
-    local junk = MakeJunk(world, "booster", posX, posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
+    local junk = MakeJunk(world, "booster", -posX, -posY, math.random()*2*math.pi, vx, vy, math.random()*0.1*math.pi)
     junkList[junk.junkIndex] = junk
 
     local components = IterableMap.New()

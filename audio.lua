@@ -83,7 +83,9 @@ function externalFunc.stopSound(id, death)
 end
 
 function externalFunc.reset()
-    sources = {}
+    for _, soundData in sounds.Iterator() do
+        soundData.source:stop()
+    end
     sounds = IterableMap.New()
 end
 

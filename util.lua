@@ -67,10 +67,11 @@ local OCCURRENCE_BANDS = {
 }
 
 local function JunkDensityFunc(dist)
-    if dist < 1000 then
-        return 0
+    if dist < 850 then
+		return 0
+	elseif dist < 1850 then
+		return 0.3 + 0.7*(dist - 850)/1000
     end
-    
     return 1
 end
 

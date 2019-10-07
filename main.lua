@@ -8,14 +8,13 @@ IterableMap = require("IterableMap")
 audioSystem = require("audio")
 util = require("util")
 
-
 SUPER_DEBUG_ENABLED = false
-local blockPhysics = false
 
 font = require("font")
 
 introTimer = 0
 introList = 0
+fadeSquenceTime = 5
 
 notifyColor = {
     r = 1,
@@ -49,7 +48,6 @@ local function SetupVars()
         crawlSpeed = 5,
         girderAddDist = 60,
     }
-    blockPhysics = false
 
     junkList = {}
 end
@@ -77,30 +75,32 @@ function love.draw()
         introList = introList + 1
     end
     
-    if introList == 3 and introTimer > 13 then
+    if introList == 3 and introTimer > 16 then
         drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4, notifyColor) 
         introList = introList + 1
     end
     
     drawSystem.draw(world, player, junkList, debugEnabled, lastDt)
     
-    local winWidth  = love.graphics:getWidth()
-    local winHeight = love.graphics:getHeight()
     
-    winPoints = {}
-    winPoints[1] = 0
-    winPoints[2] = 0
-    winPoints[3] = 0
-    winPoints[4] = winHeight
-    winPoints[5] = winWidth
-    winPoints[6] = winHeight
-    winPoints[7] = winWidth
-    winPoints[8] = 0
-    
-    love.graphics.setColor(0,0,0, math.max(0, 1 - ((introTimer - 5) / 1.5)))
-    love.graphics.polygon("fill", winPoints)
-    love.graphics.setColor(1,1,1)
-    
+    if introTimer < fadeSquenceTime + 1.5 then
+        local winWidth  = love.graphics:getWidth()
+        local winHeight = love.graphics:getHeight()
+
+        local winPoints = {}
+        winPoints[1] = 0
+        winPoints[2] = 0
+        winPoints[3] = 0
+        winPoints[4] = winHeight
+        winPoints[5] = winWidth
+        winPoints[6] = winHeight
+        winPoints[7] = winWidth
+        winPoints[8] = 0
+        love.graphics.setColor(0,0,0, math.max(0, 1 - ((introTimer - fadeSquenceTime) / 1.5)))
+        love.graphics.polygon("fill", winPoints)
+        love.graphics.setColor(1,1,1)
+    end
+
     drawSystem.drawConsole()
     drawSystem.drawGoalConsole(util.GetObjectives(), introTimer)
 end
@@ -172,6 +172,11 @@ function love.update(dt)
     introTimer = introTimer + dt
     
     lastDt = dt
+
+    if introTimer < 5 then
+        return
+    end
+
     local px, py = (player.ship or player.guy).body:getWorldCenter()
     gameSystem.ExpandJunkspace(world, junkList, px, py)
     gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
@@ -304,9 +309,14 @@ function RestartFunc()
     SetupWorld()
 
     gameSystem.reset()
+    audioSystem.reset()
     drawSystem.reset()
     firstTracker.reset{}
     util.reset()
 
-    player.guy = gameSystem.SetupPlayer(world, junkList)
+    introTimer = 10
+    fadeSquenceTime = 10.5
+    introList = 3
+
+    player.guy = gameSystem.SetupPlayer(world, junkList, true)
 end
