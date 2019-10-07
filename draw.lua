@@ -400,7 +400,7 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     end
 
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
-    local stars = starfield.locations(cx, cy)
+    local stars = starfield.locations(cx, cy, cScale)
     love.graphics.points(stars)
 
     love.graphics.scale(cScale)
