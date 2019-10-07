@@ -10,7 +10,7 @@ local conf = {
     activationOrigin = {-20, 0},
     shapeCoords = {26,0, 15,16, 15,-16, -14,-26, -26,-14, -26,14, -14,26},
     walkRadius = 35,
-    density = 4,
+    density = 6,
     maxHealth = 700,
     humanName = "a booster",
     getOccurrence = function (dist)
@@ -25,6 +25,9 @@ local conf = {
     },
     holdActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        local angularVelocity = body:getAngularVelocity()
+        activeAngle = activeAngle + math.tanh(angularVelocity*0.2)*0.5
+
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
         audioSystem.playSound("booster", comp.index)

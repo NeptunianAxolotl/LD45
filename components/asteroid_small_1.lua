@@ -8,12 +8,12 @@ local conf = {
     walkRadius = 35,
     maxHealth = 600,
     scaleMax = 0.4,
-    scaleMin = 0.02,
+    scaleMin = 0.05,
     density = 1,
     noAttach = true,
     noSelect = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.1, 0.2, 0.22, 0.25)
+        return util.InterpolateOccurrenceDensity(dist, 0.15, 0.2, 0.22, 0.25)
     end,
 }
 

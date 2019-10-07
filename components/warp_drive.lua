@@ -15,7 +15,7 @@ local conf = {
     maxHealth = 800,
     humanName = "a warp drive",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.12, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.0001, 0.02, 0.04)
     end,
     density = 12,
     text =
@@ -30,7 +30,7 @@ local conf = {
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         local angularVelocity = body:getAngularVelocity()
         
-        comp.power = (comp.power or 0) + math.tanh(-angularVelocity*6)*CHANGE_SPEED*dt
+        comp.power = (comp.power or 0) + math.tanh(-angularVelocity*10)*CHANGE_SPEED*dt
         if comp.power < -1 then
             comp.power = -1
         end

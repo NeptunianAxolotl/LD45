@@ -17,7 +17,7 @@ local conf = {
     offSound = "displacer_off",
     humanName = "a phase displacement device",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.012, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.0001, 0.025, 0.03)
     end,
     text =
     {
