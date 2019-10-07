@@ -10,7 +10,7 @@ local conf = {
 	shapeCoords = { -40,-12.5, -32.5,-20, 32.5,-20, 40,-12.5, 40,12.5, 32.5,20, -32.5,20, -40,12.5 },
     walkRadius = 42,
     maxHealth = 420,
-    humanName = "a navigation console!",
+    humanName = "a warp console!",
     density = 2,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.008, 0.03)
