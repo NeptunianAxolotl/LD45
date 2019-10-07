@@ -1,6 +1,9 @@
 local debugHitboxKey = 'm'
 local debugEnabled = false
 
+compConfig, compConfigList = unpack(require("components"))
+animationDefs = {}
+
 IterableMap = require("IterableMap")
 util = require("util")
 
@@ -109,7 +112,6 @@ function love.mousereleased(x, y, button, istouch, presses)
 end
 
 function love.keypressed(key, scancode, isRepeat)
-    print("RestartFunc", key, love.keyboard.isDown("lctrl"), love.keyboard.isDown("rctrl"))
     if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
         RestartFunc()
         return
@@ -171,47 +173,6 @@ function love.update(dt)
 end
 
 --------------------------------------------------
--- Input
---------------------------------------------------
-
-function love.mousemoved(x, y, dx, dy, istouch )
-    --ps:moveTo(x,y)
-end
-
-function love.mousereleased(x, y, button, istouch, presses)
-end
-
-function love.keypressed(key, scancode, isRepeat)
-    if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
-        return
-    end
-
-    if key == debugHitboxKey and not isRepeat then
-        debugEnabled = not debugEnabled
-    end
-
-    gameSystem.KeyPressed(player, junkList, key, isRepeat)
-end
-
-local function MouseHitFunc(fixture)
-    local fixtureData = fixture:getUserData()
-    if fixtureData.junkIndex and not fixtureData.noSelect then
-        -- Todo: point intersection
-        if gameSystem.TestJunkClick(junkList[fixtureData.junkIndex]) then
-            return false
-        end
-    end
-
-    return true
-end
-
-function love.mousepressed(x, y, button, istouch, presses)
-    --local mx, my = drawSystem.WindowSpaceToWorldSpace(x, y)
-    -- clicking on junk
-    --world:queryBoundingBox(mx - 2, my - 2, mx + 2, my + 2, MouseHitFunc)
-end
-
---------------------------------------------------
 -- Colisions
 --------------------------------------------------
 
@@ -255,6 +216,55 @@ function love.update(dt)
 end
 
 --------------------------------------------------
+-- Resource Loading
+--------------------------------------------------
+
+local function LoadAnimation(image, width, height, duration, scaleMin, scaleMax)
+    image = love.graphics.newImage(image)
+    local animation = {}
+    animation.spriteSheet = image
+    animation.quads = {}
+    animation.scaleMin = scaleMin or 1
+    animation.scaleMax = scaleMax or 1
+
+    animation.xOff, animation.yOff = width/2, height/2
+
+    for y = 0, image:getHeight() - height, height do
+        for x = 0, image:getWidth() - width, width do
+            table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
+        end
+    end
+
+    animation.duration = duration or 1
+
+    return animation
+end
+
+local function LoadComponentResources()
+    local compConfig, compConfigList = unpack(require("components"))
+    for name, def in pairs(compConfig) do
+        def.imageOff = love.graphics.newImage(def.imageOff)
+        def.imageOn = love.graphics.newImage(def.imageOn)
+        if def.imageDmg then
+            for i = 1, #def.imageDmg do
+                def.imageDmg[i] = love.graphics.newImage(def.imageDmg[i])
+            end
+            def.damBuckets = #def.imageDmg + 1
+        end
+    end
+end
+
+local function LoadResources()
+    LoadComponentResources()
+
+    local animationList = require("animations")
+    for i = 1, #animationList do
+        local data = animationList[i]
+        animationDefs[data.name] = LoadAnimation(data.image, data.width, data.height, data.duration, data.scaleMin, data.scaleMax)
+    end
+end
+
+--------------------------------------------------
 -- Loading
 --------------------------------------------------
 
@@ -267,7 +277,7 @@ function love.load()
     math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     util.load()
-    drawSystem.load()
+    LoadResources()
 
     SetupVars()
     SetupWorld()
@@ -280,7 +290,6 @@ function RestartFunc()
 
     drawSystem = require("draw")
     gameSystem = require("game")
-    drawSystem.load(true)
 
     SetupVars()
     SetupWorld()

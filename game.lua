@@ -1,5 +1,3 @@
-local compConfig, compConfigList = unpack(require("components"))
-
 --------------------------------------------------
 -- Component handling
 --------------------------------------------------
