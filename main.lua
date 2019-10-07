@@ -75,21 +75,27 @@ function love.draw()
         
     --intro console messages
     if introList == 0 and introTimer > 0.5 then
-        drawSystem.sendToConsole("> They called you paranoid for packing a space suit.", 4, notifyColor)
+        drawSystem.sendToConsole("> They say the passenger liners are safer than an afternoon stroll.", 8.5, notifyColor)
+        introList = introList + 1
+    end
+    
+    --intro console messages
+    if introList == 1 and introTimer > 2.5 then
+        drawSystem.sendToConsole("> You still pack a pressure suit on every trip.", 7.5, notifyColor)
         introList = introList + 1
     end
         
-    if introList == 1 and introTimer > 2 then
-        drawSystem.sendToConsole("> You only wish it had pockets.", 3.5, notifyColor) 
+    if introList == 2 and introTimer > 6.5 then
+        drawSystem.sendToConsole("> You only wish it had pockets.", 4.5, notifyColor) 
         introList = introList + 1
     end
         
-    if introList == 2 and introTimer > 7 then
+    if introList == 3 and introTimer > 9 then
         drawSystem.sendToConsole("> Now, you have nothing.", 5, notifyColor) 
         introList = introList + 1
     end
     
-    if introList == 3 and introTimer > 16 then
+    if introList == 4 and introTimer > 16 then
         --drawSystem.sendToConsole("> Maybe you can salvage something from this wreck.", 4, notifyColor) 
         introList = introList + 1
     end
