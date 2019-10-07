@@ -452,6 +452,10 @@ end
 local function RemoveComponent(world, player, junkList, ship, delComp)
     local xWorld, yWorld = ship.body:getWorldPoint(delComp.xOff, delComp.yOff)
     drawSystem.PlayAnimation("explosion", xWorld + math.random()*4 - 2, yWorld + math.random()*4 - 2)
+
+    if delComp.def.onDeathFunc then
+        delComp.def.onDeathFunc(world, delComp, ship)
+    end
     
     DeleteComponent(ship, delComp)
     if ship.components.IsEmpty() then

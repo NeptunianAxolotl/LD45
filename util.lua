@@ -207,12 +207,14 @@ local bulletShape = {
 	-12, 3,
 }
 
-local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy, damage, speed, life)
+local function FireBullet(world, body, shootX, shootY, activeAngle, vx, vy, damage, speed, life, offset)
 	bulletID = bulletID + 1
 	
+	local ox, oy = ToCart(activeAngle, offset or 0)
+
 	local bullet = {}
 	bullet.index = bulletID
-	bullet.body = love.physics.newBody(world, shootX, shootY, "dynamic")
+	bullet.body = love.physics.newBody(world, shootX + ox, shootY + oy, "dynamic")
 	bullet.shape = love.physics.newPolygonShape(unpack(bulletShape))
 	bullet.fixture = love.physics.newFixture(bullet.body, bullet.shape, 1)
 
