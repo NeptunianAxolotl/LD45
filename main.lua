@@ -334,7 +334,6 @@ local function SetupWorld()
 end
 
 function love.load()   
-    love.window.setIcon(love.image.newImageData("Images/icon.png"))
     math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     util.load()
