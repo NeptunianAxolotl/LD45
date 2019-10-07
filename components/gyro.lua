@@ -1,4 +1,4 @@
-local FORCE = 2000000
+local FORCE = 1000000
 local CHANGE_SPEED = 3.4
 
 local conf = {
@@ -9,13 +9,13 @@ local conf = {
     activationOrigin = {0, 0},
     circleShapeRadius = 35,
     toggleActivate = true,
-    maxHealth = 200,
+    maxHealth = 320,
     walkRadius = 20,
     scaleMax = 1,
     scaleMin = 0.3,
     humanName = "a gyroscopic stabiliser",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.04, 0.14, 0.16, 0.2)
+        return util.InterpolateOccurrenceDensity(dist, 0.05, 0.16, 0.2, 0.2)
     end,
     density = 1,
     text =

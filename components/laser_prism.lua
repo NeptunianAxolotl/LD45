@@ -14,7 +14,7 @@ local conf = {
     maxHealth = 200,
     humanName = "a laser prism",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.04, 0.12, 0.18)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0.04, 0.12, 0.20)
     end,
     density = 1,
     onDeathFunc = function(world, comp, ship)
