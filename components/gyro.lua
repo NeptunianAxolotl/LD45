@@ -13,7 +13,7 @@ local conf = {
     walkRadius = 20,
     scaleMax = 1,
     scaleMin = 0.3,
-    humanName = "a gyroscopic stabiliser",
+    humanName = "a gyroscopic stabiliser.",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.05, 0.16, 0.2, 0.2)
     end,

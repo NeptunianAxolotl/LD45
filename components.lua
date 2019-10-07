@@ -50,8 +50,7 @@ for name, def in pairs(components) do
         end
     end
     
-
-    if name ~= "player" and name ~= "push_missile_debris" and name ~= "command_module" and name ~= debris_burner and not def.isGirder then
+    if name ~= "player" and name ~= "push_missile_debris" and name ~= "command_module" and name ~= "debris_burner" and not def.isGirder then
         compList[#compList + 1] = def
     end
 end

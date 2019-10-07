@@ -12,7 +12,7 @@ local conf = {
     shapeCoords = { SCALE*33,SCALE*19, SCALE*33,SCALE*-19, SCALE*-33,SCALE*-19, SCALE*-33,SCALE*19},
     walkRadius = 42,
     maxHealth = 300,
-    humanName = "a laser battery",
+    humanName = "a laser battery!",
     alwaysOn = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.002, 0.04)

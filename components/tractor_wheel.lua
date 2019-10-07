@@ -13,7 +13,7 @@ local conf = {
     toggleActivate = true,
     scaleMax = 1.6,
     scaleMin = 0.5,
-    humanName = "a tractor beam",
+    humanName = "a tractor beam.",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.04, 0.14, 0.16, 0.2)
     end,

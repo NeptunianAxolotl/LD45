@@ -12,7 +12,7 @@ local conf = {
     scaleMax = 1,
     scaleMin = 0.7,
     density = 2.5,
-    humanName = "a sturdy piece of hull plating",
+    humanName = "a sturdy piece of hull plating.",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.22, 0.2, 0.18, 0.2)
     end,

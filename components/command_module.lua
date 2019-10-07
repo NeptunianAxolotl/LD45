@@ -11,7 +11,7 @@ local conf = {
     scaleMax = 1.1,
     scaleMin = 0.8,
     density = 1,
-    humanName = "a command module",
+    humanName = "a command module.",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0.25, 0.2, 0.07, 0.03)
     end,

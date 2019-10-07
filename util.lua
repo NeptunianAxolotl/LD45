@@ -329,6 +329,9 @@ local function UpdateObjectives(player, junkList)
 		player.closestObjX = false
 		player.closestObjY = false
 		player.objectivesSatisfied = not objectives.IsEmpty()
+		if player.objectivesSatisfied then
+			firstTracker.SendCustomTrigger("ready_to_warp")
+		end
 		return allSatisfied
 	end
 	player.objectivesSatisfied = false
@@ -412,7 +415,7 @@ end
 
 local engineUsed = false
 local function WarpWinPower(comp, body, activeX, activeY, activeAngle, junkList, player, dt)
-	audioSystem.playSound("booster", comp.index)
+	audioSystem.playSound("redrocket", comp.index)
 	if engineUsed then
 		return
 	end

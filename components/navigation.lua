@@ -10,7 +10,7 @@ local conf = {
     walkRadius = 32,
     maxHealth = 400,
     density = 2,
-    humanName = "a scanner",
+    humanName = "a scanner.",
     alwaysOn = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0.18, 0.15, 0.12)

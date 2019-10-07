@@ -13,7 +13,7 @@ local conf = {
     circleShapeRadius = 52,
     walkRadius = 42,
     maxHealth = 800,
-    humanName = "a warp drive",
+    humanName = "a warp drive!",
     isPropulsion = true,
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0.0001, 0.02, 0.04)
@@ -51,7 +51,7 @@ local conf = {
 
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
-        audioSystem.playSound("booster", comp.index)
+        audioSystem.playSound("redrocket", comp.index)
     end,
     offFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
         local winTimer = util.GetWinTimerProgress(player)

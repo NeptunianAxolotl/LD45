@@ -8,6 +8,7 @@ IterableMap = require("IterableMap")
 audioSystem = require("audio")
 util = require("util")
 
+local LOCK_DEBUG_AWAY = true
 SUPER_DEBUG_ENABLED = false
 
 REGION_SIZE = 2800
@@ -165,7 +166,7 @@ function love.keypressed(key, scancode, isRepeat)
         return
     end
 
-    if key == debugHitboxKey and not isRepeat then
+    if (not LOCK_DEBUG_AWAY) and (key == debugHitboxKey) and (not isRepeat) then
         debugEnabled = not debugEnabled
     end
 

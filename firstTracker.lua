@@ -8,8 +8,7 @@ local softlocked = nil
 local hints = {
 	{
         customTrigger = "console_no_win",
-        hint = {"The console requires a warp drive, a phase displacer, and two laser batteries."},
-        hint = {"> The console requires a warp drive, a phase displacer, and two laser batteries."},
+        hint = {"> Collect all the components to activate the console."},
         duration = 5,
     },
 	{
@@ -24,9 +23,14 @@ local hints = {
         colorOverride = notifyColor,
         duration = 50000000000000000000,
     },
+	{
+        customTrigger = "ready_to_warp",
+        hint = {"> Activate a console to warp home!"},
+        duration = 10,
+    },
     {
-        distanceTrigger = 2500,
-        hint = {"> Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
+        distanceTrigger = 2800,
+        hint = {"> Gather the components listed on the right to","build a warp drive and escape this field of flotsam."},
         duration = 9,
         waitTime = 2,
         doFunc = function ()     
@@ -37,28 +41,40 @@ local hints = {
                 util.AddObjective("Two laser batteries", "laser_battery", 2)
             end
         end
-    },    
+    },
     {
         compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
-        hint = {"> Move around your ship by holding the left mouse button.","Grab floating components by moving close to them."},
+        hint = {"> Click and hold the Left Mouse Button to", "crawl around your 'ship'."},
         duration = 8,
         waitTime = 0.5,
     },
     {
-        compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
-        hint = {"> Assign a key to your new $NAME,","then hold down that key to activate it."},
+        compTrigger = "booster",
+        hint = {"> Press any key to bind it to your booster,", "then hold the key to produce thrust."},
         duration = 8,
-        waitTime = 9,
+        waitTime = 5.5,
     },
     {
+        compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
+        hint = {"> Grab nearby componets to enlarge your ship."},
+        duration = 8,
+        waitTime = 11.5,
+    },
+    --{
+    --    compTrigger = {{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
+    --    hint = {"> Crawl onto your new $NAME, press a key to","bind it, then hold down that key to activate it."},
+    --    duration = 9,
+    --    waitTime = 2,
+    --},
+    {
         compTrigger = {{"tractor_wheel","tractor wheel"},{"gyro","stabiliser"},{"displacer","displacement device"}},
-        hint = {"> Activate or deactivate the $NAME","by pressing its assigned key."},
+        hint = {"> Activate or deactivate the $NAME","by binding it and pressing its assigned key."},
         duration = 9,
         waitTime = 2,
     },
     {
         compTrigger = "navigation",
-        hint = "> The scanner points towards the nearest objective component.",
+        hint = {"> The scanner points towards the nearest", "component required for the warp engine."},
         duration = 9,
         waitTime = 2,
     },
@@ -170,8 +186,9 @@ function externalFunc.Update(player, dt)
                     noBooster = false
                 end
             end
-            -- 1 revolution per second on a ship = softlock
-            if math.abs(player.ship.body:getAngularVelocity()) > math.pi then isSoftlocked = true end
+            if math.abs(player.ship.body:getAngularVelocity()) > 1.6 then
+                isSoftlocked = true
+            end
         end
         
         -- travelling slowly on your own or without any propulsion = softlock

@@ -12,7 +12,7 @@ local conf = {
     shapeCoords = {-32,-25, 32,-25, 50,-7.5, 0,40, -50,-7.5},
     walkRadius = 45,
     maxHealth = 200,
-    humanName = "a laser prism",
+    humanName = "a laser prism.",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0.04, 0.12, 0.20)
     end,
