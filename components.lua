@@ -37,7 +37,7 @@ for name, def in pairs(components) do
         print("Missing walkRadius for", def.name)
     end
 
-    if name ~= "player" and name ~= "push_missile_debris" and not def.isGirder then
+    if name ~= "player" and name ~= "push_missile_debris" and name ~= "command_module" and not def.isGirder then
         compList[#compList + 1] = def
     end
 end
