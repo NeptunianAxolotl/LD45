@@ -29,6 +29,7 @@ local conf = {
         activeAngle = activeAngle - math.pi*0.5
         local fx, fy = comp.scaleFactor*FORCE*math.cos(activeAngle), comp.scaleFactor*FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
+        audioSystem.playSound("redrocket", comp.index)
     end,
 }
 

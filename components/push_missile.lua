@@ -30,6 +30,7 @@ local conf = {
         activeAngle = activeAngle - math.pi*0.5
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
+        audioSystem.playSound("pushmissile", self.index)
     end,
 }
 

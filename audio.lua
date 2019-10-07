@@ -13,6 +13,10 @@ function addSource(name, id)
         source = love.audio.newSource("SFX/booster.wav", "static")
     elseif name == "ion" then
         source = love.audio.newSource("SFX/ion.wav", "static")
+    elseif name == "redrocket" then
+        source = love.audio.newSource("SFX/redrocket.wav", "static")
+    elseif name == "pushmissile" then
+        source = love.audio.newSource("SFX/pushmissile.wav", "static")
     end
 
     sources[name .. id] = source
