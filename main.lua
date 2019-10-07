@@ -5,6 +5,7 @@ compConfig, compConfigList = unpack(require("components"))
 animationDefs = {}
 
 IterableMap = require("IterableMap")
+audioSystem = require("audio")
 util = require("util")
 
 SUPER_DEBUG_ENABLED = false
@@ -214,7 +215,7 @@ function love.update(dt)
     end
     gameSystem.ProcessCollisions(world, player, junkList)
     
-    print ("distance: " .. util.AbsVal(px, py))
+    --print ("distance: " .. util.AbsVal(px, py))
 end
 
 --------------------------------------------------
@@ -279,6 +280,7 @@ function love.load()
     math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     util.load()
+    audioSystem.load()
     LoadResources()
 
     SetupVars()

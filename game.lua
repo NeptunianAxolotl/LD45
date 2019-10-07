@@ -242,8 +242,12 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
             ActivateComponent(ship, comp, junkList, player, dt, true, world)
         end
 
-        if (not comp.activated) and comp.def.offFunction then
-            ActivateComponent(ship, comp, junkList, player, dt, false, world)
+        if (not comp.activated) then
+            if comp.def.offFunction then
+                ActivateComponent(ship, comp, junkList, player, dt, false, world)
+            end
+            
+            audioSystem.stopSound(comp.index)
         end
     end
 end
