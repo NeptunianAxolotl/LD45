@@ -368,8 +368,10 @@ local function DrawShip(player, ship, debugEnabled, dt)
         
         if not comp.def.isGirder then
             if comp.def.imageExtra and comp.extraAngle then
+                love.graphics.setColor(1, 1, 1, 1*winAlpha)
                 love.graphics.draw(comp.def.imageExtra[1], dx, dy, comp.extraAngle, 
                     comp.def.imageScale[1]*(comp.xScale or 1)*comp.scaleFactor, comp.def.imageScale[2]*comp.scaleFactor, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+                love.graphics.setColor(1, 1, 1, 1)
             end
         end
     end
