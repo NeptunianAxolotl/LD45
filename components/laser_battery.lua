@@ -8,7 +8,7 @@ local conf = {
     shapeCoords = { 33,19, 33,-19, -33,-19, -33,19},
     walkRadius = 42,
     maxHealth = 300,
-    humanName = "an exotic battery",
+    humanName = "an exotic matter battery",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.01, 0.03)
     end,

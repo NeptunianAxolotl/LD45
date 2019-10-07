@@ -8,7 +8,6 @@ IterableMap = require("IterableMap")
 audioSystem = require("audio")
 util = require("util")
 
-firstTracker = require("firstTracker")
 
 SUPER_DEBUG_ENABLED = false
 
@@ -35,6 +34,7 @@ goalColor = {
 }
 
 drawSystem = require("draw")
+firstTracker = require("firstTracker")
 gameSystem = require("game")
 
 local world
