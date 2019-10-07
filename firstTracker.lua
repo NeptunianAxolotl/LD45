@@ -8,7 +8,7 @@ local softlocked = nil
 local hints = {
 	{
         customTrigger = "console_no_win",
-        hint = {"> Collect all the components to activate the console."},
+        hint = {"> Collect all the components to activate the warp console."},
         duration = 5,
     },
 	{
@@ -19,18 +19,18 @@ local hints = {
     },
 	{
         customTrigger = "console_restart",
-        hint = {"Press Ctrl + R to restart."},
+        hint = {"Press CTRL + R to restart."},
         colorOverride = notifyColor,
         duration = 50000000000000000000,
     },
 	{
         customTrigger = "ready_to_warp",
-        hint = {"> Activate a console to warp home!"},
+        hint = {"> Activate a warp console to warp home!"},
         duration = 10,
     },
     {
         distanceTrigger = 2800,
-        hint = {"> Gather the components listed on the right to","build a warp drive and escape this field of flotsam."},
+        hint = {"> Gather the components listed on the right","to escape this field of flotsam."},
         duration = 9,
         waitTime = 2,
         doFunc = function ()     
@@ -56,7 +56,7 @@ local hints = {
     },
     {
         compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
-        hint = {"> Grab nearby componets to enlarge your ship."},
+        hint = {"> Grab nearby components with your puny arms", "to enlarge your ship."},
         duration = 8,
         waitTime = 11.5,
     },
@@ -68,13 +68,13 @@ local hints = {
     --},
     {
         compTrigger = {{"tractor_wheel","tractor wheel"},{"gyro","stabiliser"},{"displacer","displacement device"}},
-        hint = {"> Activate or deactivate the $NAME","by binding it and pressing its assigned key."},
+        hint = {"> Activate or deactivate the $NAME","by binding it and pressing the assigned key."},
         duration = 9,
         waitTime = 2,
     },
     {
         compTrigger = "navigation",
-        hint = {"> The scanner points towards the nearest", "component required for the warp engine."},
+        hint = {"> The scanner points towards the nearest", "warp component."},
         duration = 9,
         waitTime = 2,
     },
