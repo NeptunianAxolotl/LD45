@@ -8,6 +8,7 @@ local conf = {
     walkRadius = 35,
     maxHealth = 550,
     density = 1,
+    humanName = "a space rock",
     noAttach = true,
     noSelect = true,
 }

@@ -8,6 +8,7 @@ local conf = {
     walkRadius = 35,
     maxHealth = 400,
     density = 1,
+    humanName = "an asteroid",
     noAttach = true,
     noSelect = true,
 }
