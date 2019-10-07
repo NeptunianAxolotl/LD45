@@ -21,7 +21,7 @@ local conf = {
     },
     toggleActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
-        util.AddPhaseRadius(player.guy, activeX, activeY, 400, dt*POWER*6)
+        util.AddPhaseRadius(player.guy, activeX, activeY, 400, dt*POWER)
         if player.ship then
             util.AddPhaseRadius(player.ship, activeX, activeY, 400, dt*POWER)
         end

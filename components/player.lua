@@ -8,6 +8,7 @@ local conf = {
     walkRadius = 30,
     maxHealth = 1000,
     density = 15,
+    phaseSpeedMult = 4,
 }
 
 return conf

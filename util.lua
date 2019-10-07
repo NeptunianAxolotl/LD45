@@ -111,7 +111,7 @@ local function AddPhaseRadius(ship, px, py, radius, power)
 		local x, y = ship.body:getWorldPoint(comp.xOff, comp.yOff)
 		local dist = Dist(x, y, px, py)
 		if dist < radius then
-			comp.phaseState = (comp.phaseState or 0) + power*(2*radius - dist)/(2*radius)
+			comp.phaseState = (comp.phaseState or 0) + (comp.def.phaseSpeedMult or 1)*power*(2*radius - dist)/(2*radius)
 			if comp.phaseState > 1 then
 				comp.phaseState = 1
 			end
@@ -126,7 +126,7 @@ local function UpdatePhasedObjects(dt)
 		local key = keyByIndex[i]
 		local comp = dataByKey[key]
 		if comp and not comp.fixture:isDestroyed() then
-			comp.phaseState = comp.phaseState - 1.4*dt
+			comp.phaseState = comp.phaseState - (comp.def.phaseSpeedMult or 1)*1.4*dt
 			if (comp.phaseState > 0.5) ~= ((comp.phased and true) or false) then
 				comp.phased = (comp.phaseState > 0.5)
 				SetPhaseStatus(comp, comp.phased)
