@@ -1,5 +1,6 @@
-
-local FORCE = 30000
+local FORCE = 40000
+local GYRO_FORCE = 400000
+local CHANGE_SPEED = 3.4
 
 local conf = {
     imageOff = "images/warpdriveoff.png",
@@ -14,7 +15,7 @@ local conf = {
     maxHealth = 800,
     humanName = "a warp drive",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.12, 0.03)
+        return util.InterpolateOccurrenceDensity(dist, 20, 0, 0.12, 0.03)
     end,
     density = 12,
     text =
@@ -25,10 +26,42 @@ local conf = {
         color = {0.2,0.2,1,1},
     },
     holdActivate = true,
+    
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        local angularVelocity = body:getAngularVelocity()
+        
+        comp.power = (comp.power or 0) + math.tanh(-angularVelocity*6)*CHANGE_SPEED*dt
+        if comp.power < -1 then
+            comp.power = -1
+        end
+        if comp.power > 1 then
+            comp.power = 1
+        end
+        body:applyTorque(comp.scaleFactor*GYRO_FORCE*comp.power)
+        comp.drawAngle = ((comp.drawAngle or 0) + dt*angularVelocity)%(math.pi*2)
+        activeAngle = activeAngle + comp.drawAngle
+
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)
         audioSystem.playSound("booster", comp.index)
+    end,
+    offFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)
+        if not comp.power then
+            return
+        end
+        if comp.power > 0 then
+            comp.power = comp.power - CHANGE_SPEED*dt
+            if comp.power < 0 then
+                comp.power = 0
+            end
+            body:applyTorque(comp.scaleFactor*GYRO_FORCE*comp.power)
+        elseif comp.power < 0 then
+            comp.power = comp.power + CHANGE_SPEED*dt
+            if comp.power > 0 then
+                comp.power = 0
+            end
+            body:applyTorque(GYRO_FORCE*comp.power)
+        end
     end,
 }
 
