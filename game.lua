@@ -41,7 +41,7 @@ local function SetupComponent(body, compDefName, params)
 
     comp.nbhd = IterableMap.New()
 
-    comp.maxHealth   = params.maxHealthOverride or (comp.def.maxHealth*scaleFactor)
+    comp.maxHealth   = params.maxHealthOverride or (comp.def.maxHealth*(0.4 + 0.6*scaleFactor))
     comp.health      = params.health or comp.maxHealth
     comp.activeKey   = params.activeKey
     comp.isPlayer    = params.isPlayer
@@ -120,7 +120,6 @@ local regionsWithJunk = {}
 local function ExpandJunkspace(world, junkList, px, py)
 
     --Region 0,0 is centered on 0,0; has top left corner at -5000,-5000.
-    local REGION_SIZE = 3000
     local function WorldPositionToRegionIndex(x, y)
         return math.floor((x+(REGION_SIZE/2))/REGION_SIZE),math.floor((y+(REGION_SIZE/2))/REGION_SIZE)
     end
@@ -175,7 +174,6 @@ local function ExpandJunkspace(world, junkList, px, py)
     for x = -1, 1 do
         for y = -1, 1 do
             if not (regionsWithJunk[prX+x] and regionsWithJunk[prX+x][prY+y]) then
-                local JUNK_PER_REGION = 180
                 for i = 1, JUNK_PER_REGION do
                     local junk = MakeRandomJunk(world, (prX+x)*REGION_SIZE, (prY+y)*REGION_SIZE, REGION_SIZE)
                     if junk then

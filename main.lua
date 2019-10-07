@@ -10,6 +10,9 @@ util = require("util")
 
 SUPER_DEBUG_ENABLED = false
 
+REGION_SIZE = 2800
+JUNK_PER_REGION = 180
+
 font = require("font")
 
 introTimer = 0
