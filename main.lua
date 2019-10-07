@@ -164,37 +164,6 @@ end
 --------------------------------------------------
 -- Update
 --------------------------------------------------
-local escPressed = false
-function love.update(dt)
-    if love.keyboard.isDown("escape") and escPressed == false then
-        introSystem.setIntroCancel()
-        escPressed = true
-    end
-    drawSystem.drawConsole()
-end
-
---------------------------------------------------
--- Colisions
---------------------------------------------------
-
-local function beginContact(a, b, coll)
-    gameSystem.beginContact(a, b, coll)
-end
-
-local function endContact(a, b, coll)
-end
-
-local function preSolve(a, b, coll)
-end
-
-local function postSolve(a, b, coll,  normalimpulse, tangentimpulse)
-    gameSystem.postSolve(a, b, coll,  normalimpulse, tangentimpulse)
-end
-
---------------------------------------------------
--- Update
---------------------------------------------------
-local escPressed = false
 function love.update(dt)
     introTimer = introTimer + dt
     
@@ -203,6 +172,7 @@ function love.update(dt)
     gameSystem.ExpandJunkspace(world, junkList, px, py)
     gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
 
+    util.UpdateObjectives(player, junkList)
     util.UpdatePhasedObjects(dt)
     util.UpdateBullets(dt)
 
@@ -215,6 +185,24 @@ function love.update(dt)
     end
     gameSystem.ProcessCollisions(world, player, junkList)
     
+    util.UpdatePhasedObjects(dt)
+    util.UpdateBullets(dt)
+
+    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+    gameSystem.UpdateMovePlayerGuy(player, mx, my)
+    gameSystem.UpdatePlayerComponentAttributes(player)
+
+    if dt < 0.4 then
+        world:update(dt)
+    end
+    gameSystem.ProcessCollisions(world, player, junkList)
+    
+    --print("distance: " .. util.AbsVal(px, py))
+
+    if util.GetObjectives().IsEmpty() then
+        util.AddObjective("A phase displacement device.", "displayer", 1)
+        util.AddObjective("exotic matter battery", "laserbatter", 3)
+    end
     --print ("distance: " .. util.AbsVal(px, py))
 end
 
@@ -253,6 +241,11 @@ local function LoadComponentResources()
                 def.imageDmg[i] = love.graphics.newImage(def.imageDmg[i])
             end
             def.damBuckets = #def.imageDmg + 1
+        end
+        if def.imageExtra then
+            for i = 1, #def.imageExtra do
+                def.imageExtra[i] = love.graphics.newImage(def.imageExtra[i])
+            end
         end
     end
 end
@@ -297,6 +290,7 @@ function RestartFunc()
 
     gameSystem.reset()
     drawSystem.reset()
+    util.reset()
 
     player.guy = gameSystem.SetupPlayer(world, junkList)
 end

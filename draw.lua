@@ -268,7 +268,12 @@ local function DrawShip(ship, debugEnabled)
                 love.graphics.print(string.upper(keyName), dx, dy, totalDrawAngle + textDef.rotation, textDef.scale[1], textDef.scale[2], textDef.pos[1], textDef.pos[2])
                 love.graphics.setColor(1,1,1,1)
             end
-
+            
+            if comp.def.imageExtra and comp.extraAngle then
+                love.graphics.draw(comp.def.imageExtra[1], dx, dy, comp.extraAngle, 
+                    comp.def.imageScale[1]*(comp.xScale or 1)*drawScale, comp.def.imageScale[2]*drawScale, comp.def.imageOrigin[1], comp.def.imageOrigin[2])
+            end
+            
             if comp.phaseState then
                 love.graphics.setColor(1, 1, 1, 1)
             end

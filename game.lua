@@ -76,7 +76,8 @@ local function MakeJunk(world, compDefName, x, y, angle, vx, vy, vangle, params)
     return {
         junkIndex = junkIndex,
         body = junkBody,
-        components = components
+        components = components,
+        compDefName = compDefName,
     }
 end
 
@@ -239,6 +240,9 @@ local function UpdateComponentActivation(player, junkList, player, dt, world)
                 comp.activated = false
             end
         elseif comp.def.toggleActivate and comp.activated then
+            ActivateComponent(ship, comp, junkList, player, dt, true, world)
+        elseif comp.def.alwaysOn then
+            comp.activated = true
             ActivateComponent(ship, comp, junkList, player, dt, true, world)
         end
 

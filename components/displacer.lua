@@ -11,7 +11,7 @@ local conf = {
     walkRadius = 40,
     maxHealth = 400,
     density = 1,
-    humanName = "a phase engine",
+    humanName = "a phase displacement device",
     getOccurrence = function (dist)
         return util.InterpolateOccurrenceDensity(dist, 0, 0, 0, 0.01)
     end,

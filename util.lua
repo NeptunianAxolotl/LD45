@@ -263,11 +263,101 @@ local function UpdateBullets(dt)
 end
 
 --------------------------------------------------
+-- Objectives
+--------------------------------------------------
+
+local objectives = IterableMap.New()
+local objectiveID = 0
+local function AddObjective(humanName, requiredComponent, requiredCount)
+	objectiveID = objectiveID + 1
+	objectives.Add(objectiveID, {
+		humanName = humanName,
+		requiredComponent = requiredComponent,
+		requiredCount = requiredCount,
+		satisfied = false,
+	})
+end
+
+local function UpdateObjectives(player, junkList)
+	if not player.ship then
+		for _, obj in objectives.Iterator() do
+			obj.satisfied = false
+		end
+		player.closestObjX = false
+		player.closestObjY = false
+		return
+	end
+
+	local wantedComponents = {}
+	for _, obj in objectives.Iterator() do
+		wantedComponents[obj.requiredComponent] = obj
+		obj.compCount = 0
+	end
+
+	for _, comp in player.ship.components.Iterator() do
+		local obj = wantedComponents[comp.def.name]
+		if obj then
+			obj.compCount = (obj.compCount or 0) + 1
+		end
+	end
+
+	local allSatisfied = true
+	for _, obj in objectives.Iterator() do
+		obj.satisfied = (obj.compCount or 0) >= obj.requiredCount
+		if obj.satisfied then
+			wantedComponents[obj.requiredComponent] = nil
+		else
+			allSatisfied = false
+		end
+	end
+
+	if allSatisfied then
+		player.closestObjX = false
+		player.closestObjY = false
+		return allSatisfied
+	end
+
+	local px, py = player.ship.body:getX(), player.ship.body:getY()
+	local minDist, minDistX, minDistY
+
+	for _, junk in pairs(junkList) do
+		if wantedComponents[junk.compDefName] then
+			local jx, jy = junk.body:getX(), junk.body:getY()
+			local dist = Dist(px, py, jx, jy)
+			if (not minDist) or (dist < minDist) then
+				minDist = dist
+				minDistX = jx
+				minDistY = jy
+			end
+		end
+	end
+
+	player.closestObjX = minDistX
+	player.closestObjY = minDistY
+
+	return allSatisfied
+end
+
+local function GetObjectives()
+	return objectives
+end
+
+--------------------------------------------------
 -- Loading
 --------------------------------------------------
 
 local function load()
 	bulletImage = love.graphics.newImage('images/bullet 1.png')
+end
+
+local function reset()
+	bullets = IterableMap.New()
+	bulletID = 0
+
+	phasedObjects = IterableMap.New()
+
+	objectives = IterableMap.New()
+	objectiveID = 0
 end
 
 return {
@@ -286,5 +376,9 @@ return {
 	DrawBullets = DrawBullets,
 	UpdateBullets = UpdateBullets,
 	DoBulletDamage = DoBulletDamage,
+	AddObjective = AddObjective,
+	UpdateObjectives = UpdateObjectives,
+	GetObjectives = GetObjectives,
 	load = load,
+	reset = reset,
 }
