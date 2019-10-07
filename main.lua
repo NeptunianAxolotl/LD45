@@ -63,7 +63,7 @@ function love.draw()
         
     --intro console messages
     if introList == 0 and introTimer > 0.5 then
-        drawSystem.sendToConsole("> They told you the freighter was safe.", 3, notifyColor) 
+        drawSystem.sendToConsole("> They told you the freighter was safe.", 3, notifyColor)
         introList = introList + 1
     end
         
@@ -102,7 +102,7 @@ function love.draw()
     love.graphics.setColor(1,1,1)
     
     drawSystem.drawConsole()
-
+    drawSystem.drawGoalConsole()
 end
 
 --------------------------------------------------
