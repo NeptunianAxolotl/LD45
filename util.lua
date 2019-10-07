@@ -372,6 +372,13 @@ local function CheckMusicChange(player, objSatisfied)
 		objSatisfied = 5
 	end
 
+	if objSatisfied == 2 then
+		objSatisfied = 1
+	end
+	if objSatisfied == 4 then
+		objSatisfied = 3
+	end
+
 	if objSatisfied == prevObjSatisfied then
 		return
 	end
