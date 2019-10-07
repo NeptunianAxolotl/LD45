@@ -65,9 +65,13 @@ function externalFunc.drawGoalConsole(objectives, _timer)
     for _, obj in objectives.Iterator() do
         love.graphics.setColor(1,1,1, math.max(0, ((_timer - 20) / 1.5)))
         
+        if obj.satisfied then
+            love.graphics.setColor(0,1,0, math.max(0, ((_timer - 20) / 1.5)))
+        end
+        
         font.SetSize(2)
-        local text = love.graphics.newText(font.GetFont(), obj.humanName)
-        love.graphics.print(obj.humanName, 974 - text:getWidth(1), 730 - (obj.index * 25))
+        local text = love.graphics.newText(font.GetFont(), obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"))
+        love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), 730 - (obj.index * 25))
         
         love.graphics.setColor(1,1,1)
     end
