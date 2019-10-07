@@ -15,7 +15,15 @@ local hints = {
         hint = {"Collect the components listed in the bottom-right","to build a warp drive and win the game!"},
         duration = 15,
         waitTime = 2,
-    },
+        doFunc = function ()     
+            if util.GetObjectives().IsEmpty() then
+                util.AddObjective("A warp drive [  ]", "warp_drive", 1)
+                util.AddObjective("A phase displacer [  ]", "displacer", 1)
+                util.AddObjective("A navigation console [  ]", "console", 1)
+                util.AddObjective("Two laser batteries [  ]", "laser_battery", 2)
+            end
+        end
+    },    
     {
         compTrigger = {{"booster","booster"},{"ion_engine","thruster"},{"push_missile","rocket"},{"red_rocket","rocket"}},
         hint = {"Assign a key to your new $NAME,","then hold down that key to activate it."},
