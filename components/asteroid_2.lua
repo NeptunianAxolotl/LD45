@@ -14,7 +14,7 @@ local conf = {
     noAttach = true,
     noSelect = true,
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.06, 0.2, 0.3)
+        return util.InterpolateOccurrenceDensity(dist, 0.001, 0.02, 0.1, 0.12)
     end,
 }
 

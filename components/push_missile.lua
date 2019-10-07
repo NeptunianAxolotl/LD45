@@ -15,7 +15,7 @@ local conf = {
     scaleMin = 0.8,
     humanName = "a solid fuel booster",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0.2, 0.3, 0.3)
+        return util.InterpolateOccurrenceDensity(dist, 0.01, 0.2, 0.3, 0.3)
     end,
     density = 10,
     text =

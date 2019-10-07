@@ -14,7 +14,7 @@ local conf = {
     density = 5,
     humanName = "an ion engine",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.8, 0.6, 0.2, 0.1)
+        return util.InterpolateOccurrenceDensity(dist, 0.6, 0.5, 0.2, 0.1)
     end,
     text =
     {

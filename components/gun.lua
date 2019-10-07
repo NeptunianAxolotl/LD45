@@ -1,6 +1,6 @@
 local FORCE = -1700
 local DAMAGE = 90
-local SPEED = 1500
+local SPEED = 1550
 local LIFE = 2
 
 local conf = {
@@ -14,9 +14,9 @@ local conf = {
     maxHealth = 220,
     humanName = "a gun",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.02, 0.1, 0.15, 0.1)
+        return util.InterpolateOccurrenceDensity(dist, 0.1, 0.12, 0.15, 0.18)
     end,
-    density = 1,
+    density = 2,
     text =
     {
         pos = {5.5, 0},
@@ -33,7 +33,7 @@ local conf = {
 
         local vx, vy = body:getLinearVelocityFromWorldPoint(activeX, activeY)
         util.FireBullet(world, body, activeX, activeY, activeAngle, vx, vy, DAMAGE, SPEED, LIFE)
-        comp.reloadTime = 0.16
+        comp.reloadTime = 0.12
 
         local fx, fy = FORCE*math.cos(activeAngle), FORCE*math.sin(activeAngle)
         body:applyForce(fx, fy, activeX, activeY)

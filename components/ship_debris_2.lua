@@ -14,7 +14,7 @@ local conf = {
     density = 2.5,
     humanName = "a sturdy piece of hull plating",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.4, 0.3, 0.1, 0.05)
+        return util.InterpolateOccurrenceDensity(dist, 0.3, 0.3, 0.18, 0.1)
     end,
 }
 

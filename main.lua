@@ -201,7 +201,7 @@ function love.update(dt)
 
     if util.GetObjectives().IsEmpty() then
         util.AddObjective("A phase displacement device.", "displayer", 1)
-        util.AddObjective("exotic matter battery", "laserbatter", 3)
+        util.AddObjective("An exotic matter battery", "laser_battery", 3)
     end
     --print ("distance: " .. util.AbsVal(px, py))
 end

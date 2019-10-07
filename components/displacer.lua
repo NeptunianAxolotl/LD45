@@ -13,7 +13,7 @@ local conf = {
     density = 1,
     humanName = "a phase displacement device",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0, 0.01)
+        return util.InterpolateOccurrenceDensity(dist, 0, 0, 0.005, 0.02)
     end,
     text =
     {

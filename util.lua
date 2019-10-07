@@ -60,10 +60,10 @@ end
 --------------------------------------------------
 
 local OCCURRENCE_BANDS = {
-	3000,
-	6000,
-	10000,
-	15000,
+	2200,
+	5000,
+	8000,
+	12000,
 }
 
 local function JunkDensityFunc(dist)
@@ -71,7 +71,7 @@ local function JunkDensityFunc(dist)
         return 0
     end
     
-    return (0.4 + 0.6*(dist - 1000)/8000)/2
+    return 1
 end
 
 local function InterpolateOccurrenceDensity(dist, o1, o2, o3, o4)

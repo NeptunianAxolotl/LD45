@@ -15,7 +15,7 @@ local conf = {
     scaleMin = 0.3,
     humanName = "a gyroscopic stabiliser",
     getOccurrence = function (dist)
-        return util.InterpolateOccurrenceDensity(dist, 0.01, 0.1, 0.2, 0.1)
+        return util.InterpolateOccurrenceDensity(dist, 0.04, 0.14, 0.16, 0.2)
     end,
     density = 1,
     text =
