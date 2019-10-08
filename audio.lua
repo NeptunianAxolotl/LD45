@@ -22,7 +22,7 @@ local volMult = {
     theme1 = 0.75,
     theme2 = 0.75,
     theme2point5 = 0.8,
-    theme3 = 0.48,
+    theme3 = 0.55,
     themeWin = 0.82,
 }
 

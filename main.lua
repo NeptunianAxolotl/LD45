@@ -233,11 +233,10 @@ function love.update(dt)
     if dt < 0.2 then
         local px, py = (player.ship or player.guy).body:getWorldCenter()
         gameSystem.ExpandJunkspace(world, junkList, px, py)
-        
-        util.UpdatePhasedObjects(dt)
         gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
 
         util.UpdateObjectives(player, junkList)
+        util.UpdatePhasedObjects(dt)
         util.UpdateBullets(dt)
 
         local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
@@ -249,6 +248,7 @@ function love.update(dt)
             gameSystem.ProcessCollisions(world, player, junkList)
         end
 
+        util.UpdatePhasedObjects(dt)
         util.UpdateBullets(dt)
         util.UpdateWarpWin()
 
