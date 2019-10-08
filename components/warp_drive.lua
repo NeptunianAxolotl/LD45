@@ -21,10 +21,10 @@ local conf = {
     density = 12,
     text =
     {
-        pos = {-2,2 },
+        pos = {-2,2},
         rotation = -math.pi*0.5,
         scale = {1, 1},
-        color = {0.2,0.2,1,1},
+        color = {0.2,0.3,1,1},
     },
     holdActivate = true,
     

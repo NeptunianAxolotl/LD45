@@ -21,10 +21,10 @@ local conf = {
     end,
     text =
     {
-        pos = {-5, 5},
-        rotation = 0,
+        pos = {19, 30},
+        rotation = math.pi,
         scale = {1, 1},
-        color = {0.8,0.1,0.1,1},
+        color = {1,1,1,1},
     },
     toggleActivate = true,
     onFunction = function (comp, body, activeX, activeY, activeAngle, junkList, player, dt)

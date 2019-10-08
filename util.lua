@@ -164,7 +164,7 @@ local function AddPhaseRadius(ship, px, py, radius, power)
 		local dist = Dist(x, y, px, py)
 		if dist < radius then
 			comp.phaseState = (comp.phaseState or 0) + (comp.def.phaseSpeedMult or 1)*power*(2*radius - dist)/(2*radius)
-			comp.enteringPhase = 2
+			comp.enteringPhase = 1
 			if comp.phaseState > 1 then
 				comp.phaseState = 1
 			end
@@ -179,7 +179,7 @@ local function UpdatePhasedObjects(dt)
 		local key = keyByIndex[i]
 		local comp = dataByKey[key]
 		if comp and not comp.fixture:isDestroyed() then
-			comp.phaseState = comp.phaseState - (comp.def.phaseSpeedMult or 1)*1.55*dt
+			comp.phaseState = comp.phaseState - (comp.def.phaseSpeedMult or 1)*3.1*dt
 			if comp.enteringPhase then
 				comp.enteringPhase = comp.enteringPhase - 1
 				if comp.enteringPhase < 0 then
@@ -396,7 +396,7 @@ local function CheckMusicChange(player, objSatisfied)
 		audioSystem.playSound("theme2point5", "theme2point5", true, 1)
 		audioSystem.playSound("theme3", "theme3", false, 1, 13)
 	elseif objSatisfied == 5 then
-		audioSystem.playSound("themeWin", "themeWin", false, 1, 1.5)
+		audioSystem.playSound("themeWin", "themeWin", false, 1, 1)
 	else
 		audioSystem.playSound("theme1", "theme1", false, 1, 5)
 	end

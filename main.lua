@@ -230,37 +230,35 @@ function love.update(dt)
         return
     end
     
-    local px, py = (player.ship or player.guy).body:getWorldCenter()
-    gameSystem.ExpandJunkspace(world, junkList, px, py)
-    gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
+    if dt < 0.2 then
+        local px, py = (player.ship or player.guy).body:getWorldCenter()
+        gameSystem.ExpandJunkspace(world, junkList, px, py)
+        
+        util.UpdatePhasedObjects(dt)
+        gameSystem.UpdateComponentActivation(player, junkList, player, dt, world)
 
-    util.UpdateObjectives(player, junkList)
-    util.UpdatePhasedObjects(dt)
-    util.UpdateBullets(dt)
+        util.UpdateObjectives(player, junkList)
+        util.UpdateBullets(dt)
 
-    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
-    gameSystem.UpdateMovePlayerGuy(player, mx, my)
-    gameSystem.UpdatePlayerComponentAttributes(player)
+        local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+        gameSystem.UpdateMovePlayerGuy(player, mx, my)
+        gameSystem.UpdatePlayerComponentAttributes(player)
 
-    if (not winTimer) or (winTimer < 8) then 
-        if dt < 0.4 then
+        if (not winTimer) or (winTimer < 8) then 
             world:update(dt)
+            gameSystem.ProcessCollisions(world, player, junkList)
         end
+
+        util.UpdateBullets(dt)
+        util.UpdateWarpWin()
+
+        local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
+        gameSystem.UpdateMovePlayerGuy(player, mx, my)
+        gameSystem.UpdatePlayerComponentAttributes(player)
+
+        world:update(dt)
         gameSystem.ProcessCollisions(world, player, junkList)
     end
-
-    util.UpdatePhasedObjects(dt)
-    util.UpdateBullets(dt)
-    util.UpdateWarpWin()
-
-    local mx, my = drawSystem.WindowSpaceToWorldSpace(love.mouse.getX(), love.mouse.getY())
-    gameSystem.UpdateMovePlayerGuy(player, mx, my)
-    gameSystem.UpdatePlayerComponentAttributes(player)
-
-    if dt < 0.4 then
-        world:update(dt)
-    end
-    gameSystem.ProcessCollisions(world, player, junkList)
 
     firstTracker.Update(player, dt)
     audioSystem.Update(player, dt)

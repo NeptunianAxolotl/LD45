@@ -21,8 +21,8 @@ local volMult = {
     explosion = 0.15,
     theme1 = 0.75,
     theme2 = 0.75,
-    theme2point5 = 0.82,
-    theme3 = 0.75,
+    theme2point5 = 0.8,
+    theme3 = 0.48,
     themeWin = 0.82,
 }
 
@@ -89,6 +89,12 @@ function externalFunc.playSound(name, id, noLoop, fadeRate, delay)
 end
 
 function externalFunc.Update(player, dt)
+    local winTimer = util.GetWinTimerProgress(player)
+    local wantedWinVolume
+    if winTimer and winTimer > 2 then
+        wantedWinVolume = math.max(0, (7 - winTimer)/5)
+    end
+
     for _, soundData in sounds.Iterator() do
         if soundData.delay then
             soundData.delay = soundData.delay - dt
@@ -96,6 +102,7 @@ function externalFunc.Update(player, dt)
                 soundData.delay = false
                 if soundData.want > 0 then
                     love.audio.play(soundData.source)
+                    soundData.source:setVolume(soundData.have*(wantedWinVolume or 1)*volMult[soundData.name])
                 end
             end
         else
@@ -115,10 +122,8 @@ function externalFunc.Update(player, dt)
                 soundData.source:setVolume(soundData.have*volMult[soundData.name])
             end
 
-            local winTimer = util.GetWinTimerProgress(player)
-            if winTimer and winTimer > 2 then
-                local wantedVolume = math.max(0, (7 - winTimer)/5)
-                soundData.source:setVolume(soundData.have*wantedVolume*volMult[soundData.name])
+            if wantedWinVolume then
+                soundData.source:setVolume(soundData.have*wantedWinVolume*volMult[soundData.name])
             end
         end
     end
