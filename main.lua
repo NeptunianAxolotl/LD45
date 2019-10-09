@@ -336,7 +336,8 @@ local function SetupWorld()
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 end
 
-function love.load()   
+function love.load()
+    love.window.maximize() -- Do not fullscreen since we lack an exit button.
     math.randomseed(os.clock())
     --love.graphics.setFont(love.graphics.newFont('Resources/fonts/pixelsix00.ttf'))
     util.load()

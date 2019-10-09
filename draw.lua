@@ -5,6 +5,9 @@ local smoothCameraFactor = 0.25
 local softlockDelay = 4
 local softlockPeriod = 3.6
 
+local CONSOLE_BOTTOM = 38
+local CONSOLE_RIGHT = 50
+
 local starfield = require("starfield")
 local animations = IterableMap.New()
 
@@ -34,7 +37,10 @@ function externalFunc.sendToConsole (text, timer, color)
     table.insert(consoleColorB, color.b)
 end
 
+
 function externalFunc.drawConsole()
+    local botPad = love.graphics:getHeight() - CONSOLE_BOTTOM
+
     for i = #consoleText, 1, -1 do
 
         love.graphics.setColor(
@@ -45,7 +51,7 @@ function externalFunc.drawConsole()
         
         font.SetSize(2)
         
-        love.graphics.print(consoleText[#consoleText + 1 - i], 50, 730 - (i * 25))
+        love.graphics.print(consoleText[#consoleText + 1 - i], 50, botPad - (i * 25))
         
         love.graphics.setColor(1,1,1)
     end
@@ -73,7 +79,9 @@ function externalFunc.drawGoalConsole(player, objectives, softlocked, _timer)
         return
     end
     
-    local vnext = 730
+    local vnext = love.graphics:getHeight() - CONSOLE_BOTTOM
+    local rightPad = love.graphics:getWidth() - CONSOLE_RIGHT
+
     local winAlpha = 1
     if util.GetWinTimerProgress(player) then
         winAlpha = (5.5 - util.GetWinTimerProgress(player))/5.5
@@ -92,8 +100,8 @@ function externalFunc.drawGoalConsole(player, objectives, softlocked, _timer)
         font.SetSize(2)
         local text = love.graphics.newText(font.GetFont(), obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"))
         vnext = vnext - 25
-        --love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), 730 - (obj.index * 25))
-        love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), 974 - text:getWidth(1), vnext)
+        --love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), rightPad - text:getWidth(1), 730 - (obj.index * 25))
+        love.graphics.print(obj.humanName .. ((obj.satisfied and " [x]") or " [  ]"), rightPad - text:getWidth(1), vnext)
         
         love.graphics.setColor(1,1,1,1)
     end
@@ -104,7 +112,7 @@ function externalFunc.drawGoalConsole(player, objectives, softlocked, _timer)
         font.SetSize(2)
         local text = love.graphics.newText(font.GetFont(), "Press Ctrl-R to restart the game")
         vnext = vnext - 25
-        love.graphics.print("Press Ctrl-R to restart the game", 974 - text:getWidth(1), vnext)
+        love.graphics.print("Press Ctrl-R to restart the game", rightPad - text:getWidth(1), vnext)
         love.graphics.setColor(1,1,1,1)
     end
 end
@@ -444,10 +452,16 @@ function externalFunc.draw(world, player, junkList, debugEnabled, dt)
     love.graphics.push()
 
     local wantedScale = 100/(((player.ship or player.guy).components.GetIndexMax())^0.72 + 100)
-    if introTimer < PHYSICS_TIME + 7.6 then
-        wantedScale = wantedScale/0.6
-    elseif introTimer < PHYSICS_TIME + 9 then
-        wantedScale = wantedScale/(0.6 + 0.4*(introTimer - (PHYSICS_TIME + 7.6))/1.4)
+
+    wantedScale = wantedScale*(0.5*768 + 0.5*winHeight)/768
+
+    if introTimer < PHYSICS_TIME + 9 then
+        local introScale = 0.6*1024/winWidth
+        if introTimer < PHYSICS_TIME + 7.6 then
+            wantedScale = wantedScale/introScale
+        elseif introTimer < PHYSICS_TIME + 9 then
+            wantedScale = wantedScale/(introScale + (1 - introScale)*(introTimer - (PHYSICS_TIME + 7.6))/1.4)
+        end
     end
 
     local cx, cy, cScale = UpdateCameraPos(player, wantedScale)
